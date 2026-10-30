@@ -312,6 +312,177 @@ export const SPELL_DD: Record<string, string> = {
   "smite": "SummonerSmite.png"
 };
 
+/** slug interno do item -> nome oficial no cliente em pt_BR */
+export const ITEM_PT: Record<string, string | null> = {
+  "dorans-blade": "Lâmina de Doran",
+  "dorans-shield": "Escudo de Doran",
+  "dorans-ring": "Anel de Doran",
+  "health-potion": "Poção de Vida",
+  "refillable-potion": "Poção com Refil",
+  "corrupting-potion": "Poção Corrupta",
+  "plated-steelcaps": "Botas Galvanizadas de Aço",
+  "mercury-treads": "Passos de Mercúrio",
+  "berserker-greaves": "Grevas do Berserker",
+  "sorcerers-shoes": "Sapatos do Feiticeiro",
+  "ionian-boots": "Botas Ionianas da Lucidez",
+  "boots-of-swiftness": "Botas da Rapidez",
+  "sundered-sky": "Céu Dividido",
+  "black-cleaver": "Cutelo Negro",
+  "steraks-gage": "Sinal de Sterak",
+  "stridebreaker": "Quebrapassos",
+  "titanic-hydra": "Hidra Titânica",
+  "ravenous-hydra": "Hidra Raivosa",
+  "botrk": "Espada do Rei Destruído",
+  "trinity-force": "Força da Trindade",
+  "hullbreaker": "Quebracascos",
+  "dead-mans-plate": "Couraça do Defunto",
+  "youmuus-ghostblade": "Lâmina Fantasma de Youmuu",
+  "eclipse": "Eclipse",
+  "deaths-dance": "Dança da Morte",
+  "maw-of-malmortius": "Mandíbula de Malmortius",
+  "guardian-angel": "Anjo Guardião",
+  "chempunk-chainsword": "Serrespada Quimiopunk",
+  "mortal-reminder": "Lembrete Mortal",
+  "seryldas-grudge": "Rancor de Serylda",
+  "wits-end": "Limite da Razão",
+  "phantom-dancer": "Dançarina Fantasma",
+  "heartsteel": "Coração de Aço",
+  "warmogs": "Armadura de Warmog",
+  "jaksho": "Jak'Sho, o Inconstante",
+  "sunfire-aegis": "Égide de Fogo Solar",
+  "hollow-radiance": "Resplendor Vazio",
+  "kaenic-rookern": "Rookern Lamúrico",
+  "force-of-nature": "Força da Natureza",
+  "spirit-visage": "Semblante Espiritual",
+  "thornmail": "Armadura de Espinhos",
+  "frozen-heart": "Coração Congelado",
+  "randuins-omen": "Presságio de Randuin",
+  "unending-despair": "Desespero Eterno",
+  "iceborn-gauntlet": "Manopla dos Glacinatas",
+  "abyssal-mask": "Máscara Abissal",
+  "riftmaker": "Criafendas",
+  "rod-of-ages": "Bastão das Eras",
+  "rylais": "Cetro de Cristal de Rylai",
+  "liandrys": "Tormento de Liandry",
+  "zhonyas": "Ampulheta de Zhonya",
+  "rabaddons": "Capuz da Morte de Rabadon",
+  "void-staff": "Cajado do Vazio",
+  "cryptbloom": "Criptoflora",
+  "nashors-tooth": "Dente de Na'Shor",
+  "stormsurge": "Ápice da Tempestade",
+  "morellonomicon": "Morellonomicon",
+  "shadowflame": "Chama Sombria"
+};
+
+/** slug interno da runa -> nome oficial no cliente em pt_BR */
+export const RUNE_PT: Record<string, string | null> = {
+  "conqueror": "Conquistador",
+  "lethal-tempo": "Ritmo Fatal",
+  "fleet-footwork": "Agilidade nos Pés",
+  "press-the-attack": "Pressione o Ataque",
+  "triumph": "Triunfo",
+  "presence-of-mind": "Presença de Espírito",
+  "legend-alacrity": "Lenda: Espontaneidade",
+  "legend-bloodline": "Lenda: Linhagem",
+  "legend-haste": "Lenda: Aceleração",
+  "last-stand": "Até a Morte",
+  "cut-down": "Dilacerar",
+  "coup-de-grace": "Golpe de Misericórdia",
+  "stormraiders-surge": "Avanço da Tempestade",
+  "arcane-comet": "Cometa Arcano",
+  "summon-aery": "Invocar Aery",
+  "deathfire-touch": "Toque Ígneo",
+  "aery": "Invocar Aery",
+  "nimbus-cloak": "Manto de Nimbus",
+  "celerity": "Celeridade",
+  "transcendence": "Transcendência",
+  "scorch": "Chamuscar",
+  "gathering-storm": "Tempestade Crescente",
+  "manaflow-band": "Faixa de Fluxo de Mana",
+  "absolute-focus": "Foco Absoluto",
+  "grasp": "Aperto dos Mortos-Vivos",
+  "aftershock": "Pós-choque",
+  "demolish": "Demolir",
+  "second-wind": "Ventos Revigorantes",
+  "bone-plating": "Osso Revestido",
+  "conditioning": "Condicionamento",
+  "overgrowth": "Crescimento Excessivo",
+  "unflinching": "Inabalável",
+  "revitalize": "Revitalizar",
+  "font-of-life": "Fonte da Vida",
+  "shield-bash": "Golpe de Escudo",
+  "magical-footwear": "Calçados Mágicos",
+  "cosmic-insight": "Perspicácia Cósmica",
+  "biscuit-delivery": "Entrega de Biscoitos",
+  "triple-tonic": "Tônico Triplo",
+  "approach-velocity": "Velocidade de Aproximação",
+  "time-warp-tonic": "Tônico de Distorção no Tempo",
+  "cash-back": "Reembolso",
+  "sudden-impact": "Impacto Repentino",
+  "taste-of-blood": "Gosto de Sangue",
+  "cheap-shot": "Golpe Desleal",
+  "sixth-sense": "Sexto Sentido",
+  "grisly-mementos": "Lembranças Aterrorizantes",
+  "deep-ward": "Sentinela Profunda",
+  "ultimate-hunter": "Caça Suprema",
+  "relentless-hunter": "Caça Incansável",
+  "treasure-hunter": "Caçador de Tesouros",
+  "electrocute": "Eletrocutar",
+  "dark-harvest": "Colheita Sombria"
+};
+
+/** slug interno do feitiço -> nome oficial no cliente em pt_BR */
+export const SPELL_PT: Record<string, string | null> = {
+  "flash": "Flash",
+  "teleport": "Teleporte",
+  "ignite": "Incendiar",
+  "ghost": "Fantasma",
+  "heal": "Curar",
+  "barrier": "Barreira",
+  "exhaust": "Exaustão",
+  "cleanse": "Purificar",
+  "smite": "Golpear"
+};
+
+/** chave Data Dragon -> nomes oficiais das habilidades em pt_BR */
+export const CHAMPION_ABILITIES: Record<string, { P: string; Q: string; W: string; E: string; R: string }> = {
+  "Quinn": {
+    "P": "Rapina",
+    "Q": "Investida Anuviante",
+    "W": "Sentidos Apurados",
+    "E": "Salto",
+    "R": "Retaguarda do Inimigo"
+  },
+  "Poppy": {
+    "P": "Embaixadora de Ferro",
+    "Q": "Choque do Martelo",
+    "W": "Presença Inabalável",
+    "E": "Investida Heroica",
+    "R": "Veredito da Guardiã"
+  },
+  "Warwick": {
+    "P": "Fome Eterna",
+    "Q": "Presas da Fera",
+    "W": "Caçada Sangrenta",
+    "E": "Uivo Primitivo",
+    "R": "Coerção Infinita"
+  },
+  "Zac": {
+    "P": "Divisão Celular",
+    "Q": "Esticada",
+    "W": "Matéria Instável",
+    "E": "Estilingue Elástico",
+    "R": "Vamos pular!"
+  },
+  "Anivia": {
+    "P": "Renascimento",
+    "Q": "Lampejo Gelado",
+    "W": "Cristalizar",
+    "E": "Congelamento",
+    "R": "Tempestade Glacial"
+  }
+};
+
 /** chave Data Dragon -> nome e título em pt_BR (campeões novos) */
 export const CHAMPION_PT: Record<string, { name: string; title: string }> = {
   "Illaoi": {
@@ -362,45 +533,25 @@ export const CHAMPION_PT: Record<string, { name: string; title: string }> = {
     "name": "Urgot",
     "title": "o Encouraçado"
   },
-  "Yone": {
-    "name": "Yone",
-    "title": "o Inesquecido"
+  "Quinn": {
+    "name": "Quinn",
+    "title": "as Asas de Demacia"
   },
-  "Irelia": {
-    "name": "Irelia",
-    "title": "a Dançarina das Lâminas"
+  "Poppy": {
+    "name": "Poppy",
+    "title": "a Guardiã do Martelo"
   },
-  "Gangplank": {
-    "name": "Gangplank",
-    "title": "o Flagelo dos Mares"
+  "Warwick": {
+    "name": "Warwick",
+    "title": "a Ira Desimpedida de Zaun"
   },
-  "Sion": {
-    "name": "Sion",
-    "title": "o Colosso Não-Morto"
+  "Zac": {
+    "name": "Zac",
+    "title": "a Arma Secreta"
   },
-  "MonkeyKing": {
-    "name": "Wukong",
-    "title": "o Rei dos Macacos"
-  },
-  "Kled": {
-    "name": "Kled",
-    "title": "o Cavaleiro Caçamba"
-  },
-  "Gnar": {
-    "name": "Gnar",
-    "title": "o Elo Perdido"
-  },
-  "Singed": {
-    "name": "Singed",
-    "title": "o Químico Louco"
-  },
-  "Vladimir": {
-    "name": "Vladimir",
-    "title": "o Terror Escarlate"
-  },
-  "Jayce": {
-    "name": "Jayce",
-    "title": "o Defensor do Amanhã"
+  "Anivia": {
+    "name": "Anivia",
+    "title": "a Criofênix"
   }
 };
 
@@ -421,7 +572,7 @@ export function championSquareUrl(champKey: string): string {
   return `https://ddragon.leagueoflegends.com/cdn/16.21.1/img/champion/${champKey}.png`;
 }
 
-/** Mapa oficial do Summoner's Rift (minimapa 8-bit carregado do patch atual) */
-export const RIFT_MAP_URL = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/map/map11.png`;
+/** Mapa oficial do Summoner's Rift (minimapa carregado do patch atual) */
+export const RIFT_MAP_URL = `https://ddragon.leagueoflegends.com/cdn/16.21.1/img/map/map11.png`;
 /** Minimapa com o desenho estilo "mapa-múndi" alternativo */
-export const RIFT_MAP_ALT_URL = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/map/map11_shrouded.png`;
+export const RIFT_MAP_ALT_URL = `https://ddragon.leagueoflegends.com/cdn/16.21.1/img/map/map11_shrouded.png`;

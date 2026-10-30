@@ -44,10 +44,24 @@ import {
   ITEM_DD,
   RUNE_DD,
   SPELL_DD,
+  ITEM_PT,
+  RUNE_PT,
+  SPELL_PT,
   itemIconUrl,
   runeIconUrl,
   spellIconUrl,
 } from "@/lib/lol/ddragon";
+
+// --------------------------------------------------------------
+// Nomes bilíngues (pt_BR oficial do cliente + original em inglês)
+// --------------------------------------------------------------
+function dualName(pt: string | null | undefined, en: string): string | null {
+  if (!pt || normalizeName(pt) === normalizeName(en)) return null;
+  return en;
+}
+function normalizeName(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+}
 
 // ------------------------------------------------------------
 // Ícone por glifo de item/feitiço
@@ -145,7 +159,14 @@ export function ItemIcon({
     <InfoTooltip
       content={
         <div className="space-y-1">
-          <p className="font-semibold text-gold-bright">{item.name}</p>
+          <p className="font-semibold text-gold-bright">
+            {ITEM_PT[id] ?? item.name}
+            {dualName(ITEM_PT[id], item.name) && (
+              <span className="ml-1.5 font-normal text-[11px] text-muted-foreground">
+                ({item.name})
+              </span>
+            )}
+          </p>
           <p className="flex items-center gap-1 text-xs text-gold">
             <Coins className="h-3 w-3" aria-hidden="true" /> {item.cost} de ouro
           </p>
@@ -195,13 +216,21 @@ export function ItemChip({
 }) {
   const item = ITEMS[id];
   if (!item) return null;
+  // Nome oficial em pt_BR; quando difere do original, mostra os dois
+  const ptName = ITEM_PT[id] ?? item.name;
+  const enName = dualName(ITEM_PT[id], item.name);
   return (
     <div className="flex items-start gap-3">
       <ItemIcon id={id} size={size} />
       <div className="min-w-0">
         <p className="text-sm font-medium leading-tight text-gold-bright">
-          {item.name}
+          {ptName}
         </p>
+        {enName && (
+          <p className="text-[11px] italic leading-tight text-muted-foreground">
+            {enName} (EN)
+          </p>
+        )}
         {note && (
           <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
             {note}
@@ -242,7 +271,14 @@ export function RuneChip({
     <InfoTooltip
       content={
         <div className="space-y-1">
-          <p className="font-semibold text-gold-bright">{rune.name}</p>
+          <p className="font-semibold text-gold-bright">
+            {RUNE_PT[id] ?? rune.name}
+            {dualName(RUNE_PT[id], rune.name) && (
+              <span className="ml-1.5 font-normal text-[11px] text-muted-foreground">
+                ({rune.name})
+              </span>
+            )}
+          </p>
           <p className="text-xs" style={{ color: tree.color }}>
             {showTree ? `Árvore: ${tree.name}` : tree.name}
             {isKey ? " · Keystone" : ""}
@@ -298,11 +334,19 @@ export function SpellChip({
   const spell = SPELLS[id];
   if (!spell) return null;
   const ddIcon = SPELL_DD[id];
+  const spellPt = SPELL_PT[id] ?? spell.name;
   return (
     <InfoTooltip
       content={
         <div className="space-y-1">
-          <p className="font-semibold text-gold-bright">{spell.name}</p>
+          <p className="font-semibold text-gold-bright">
+            {spellPt}
+            {dualName(SPELL_PT[id], spell.name) && (
+              <span className="ml-1.5 font-normal text-[11px] text-muted-foreground">
+                ({spell.name})
+              </span>
+            )}
+          </p>
           <p className="text-xs text-muted-foreground">{spell.desc}</p>
         </div>
       }
@@ -311,7 +355,7 @@ export function SpellChip({
         <div
           tabIndex={0}
           role="img"
-          aria-label={`${spell.name} — ${spell.desc}`}
+          aria-label={`${spellPt} — ${spell.desc}`}
           className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss text-teal-400 transition-all hover:scale-105 hover:border-gold/80 hover:shadow-[0_0_10px_var(--gold)] focus-visible:outline-2 focus-visible:outline-gold cursor-help"
         >
           {ddIcon && !failed ? (
@@ -330,7 +374,7 @@ export function SpellChip({
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium leading-tight text-gold-bright">
-            {spell.name}
+            {spellPt}
           </p>
           {note && (
             <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
@@ -363,7 +407,14 @@ export function SpellIcon({
     <InfoTooltip
       content={
         <div className="space-y-1">
-          <p className="font-semibold text-gold-bright">{spell.name}</p>
+          <p className="font-semibold text-gold-bright">
+            {SPELL_PT[id] ?? spell.name}
+            {dualName(SPELL_PT[id], spell.name) && (
+              <span className="ml-1.5 font-normal text-[11px] text-muted-foreground">
+                ({spell.name})
+              </span>
+            )}
+          </p>
           <p className="text-xs text-muted-foreground">{spell.desc}</p>
         </div>
       }

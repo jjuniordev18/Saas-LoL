@@ -543,6 +543,12 @@ export const RUNES: Record<string, RuneInfo> = {
     keystone: true,
     desc: "Acumula dano adaptativo a cada ataque/habilidade em combate; ao encher, cura parte do dano causado. Ideal para brigas longas.",
   },
+  "press-the-attack": {
+    name: "Press the Attack",
+    tree: "precision",
+    keystone: true,
+    desc: "3 básicos seguidos no mesmo alvo expõem uma fraqueza: o alvo sofre dano extra de TODAS as fontes por alguns segundos. Perfeito para trocas curtas de 3 golpes.",
+  },
   "lethal-tempo": {
     name: "Lethal Tempo",
     tree: "precision",
@@ -783,6 +789,51 @@ export const TIER_META: Record<Tier, { label: string; color: string; desc: strin
 
 export const PATCH_VERSION = "16.21";
 export const SEASON_LABEL = "Temporada 2026";
+
+// ------------------------------------------------------------
+// Tier list da rota do topo — dados reais do Blitz.gg
+// ("LoL Meta Ranked Champion Stats for Top", Esmeralda+, Mundo,
+// captura atualizada ~2h antes da inclusão — patch 26.21 no site)
+// ------------------------------------------------------------
+export interface BlitzTierEntry {
+  rank: number;
+  championId: string; // id interno do campeão neste site
+  name: string;
+  tier: "S" | "A";
+  winRate: number; // %
+  wrChange: number; // variação de WR vs. patch anterior (p.p.)
+  banRate: number; // %
+  pickRate: number; // %
+  matches: number;
+}
+
+export const BLITZ_SOURCE = {
+  site: "Blitz.gg",
+  elo: "Esmeralda+",
+  region: "Mundo",
+  updatedLabel: "atualizado há ~2 horas",
+  url: "https://blitz.gg/lol/champions",
+} as const;
+
+export const BLITZ_TIER_LIST: BlitzTierEntry[] = [
+  { rank: 1, championId: "quinn", name: "Quinn", tier: "S", winRate: 52.2, wrChange: 0.3, banRate: 0.4, pickRate: 0.4, matches: 12960 },
+  { rank: 2, championId: "poppy", name: "Poppy", tier: "S", winRate: 52.0, wrChange: 1.5, banRate: 1.8, pickRate: 0.5, matches: 13939 },
+  { rank: 3, championId: "warwick", name: "Warwick", tier: "S", winRate: 52.0, wrChange: 0.9, banRate: 0.9, pickRate: 0.7, matches: 21614 },
+  { rank: 4, championId: "shen", name: "Shen", tier: "S", winRate: 51.6, wrChange: 0.4, banRate: 0.4, pickRate: 2.0, matches: 58513 },
+  { rank: 5, championId: "malphite", name: "Malphite", tier: "S", winRate: 51.4, wrChange: -0.4, banRate: 10.4, pickRate: 3.8, matches: 110382 },
+  { rank: 6, championId: "zac", name: "Zac", tier: "A", winRate: 51.7, wrChange: 0.0, banRate: 0.6, pickRate: 0.3, matches: 7924 },
+  { rank: 7, championId: "singed", name: "Singed", tier: "A", winRate: 51.6, wrChange: 0.0, banRate: 0.4, pickRate: 1.2, matches: 34117 },
+  { rank: 8, championId: "anivia", name: "Anivia", tier: "A", winRate: 51.5, wrChange: -0.2, banRate: 1.2, pickRate: 0.4, matches: 11474 },
+  { rank: 9, championId: "kayle", name: "Kayle", tier: "A", winRate: 51.4, wrChange: 0.2, banRate: 0.7, pickRate: 1.1, matches: 33626 },
+  { rank: 10, championId: "ornn", name: "Ornn", tier: "A", winRate: 51.3, wrChange: -0.5, banRate: 0.3, pickRate: 2.1, matches: 61243 },
+  { rank: 11, championId: "kled", name: "Kled", tier: "A", winRate: 51.3, wrChange: 0.2, banRate: 0.5, pickRate: 0.9, matches: 26398 },
+  { rank: 12, championId: "sion", name: "Sion", tier: "A", winRate: 51.0, wrChange: 1.3, banRate: 0.4, pickRate: 2.0, matches: 58353 },
+];
+
+/** Entrada da tier list Blitz para um campeão (por id interno), se houver */
+export function getBlitzEntry(championId: string): BlitzTierEntry | undefined {
+  return BLITZ_TIER_LIST.find((e) => e.championId === championId);
+}
 
 // ------------------------------------------------------------
 // Gera a sequência de habilidades (níveis 1–18) da prioridade

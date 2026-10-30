@@ -948,7 +948,7 @@ export const CHAMPIONS_B: Champion[] = [
     title: "o Olho do Crepúsculo",
     classes: ["tank"],
     difficulty: 2,
-    tier: "B",
+    tier: "S",
     popular: false,
     image: "shen",
     color: "#3F7A5C",

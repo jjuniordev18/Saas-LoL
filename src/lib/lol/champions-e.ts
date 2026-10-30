@@ -402,7 +402,7 @@ export const CHAMPIONS_E: Champion[] = [
     title: "o Colosso Não-Morto",
     classes: ["tank", "lutador"],
     difficulty: 1,
-    tier: "B",
+    tier: "A",
     image: "Sion",
     color: "#8B6F4E",
     playstyle: "Tanque de ondas e ultimate global",

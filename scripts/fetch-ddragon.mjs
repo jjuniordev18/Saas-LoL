@@ -148,16 +148,24 @@ const SPELL_ID_MAP = {
 const NEW_CHAMPS = [
   "Illaoi", "Volibear", "Tryndamere", "Olaf", "Yorick", "KSante",
   "DrMundo", "Pantheon", "Chogath", "Kayle", "Rumble", "Urgot",
+  // Alta taxa de vitória na rota do topo (Blitz.gg)
+  "Quinn", "Poppy", "Warwick", "Zac", "Anivia",
 ];
+
+// Campeões cujos nomes de habilidades serão extraídos em pt_BR
+const ABILITY_CHAMPS = ["Quinn", "Poppy", "Warwick", "Zac", "Anivia"];
 
 const norm = (s) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’]/g, "'").trim();
 
 async function main() {
-  const [items, runes, spells, champsEn, champsPt] = await Promise.all([
+  const [items, itemsPt, runes, runesPt, spells, spellsPt, champsEn, champsPt] = await Promise.all([
     getJSON(`${BASE}/data/en_US/item.json`),
-    getJSON(`${CDN}/img/../../cdn/${VERSION}/data/en_US/runesReforged.json`.replace("/cdn/img/../../cdn", "/cdn")), // simple guard
+    getJSON(`${BASE}/data/pt_BR/item.json`),
+    getJSON(`${BASE}/data/en_US/runesReforged.json`),
+    getJSON(`${BASE}/data/pt_BR/runesReforged.json`),
     getJSON(`${BASE}/data/en_US/summoner.json`),
+    getJSON(`${BASE}/data/pt_BR/summoner.json`),
     getJSON(`${BASE}/data/en_US/champion.json`),
     getJSON(`${BASE}/data/pt_BR/champion.json`),
   ]);
@@ -174,6 +182,14 @@ async function main() {
     const hit = byName.get(norm(name));
     if (hit) itemOut[slug] = hit;
     else misses.push(`ITEM: ${slug} -> "${name}"`);
+  }
+
+  // Nome oficial em pt_BR de cada item mapeado (mesma ID)
+  const itemPtOut = {};
+  for (const [slug, hit] of Object.entries(itemOut)) {
+    const pt = itemsPt.data[hit.id];
+    itemPtOut[slug] = pt ? pt.name : null;
+    if (!pt) misses.push(`ITEM-PT: ${slug} (id ${hit.id})`);
   }
 
   // ---------- Runas ----------
@@ -193,12 +209,37 @@ async function main() {
     else misses.push(`RUNA: ${slug} -> "${name}"`);
   }
 
+  // Nome oficial em pt_BR de cada runa mapeada (mesma key)
+  const runePtByKey = new Map();
+  for (const tree of runesPt) {
+    runePtByKey.set(String(tree.id), tree.name);
+    for (const slot of tree.slots) {
+      for (const r of slot.runes) {
+        runePtByKey.set(String(r.id), r.name);
+      }
+    }
+  }
+  const runePtOut = {};
+  for (const [slug, name] of Object.entries(RUNE_NAME_MAP)) {
+    const hit = runeByName.get(norm(name));
+    runePtOut[slug] = hit ? (runePtByKey.get(String(hit.key)) ?? null) : null;
+    if (!runePtOut[slug]) misses.push(`RUNA-PT: ${slug} -> "${name}"`);
+  }
+
   // ---------- Feitiços ----------
   const spellOut = {};
   for (const [slug, sid] of Object.entries(SPELL_ID_MAP)) {
     const s = spells.data[sid];
     if (s) spellOut[slug] = s.image.full;
     else misses.push(`FEITIÇO: ${slug} -> "${sid}"`);
+  }
+
+  // Nome oficial em pt_BR de cada feitiço mapeado
+  const spellPtOut = {};
+  for (const [slug, sid] of Object.entries(SPELL_ID_MAP)) {
+    const s = spellsPt.data[sid];
+    spellPtOut[slug] = s ? s.name : null;
+    if (!s) misses.push(`FEITIÇO-PT: ${slug} -> "${sid}"`);
   }
 
   // ---------- Campeões novos ----------
@@ -208,6 +249,24 @@ async function main() {
     const pt = champsPt.data[key];
     if (en && pt) champOut[key] = { name: pt.name, title: pt.title };
     else misses.push(`CAMPEÃO: ${key}`);
+  }
+
+  // Nomes oficiais das habilidades (pt_BR) dos campeões novos
+  const abilityOut = {};
+  for (const key of ABILITY_CHAMPS) {
+    try {
+      const full = await getJSON(`${BASE}/data/pt_BR/champion/${key}.json`);
+      const data = full.data[key];
+      abilityOut[key] = {
+        P: data.passive.name,
+        Q: data.spells[0].name,
+        W: data.spells[1].name,
+        E: data.spells[2].name,
+        R: data.spells[3].name,
+      };
+    } catch {
+      misses.push(`HABILIDADES: ${key}`);
+    }
   }
 
   // ---------- Emitir TS ----------
@@ -228,6 +287,18 @@ export const RUNE_DD: Record<string, string> = ${JSON.stringify(runeOut, null, 2
 /** slug interno do feitiço -> arquivo oficial de ícone (SummonerX.png) */
 export const SPELL_DD: Record<string, string> = ${JSON.stringify(spellOut, null, 2)};
 
+/** slug interno do item -> nome oficial no cliente em pt_BR */
+export const ITEM_PT: Record<string, string | null> = ${JSON.stringify(itemPtOut, null, 2)};
+
+/** slug interno da runa -> nome oficial no cliente em pt_BR */
+export const RUNE_PT: Record<string, string | null> = ${JSON.stringify(runePtOut, null, 2)};
+
+/** slug interno do feitiço -> nome oficial no cliente em pt_BR */
+export const SPELL_PT: Record<string, string | null> = ${JSON.stringify(spellPtOut, null, 2)};
+
+/** chave Data Dragon -> nomes oficiais das habilidades em pt_BR */
+export const CHAMPION_ABILITIES: Record<string, { P: string; Q: string; W: string; E: string; R: string }> = ${JSON.stringify(abilityOut, null, 2)};
+
 /** chave Data Dragon -> nome e título em pt_BR (campeões novos) */
 export const CHAMPION_PT: Record<string, { name: string; title: string }> = ${JSON.stringify(champOut, null, 2)};
 
@@ -247,6 +318,11 @@ export function runeIconUrl(iconPath: string): string {
 export function championSquareUrl(champKey: string): string {
   return \`${BASE}/img/champion/\${champKey}.png\`;
 }
+
+/** Mapa oficial do Summoner's Rift (minimapa carregado do patch atual) */
+export const RIFT_MAP_URL = \`${BASE}/img/map/map11.png\`;
+/** Minimapa com o desenho estilo "mapa-múndi" alternativo */
+export const RIFT_MAP_ALT_URL = \`${BASE}/img/map/map11_shrouded.png\`;
 `;
 
   await (await import("node:fs/promises")).writeFile(
@@ -259,6 +335,7 @@ export function championSquareUrl(champKey: string): string {
   console.log(`Runas mapeadas: ${Object.keys(runeOut).length}/${Object.keys(RUNE_NAME_MAP).length}`);
   console.log(`Feitiços mapeados: ${Object.keys(spellOut).length}/${Object.keys(SPELL_ID_MAP).length}`);
   console.log(`Campeões: ${Object.keys(champOut).length}/${NEW_CHAMPS.length}`);
+  console.log(`Habilidades pt_BR: ${Object.keys(abilityOut).length}/${ABILITY_CHAMPS.length}`);
   if (misses.length) {
     console.log("\n=== NÃO ENCONTRADOS ===");
     misses.forEach((m) => console.log(" - " + m));

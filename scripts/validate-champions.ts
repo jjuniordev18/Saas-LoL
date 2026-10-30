@@ -4,8 +4,20 @@ import { CHAMPIONS_A } from "../src/lib/lol/champions-a";
 import { CHAMPIONS_B } from "../src/lib/lol/champions-b";
 import { CHAMPIONS_C } from "../src/lib/lol/champions-c";
 import { CHAMPIONS_D } from "../src/lib/lol/champions-d";
+import { CHAMPIONS_E } from "../src/lib/lol/champions-e";
+import { CHAMPIONS_F } from "../src/lib/lol/champions-f";
+import { CHAMPIONS_G } from "../src/lib/lol/champions-g";
+import { BLITZ_TIER_LIST } from "../src/lib/lol/data";
 
-const ALL = [...CHAMPIONS_A, ...CHAMPIONS_B, ...CHAMPIONS_C, ...CHAMPIONS_D];
+const ALL = [
+  ...CHAMPIONS_A,
+  ...CHAMPIONS_B,
+  ...CHAMPIONS_C,
+  ...CHAMPIONS_D,
+  ...CHAMPIONS_E,
+  ...CHAMPIONS_F,
+  ...CHAMPIONS_G,
+];
 
 let errors = 0;
 const seen = new Set<string>();
@@ -59,6 +71,14 @@ for (const c of ALL) {
   }
   if (c.abilities.length !== 5) {
     console.error(`[ABILITIES INVÁLIDAS] ${c.name}: ${c.abilities.length} habilidades`);
+    errors++;
+  }
+}
+
+// Tier list Blitz deve apontar sempre para campeões existentes
+for (const e of BLITZ_TIER_LIST) {
+  if (!ALL.some((c) => c.id === e.championId)) {
+    console.error(`[BLITZ] championId inexistente: "${e.championId}"`);
     errors++;
   }
 }

@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { InfoTooltip, GlyphIcon } from "./pieces";
 import { ChampionAvatar } from "./ChampionCard";
-import { ITEM_DD, itemIconUrl } from "@/lib/lol/ddragon";
+import { ITEM_DD, ITEM_PT, itemIconUrl } from "@/lib/lol/ddragon";
 import type { Champion } from "@/lib/lol/data";
 
 const CATEGORY_META: Record<ItemCategory, { label: string; color: string }> = {
@@ -59,17 +59,24 @@ export function ItemSearch({
 
   const results = React.useMemo(() => {
     const q = normalizeText(query);
-    let list = Object.entries(ITEMS).filter(([, item]) => {
+    let list = Object.entries(ITEMS).filter(([id, item]) => {
       if (category !== "todas" && item.category !== category) return false;
       if (!q) return true;
+      // Busca bilíngue: nome oficial pt_BR + original em inglês + descrição
       return (
         normalizeText(item.name).includes(q) ||
+        normalizeText(ITEM_PT[id] ?? "").includes(q) ||
         normalizeText(item.desc).includes(q) ||
         normalizeText(CATEGORY_META[item.category].label).includes(q)
       );
     });
     if (sort === "nome") {
-      list.sort(([, a], [, b]) => a.name.localeCompare(b.name, "pt-BR"));
+      list.sort(([aId], [bId]) =>
+        (ITEM_PT[aId] ?? ITEMS[aId].name).localeCompare(
+          ITEM_PT[bId] ?? ITEMS[bId].name,
+          "pt-BR"
+        )
+      );
     } else if (sort === "preco-asc") {
       list.sort(([, a], [, b]) => a.cost - b.cost);
     } else if (sort === "preco-desc") {
@@ -103,7 +110,7 @@ export function ItemSearch({
             <Input
               id="busca-item"
               type="search"
-              placeholder="Buscar item (ex.: Heartsteel, botas, anti-cura...)"
+              placeholder="Buscar em português ou inglês (ex.: Cutelo Negro, Heartsteel, botas...)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="h-11 rounded-md border-border bg-card pl-10 pr-10 text-sm focus-visible:ring-gold"
@@ -184,7 +191,7 @@ export function ItemSearch({
 
       <p className="text-sm text-muted-foreground" aria-live="polite">
         <strong className="text-gold-bright">{results.length}</strong>{" "}
-        {results.length === 1 ? "item encontrado" : "itens encontrados"} · ícones
+        {results.length === 1 ? "item encontrado" : "itens encontrados"} · nomes em português e inglês · ícones
         oficiais do patch
       </p>
 
@@ -204,6 +211,11 @@ export function ItemSearch({
             const users = championsUsingItem(id);
             const isOpen = expanded === id;
             const cat = CATEGORY_META[item.category];
+            const ptName = ITEM_PT[id] ?? item.name;
+            const enName =
+              normalizeText(ptName) !== normalizeText(item.name)
+                ? item.name
+                : null;
             return (
               <div
                 key={id}
@@ -213,7 +225,14 @@ export function ItemSearch({
                   <InfoTooltip
                     content={
                       <div className="space-y-1">
-                        <p className="font-semibold text-gold-bright">{item.name}</p>
+                        <p className="font-semibold text-gold-bright">
+                          {ptName}
+                          {enName && (
+                            <span className="ml-1.5 font-normal text-[11px] text-muted-foreground">
+                              ({enName})
+                            </span>
+                          )}
+                        </p>
                         <p className="flex items-center gap-1 text-xs text-gold">
                           <Coins className="h-3 w-3" aria-hidden="true" />{" "}
                           {item.cost} de ouro
@@ -224,7 +243,7 @@ export function ItemSearch({
                     <span
                       tabIndex={0}
                       role="img"
-                      aria-label={item.name}
+                      aria-label={`${ptName} — ${item.desc}`}
                       className="gold-glow-hover relative flex h-12 w-12 shrink-0 cursor-help items-center justify-center overflow-hidden rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss text-gold"
                     >
                       {/* Ícone oficial via ItemBadge (mantém fallback) */}
@@ -233,8 +252,13 @@ export function ItemSearch({
                   </InfoTooltip>
                   <div className="min-w-0">
                     <p className="truncate font-display text-sm font-bold text-gold-bright">
-                      {item.name}
+                      {ptName}
                     </p>
+                    {enName && (
+                      <p className="truncate text-[11px] italic text-muted-foreground">
+                        {enName} (EN)
+                      </p>
+                    )}
                     <p className="mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-gold">
                       <Coins className="h-3 w-3" aria-hidden="true" />
                       {item.cost}

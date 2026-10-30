@@ -406,7 +406,7 @@ export const CHAMPIONS_D: Champion[] = [
     title: "a Justa Radiante",
     classes: ["duelista", "mago"],
     difficulty: 2,
-    tier: "B",
+    tier: "A",
     image: "kayle",
     color: "#E8C34A",
     playstyle: "Hipercarregador de late game",

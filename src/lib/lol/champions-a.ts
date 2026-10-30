@@ -643,8 +643,9 @@ export const CHAMPIONS_A: Champion[] = [
       { champion: "Mordekaiser", note: "Dano maior no early e cura equipara; cuidado com o R dele." },
     ],
     weakAgainst: [
-      { champion: "Jax", note: "Counter Strike nega seu combo; espere o E de defesa dele." },
-      { champion: "Fiora", note: "Riposte no W/Q e true damage; troque apenas com Q isolado." },
+      { champion: "Jax", note: "Counter Strike nega seu combo; espere o E dele." },
+      { champion: "Fiora", note: "Riposte no seu E e true damage; troque só sem cooldown do W dela." },
+      { champion: "Warwick", note: "A cura das Presas da Fera supera seu poke; brigas longas são o terreno dele." },
       { champion: "Quinn", note: "Kite à distância: use TP e farme sob torre." },
       { champion: "Kayle", note: "Escala melhor: termine antes do minuto 30." },
     ],
@@ -1049,6 +1050,7 @@ export const CHAMPIONS_A: Champion[] = [
       { champion: "Renekton", note: "Pressão early pesada antes dos seus itens." },
       { champion: "Pantheon", note: "Burst impossível de ripostar bem; jogue para escalar." },
       { champion: "Kennen", note: "Poke e stun à distância: busque TP criativo." },
+      { champion: "Poppy", note: "A Presença Inabalável anula seu Q e o stun do E na parede; troque só sem a W dela." },
     ],
     counterTips: [
       "Guarde o W para o golpe que define a troca — errar o timing é perder metade do HP.",

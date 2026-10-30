@@ -5,7 +5,7 @@
 // Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ import { Comparator } from "@/components/lol/Comparator";
 import { ItemSearch } from "@/components/lol/ItemSearch";
 import { RiftMap } from "@/components/lol/RiftMap";
 import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
+import { TierList } from "@/components/lol/TierList";
 
 // ------------------------------------------------------------
 // Cabeçalho fixo
@@ -43,12 +44,19 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
             <Swords className="h-5 w-5 text-gold" aria-hidden="true" />
           </span>
-          <span className="whitespace-nowrap font-display text-base font-black tracking-wide text-gold-gradient sm:text-lg">
+          <span className="hidden whitespace-nowrap font-display text-base font-black tracking-wide text-gold-gradient sm:inline sm:text-lg">
             Topo do Rift
           </span>
         </a>
 
         <nav aria-label="Navegação principal" className="flex items-center gap-0.5 sm:gap-2">
+          <a
+            href="#tierlist"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+          >
+            <BarChart3 className="h-4 w-4 text-gold" aria-hidden="true" />
+            Tier list
+          </a>
           <a
             href="#mapa"
             className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
@@ -118,6 +126,9 @@ function Footer() {
             </span>
           </div>
           <nav aria-label="Links do rodapé" className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+            <a href="#tierlist" className="transition-colors hover:text-gold-bright">
+              Tier list
+            </a>
             <a href="#mapa" className="transition-colors hover:text-gold-bright">
               Mapa
             </a>
@@ -139,7 +150,8 @@ function Footer() {
           </nav>
         </div>
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
-          Patch {PATCH_VERSION} · Conteúdo educativo feito por fãs.{" "}
+          Patch {PATCH_VERSION} · Taxa de vitória, ban e pick rate: Blitz.gg (Esmeralda+) ·{" "}
+          Conteúdo educativo feito por fãs.{" "}
           Topo do Rift não é afiliado à Riot Games. League of Legends e todos os
           nomes e ícones de campeões são marcas da Riot Games, Inc.
         </p>
@@ -181,6 +193,30 @@ function FilterChip({
 }
 
 // ------------------------------------------------------------
+// Botão "voltar ao topo" — aparece após rolagem
+// ------------------------------------------------------------
+function BackToTop() {
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 700);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  if (!visible) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label="Voltar ao topo da página"
+      className="animate-fade-in-up fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-frame/70 bg-card text-gold shadow-lg transition-all hover:scale-105 hover:border-gold hover:shadow-[0_0_14px_color-mix(in_srgb,var(--gold)_40%,transparent)] focus-visible:outline-2 focus-visible:outline-gold"
+    >
+      <ArrowUp className="h-5 w-5" aria-hidden="true" />
+    </button>
+  );
+}
+
+// ------------------------------------------------------------
 // Página
 // ------------------------------------------------------------
 export default function Home() {
@@ -189,6 +225,19 @@ export default function Home() {
   const [selected, setSelected] = React.useState<Champion | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { favorites, isFavorite } = useFavorites();
+
+  // Atalho de teclado: "/" foca a busca de campeões
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      e.preventDefault();
+      document.getElementById("busca-campeao")?.focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const favoriteChampions = React.useMemo(
     () => CHAMPIONS.filter((c) => isFavorite(c.id)),
@@ -253,7 +302,8 @@ export default function Home() {
             <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
               Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
               habilidades, comparador de matchups de até 3 campeões, busca de
-              itens e favoritos salvos no seu navegador — direto ao ponto, para
+              itens em português e inglês, tier list com dados do Blitz.gg e
+              favoritos salvos no seu navegador — direto ao ponto, para
               iniciantes e intermediários.
             </p>
 
@@ -288,6 +338,11 @@ export default function Home() {
                   </button>
                 )}
               </div>
+              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                Dica: aperte{" "}
+                <kbd className="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] font-bold text-gold">/</kbd>{" "}
+                a qualquer momento para buscar
+              </p>
             </div>
 
             {/* Estatísticas rápidas */}
@@ -313,6 +368,23 @@ export default function Home() {
               ))}
             </dl>
           </div>
+        </section>
+
+        {/* ---------- Tier list da patch (Blitz.gg) ---------- */}
+        <section id="tierlist" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+          <div className="mb-8 flex items-center gap-3">
+            <BarChart3 className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Tier list do topo — dados Blitz.gg
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Os 12 maiores win rates da rota superior em Esmeralda+ — clique
+                na linha para abrir a build completa do campeão
+              </p>
+            </div>
+          </div>
+          <TierList onSelectDetail={handleSelect} />
         </section>
 
         {/* ---------- Mapa do Summoner's Rift ---------- */}
@@ -555,6 +627,7 @@ export default function Home() {
         </section>
       </main>
 
+      <BackToTop />
       <Footer />
 
       <ChampionDialog

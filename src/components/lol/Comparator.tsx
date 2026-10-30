@@ -327,10 +327,11 @@ const RANK_MEDAL: Record<number, { icon: typeof Medal; color: string }> = {
 };
 
 const EXAMPLES: { ids: string[]; label: string }[] = [
-  { ids: ["darius", "mordekaiser"], label: "Darius vs Mordekaiser" },
-  { ids: ["fiora", "garen"], label: "Fiora vs Garen" },
+  { ids: ["quinn", "darius"], label: "Quinn vs Darius" },
+  { ids: ["poppy", "fiora", "jax"], label: "Poppy vs Fiora vs Jax" },
+  { ids: ["warwick", "aatrox"], label: "Warwick vs Aatrox" },
+  { ids: ["anivia", "garen", "kled"], label: "Anivia vs Garen vs Kled" },
   { ids: ["ksante", "sett", "malphite"], label: "K'Sante vs Sett vs Malphite" },
-  { ids: ["vladimir", "garen", "gnar"], label: "Vladimir vs Garen vs Gnar" },
 ];
 
 // Busca tolerante: ignora acentos, apóstrofos e caixa; aceita subsequência

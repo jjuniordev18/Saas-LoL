@@ -8,6 +8,7 @@ import { CHAMPIONS_C } from "./champions-c";
 import { CHAMPIONS_D } from "./champions-d";
 import { CHAMPIONS_E } from "./champions-e";
 import { CHAMPIONS_F } from "./champions-f";
+import { CHAMPIONS_G } from "./champions-g";
 
 export const CHAMPIONS: Champion[] = [
   ...CHAMPIONS_A,
@@ -16,6 +17,7 @@ export const CHAMPIONS: Champion[] = [
   ...CHAMPIONS_D,
   ...CHAMPIONS_E,
   ...CHAMPIONS_F,
+  ...CHAMPIONS_G,
 ];
 
 export function getChampionById(id: string): Champion | undefined {

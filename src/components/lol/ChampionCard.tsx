@@ -4,10 +4,12 @@
 // Topo do Rift — Card de campeão
 // ============================================================
 import * as React from "react";
+import { TrendingUp } from "lucide-react";
 import { championImageUrl } from "@/lib/lol";
 import type { Champion } from "@/lib/lol/data";
+import { getBlitzEntry } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
-import { ClassBadge, DifficultyBadge, TierBadge } from "./pieces";
+import { ClassBadge, DifficultyBadge, TierBadge, InfoTooltip } from "./pieces";
 import { FavoriteButton } from "./FavoriteButton";
 
 export function ChampionAvatar({
@@ -61,6 +63,8 @@ export function ChampionCard({
   champion: Champion;
   onSelect: (champion: Champion) => void;
 }) {
+  const blitz = getBlitzEntry(champion.id);
+
   return (
     // Envoltório: o coração fica FORA do <button> do card (HTML não permite
     // botão aninhado) e os dois são posicionados juntos.
@@ -111,6 +115,20 @@ export function ChampionCard({
         </div>
 
         <DifficultyBadge level={champion.difficulty} />
+
+        {blitz && (
+          <InfoTooltip
+            content={`Taxa de vitória na rota do topo segundo o Blitz.gg (Esmeralda+): ${blitz.winRate.toFixed(1)}% — ${blitz.rank}º lugar da tier list`}
+          >
+            <span
+              tabIndex={0}
+              className="inline-flex cursor-help items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold text-gold transition-colors hover:border-gold/70"
+            >
+              <TrendingUp className="h-3 w-3" aria-hidden="true" />
+              {blitz.winRate.toFixed(1)}% WR
+            </span>
+          </InfoTooltip>
+        )}
       </button>
     </div>
   );
