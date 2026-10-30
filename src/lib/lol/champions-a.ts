@@ -185,7 +185,7 @@ export const CHAMPIONS_A: Champion[] = [
       { id: "force-of-nature", note: "Contra AP" },
       { id: "thornmail", note: "Contra cura e lutadores AD" },
       { id: "warmogs", note: "Vida + regen infinita" },
-      { id: "mortal-reminder", note: "Anti-cura (contra o R de escapes? não: contra curas)" },
+      { id: "mortal-reminder", note: "Anti-cura (Soraka, Aatrox, Fiora)" },
       { id: "guardian-angel" },
     ],
     runes: {
@@ -224,7 +224,7 @@ export const CHAMPIONS_A: Champion[] = [
         "Regeneração passiva: recue alguns segundos após tomar poke e volte com vantagem de vida.",
       ],
       mid: [
-        "Giren tem rotação de mapa forte: empurre a onda e invada a jungle com o jungler.",
+        "Garen tem rotação de mapa forte: empurre a onda e invada a jungle com o jungler.",
         "Com Stridebreaker você finalmente prende alvos móveis — force brigas no rio.",
         "Procure o alvo de maior ameaça e silencie com Q no início do teamfight.",
       ],
@@ -1013,8 +1013,8 @@ export const CHAMPIONS_A: Champion[] = [
       { key: "P", name: "Duelista", desc: "Pontos vitais aparecem nos lados do inimigo; acertá-los causa dano verdadeiro % vida e concede cura + velocidade. O coração do campeão." },
       { key: "Q", name: "Investida", desc: "Dash curto que causa dano no ponto vital se alinhado. Recarga muito baixa: mobilidade constante e reset ao acertar vital." },
       { key: "W", name: "Riposte", desc: "Bloqueia TODO dano e CC de uma habilidade inimiga por um instante; atordoa se bloquear CC, desacelera caso contrário. Prever o inimigo é a maestoria." },
-      { key: "E", name: "Bailado? Não: "Bladework"", desc: "Dois básicos turbinados: o primeiro nunca erra (reset de ataque), o segundo causa crítico. Sinergia perfeita com vitais." },
-      { key: "R", name: "Desafio Final? Grand Challenge", desc: "Marca 4 vitais no alvo; acertar todos (ou 2 + abater) cura você e aliados próximos em área. Duelo de vida ou morte — geralmente de vida." },
+      { key: "E", name: "Bladework", desc: "Dois básicos turbinados: o primeiro nunca erra (reset de ataque), o segundo causa crítico. Sinergia perfeita com vitais." },
+      { key: "R", name: "Grand Challenge", desc: "Marca 4 vitais no alvo; acertar todos (ou 2 + abater) cura você e aliados próximos em área. Duelo de vida ou morte — geralmente de vida." },
     ],
     comboTips: [
       "Q no vital → E (reset de básico) → segundo E crítico → recue com a velocidade do passivo.",

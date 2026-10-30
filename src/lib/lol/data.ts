@@ -330,6 +330,13 @@ export const ITEMS: Record<string, ItemInfo> = {
     category: "ad",
     desc: "Resistência mágica e dano mágico on-hit nos básicos. Item híbrido contra times AP.",
   },
+  "phantom-dancer": {
+    name: "Phantom Dancer",
+    cost: 2800,
+    glyph: "bow",
+    category: "ad",
+    desc: "Velocidade de ataque e movimento; ao atacar, ganha um fantasma temporário que acelera você. Para lutadores que dependem de básicos constantes.",
+  },
 
   // Tanques
   heartsteel: {

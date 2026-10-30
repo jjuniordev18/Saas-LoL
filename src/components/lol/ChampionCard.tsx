@@ -1,0 +1,97 @@
+"use client";
+
+// ============================================================
+// Topo do Rift — Card de campeão
+// ============================================================
+import * as React from "react";
+import { championImageUrl } from "@/lib/lol";
+import type { Champion } from "@/lib/lol/data";
+import { cn } from "@/lib/utils";
+import { ClassBadge, DifficultyBadge, TierBadge } from "./pieces";
+
+export function ChampionAvatar({
+  champion,
+  className,
+  size = 96,
+}: {
+  champion: Champion;
+  className?: string;
+  size?: number;
+}) {
+  const [failed, setFailed] = React.useState(false);
+  const initials = champion.name.slice(0, 2).toUpperCase();
+
+  return (
+    <div
+      className={cn(
+        "relative shrink-0 overflow-hidden rounded-md border-2",
+        className
+      )}
+      style={{ width: size, height: size, borderColor: `${champion.color}80` }}
+    >
+      {failed ? (
+        <div
+          className="flex h-full w-full items-center justify-center font-display font-bold text-white"
+          style={{ background: `linear-gradient(160deg, ${champion.color}, #0a1428)` }}
+          aria-label={champion.name}
+          role="img"
+        >
+          <span style={{ fontSize: size * 0.3 }}>{initials}</span>
+        </div>
+      ) : (
+        <img
+          src={championImageUrl(champion.image)}
+          alt={`Retrato de ${champion.name}`}
+          width={size}
+          height={size}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      )}
+    </div>
+  );
+}
+
+export function ChampionCard({
+  champion,
+  onSelect,
+}: {
+  champion: Champion;
+  onSelect: (champion: Champion) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(champion)}
+      aria-label={`Ver build de ${champion.name}`}
+      className="card-hover-lift group flex w-full flex-col items-center gap-3 rounded-lg border border-border bg-card p-4 text-center focus-visible:outline-2 focus-visible:outline-gold"
+    >
+      <div className="relative">
+        <ChampionAvatar
+          champion={champion}
+          size={88}
+          className="transition-transform duration-200 group-hover:scale-105"
+        />
+        <div className="absolute -right-2 -top-2">
+          <TierBadge tier={champion.tier} />
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <h3 className="font-display text-base font-bold leading-tight text-gold-bright">
+          {champion.name}
+        </h3>
+        <p className="text-xs text-muted-foreground">{champion.playstyle}</p>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-center gap-1.5">
+        {champion.classes.map((c) => (
+          <ClassBadge key={c} classe={c} />
+        ))}
+      </div>
+
+      <DifficultyBadge level={champion.difficulty} />
+    </button>
+  );
+}
