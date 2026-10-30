@@ -1,5 +1,5 @@
 // ============================================================
-// Topo do Rift — Camada de dados (Patch 26.21)
+// Topo do Rift — Camada de dados (Patch 16.21)
 // Catálogos de itens, runas e feitiços + tipos compartilhados
 // ============================================================
 
@@ -516,6 +516,13 @@ export const ITEMS: Record<string, ItemInfo> = {
     category: "ap",
     desc: "AP e vida; aplica Ferimentos Graves ao causar dano mágico. Anti-cura AP.",
   },
+  shadowflame: {
+    name: "Shadowflame",
+    cost: 3000,
+    glyph: "bolt",
+    category: "ap",
+    desc: "AP e penetração mágica; contra alvos escudados, causa dano crítico extra. Execute de poke.",
+  },
 };
 
 // ------------------------------------------------------------
@@ -528,6 +535,12 @@ export const RUNES: Record<string, RuneInfo> = {
     tree: "precision",
     keystone: true,
     desc: "Acumula dano adaptativo a cada ataque/habilidade em combate; ao encher, cura parte do dano causado. Ideal para brigas longas.",
+  },
+  "lethal-tempo": {
+    name: "Lethal Tempo",
+    tree: "precision",
+    keystone: true,
+    desc: "Ataques seguidos concedem velocidade de ataque acumulável (pode ultrapassar o limite) e estendem a duração em combate. Para quem depende de básicos constantes.",
   },
   "fleet-footwork": {
     name: "Fleet Footwork",
@@ -550,6 +563,11 @@ export const RUNES: Record<string, RuneInfo> = {
     tree: "precision",
     desc: "Velocidade de ataque acumulável com tropas, monstros e abates.",
   },
+  "legend-haste": {
+    name: "Legend: Haste",
+    tree: "precision",
+    desc: "Aceleração de habilidade acumulável com tropas, monstros e abates — mais Qs por minuto.",
+  },
   "legend-bloodline": {
     name: "Legend: Bloodline",
     tree: "precision",
@@ -560,6 +578,16 @@ export const RUNES: Record<string, RuneInfo> = {
     tree: "precision",
     desc: "Causa mais dano quando você está com pouca vida — sinergia com escudos e salvamentos.",
   },
+  "taste-of-blood": {
+    name: "Taste of Blood",
+    tree: "domination",
+    desc: "Cura periódica ao atacar campeões — sustain barato para a rota.",
+  },
+  "treasure-hunter": {
+    name: "Treasure Hunter",
+    tree: "domination",
+    desc: "Ouro extra por abate único, acelerando seu primeiro item.",
+  },
   "cut-down": {
     name: "Cut Down",
     tree: "precision",
@@ -567,17 +595,22 @@ export const RUNES: Record<string, RuneInfo> = {
   },
 
   // Sorcery
+  "arcane-comet": {
+    name: "Arcane Comet",
+    tree: "sorcery",
+    keystone: true,
+    desc: "O primeiro dano em um campeão a cada intervalo chama um cometa em área. O poke de habilidades fica muito mais doloroso.",
+  },
+  "manaflow-band": {
+    name: "Manaflow Band",
+    tree: "sorcery",
+    desc: "Mana máxima extra e restauração periódica de mana — sustenta o spam de habilidades na rota.",
+  },
   "stormraiders-surge": {
     name: "Stormraider's Surge",
     tree: "sorcery",
     keystone: true,
     desc: "Ao causar dano suficiente em um campeão em pouco tempo, ganha velocidade de movimento e resistência a desaceleração. Perfeito para colar nos alvos (retornou no patch 26.9).",
-  },
-  "phase-rush": {
-    name: "Phase Rush",
-    tree: "sorcery",
-    keystone: true,
-    desc: "Três ataques/habilidades seguidos contra um campeão concedem uma rajada de velocidade e redução de lentidão.",
   },
   "nimbus-cloak": {
     name: "Nimbus Cloak",
@@ -606,6 +639,12 @@ export const RUNES: Record<string, RuneInfo> = {
   },
 
   // Resolve
+  aftershock: {
+    name: "Aftershock",
+    tree: "resolve",
+    keystone: true,
+    desc: "Após imobilizar um inimigo, ganha resistências e explode em dano ao redor. Para tanques que iniciam com CC.",
+  },
   grasp: {
     name: "Grasp of the Undying",
     tree: "resolve",
@@ -735,7 +774,7 @@ export const TIER_META: Record<Tier, { label: string; color: string; desc: strin
   B: { label: "B", color: "#8C9BA8", desc: "Situacional; exige mais do jogador." },
 };
 
-export const PATCH_VERSION = "26.21";
+export const PATCH_VERSION = "16.21";
 export const SEASON_LABEL = "Temporada 2026";
 
 // ------------------------------------------------------------

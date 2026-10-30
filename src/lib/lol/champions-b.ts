@@ -1,7 +1,7 @@
 // ============================================================
 // Campeões (parte 2/2) — Malphite, Nasus, Teemo, Riven,
 // Gwen, Ornn, Camille, Shen
-// Builds baseadas no patch 26.21 (Temporada 2026)
+// Builds baseadas no patch 16.21 (Temporada 2026)
 // ============================================================
 import type { Champion } from "./data";
 
@@ -321,13 +321,13 @@ export const CHAMPIONS_B: Champion[] = [
     ],
     runes: {
       primaryTree: "sorcery",
-      keystone: "phase-rush",
+      keystone: "arcane-comet",
       primary: ["nimbus-cloak", "transcendence", "scorch"],
       secondaryTree: "domination",
       secondary: ["sudden-impact", "ultimate-hunter"],
       shards: ["+Velocidade de Habilidade", "+9 Adaptativo (AP)", "+Vida bônus (escala com nível)"],
       explanation:
-        "Phase Rush é seu seguro de vida: 3 golpes no inimigo e você corre do all-in OU cola no alvo. Ultimate Hunter reduz a recarga dos cogumelos — mais controle do mapa, o coração do Teemo.",
+        "Arcane Comet deixa cada Q e cogumelo ainda mais dolorosos no poke — com Nimbus Cloak você corre do all-in depois do combo. Ultimate Hunter reduz a recarga dos cogumelos — mais controle do mapa, o coração do Teemo.",
     },
     altRunesNote:
       "Contra lutadores de all-in: Fleet Footwork + Resolve (Bone Plating + Overgrowth) sustenta a rota até escalar.",
@@ -344,8 +344,8 @@ export const CHAMPIONS_B: Champion[] = [
       { key: "R", name: "Armadilha Pestilenta", desc: "Cogumelos invisíveis que explodem em veneno em área. Domine entradas, rios e objetivos." },
     ],
     comboTips: [
-      "Q (cega) → básicos com E → recue com W antes do inimigo reagir: o ciclo de poke.",
-      "Phase Rush ativa em 3 golpes: poke e CORRA — nunca termine a troca perto dele.",
+      "Q (cega) + Comet poke e recue com W antes do inimigo reagir: o ciclo de poke.",
+      "Guarde o W ativo: com ele você é mais rápido que quase todo lutador de topo — poke e NUNCA termine a troca perto dele.",
       "Cogumelo atrás de você antes de trocar: se o all-in vier, o R te salva.",
     ],
     tips: {

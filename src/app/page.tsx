@@ -2,10 +2,10 @@
 
 // ============================================================
 // Topo do Rift — Página inicial
-// Busca + cards de campeões populares + lista com filtros
+// Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,13 +21,15 @@ import {
 import { CLASS_META, DIFFICULTY_META, TIER_META, PATCH_VERSION } from "@/lib/lol/data";
 import type { Champion } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
+import { useFavorites } from "@/lib/lol/favorites";
 import { ChampionCard } from "@/components/lol/ChampionCard";
 import { ChampionDialog } from "@/components/lol/ChampionDialog";
+import { Comparator } from "@/components/lol/Comparator";
 
 // ------------------------------------------------------------
 // Cabeçalho fixo
 // ------------------------------------------------------------
-function Header() {
+function Header({ favoritesCount }: { favoritesCount: number }) {
   return (
     <header className="sticky top-0 z-30 border-b border-[#785a28]/40 bg-[#0a1428]/90 backdrop-blur supports-[backdrop-filter]:bg-[#0a1428]/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
@@ -55,6 +57,31 @@ function Header() {
             className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
           >
             Campeões
+          </a>
+          <a
+            href="#comparador"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+          >
+            <GitCompareArrows className="h-4 w-4 text-gold" aria-hidden="true" />
+            Comparador
+          </a>
+          <a
+            href="#favoritos"
+            className="flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+          >
+            <Heart className="h-4 w-4 text-rose-400" aria-hidden="true" />
+            <span className="hidden sm:inline">Favoritos</span>
+            <span
+              className={cn(
+                "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold",
+                favoritesCount > 0
+                  ? "bg-rose-500/20 text-rose-300"
+                  : "bg-muted text-muted-foreground"
+              )}
+              aria-label={`${favoritesCount} favoritos salvos`}
+            >
+              {favoritesCount}
+            </span>
           </a>
         </nav>
       </div>
@@ -85,6 +112,12 @@ function Footer() {
             <a href="#campeoes" className="transition-colors hover:text-gold-bright">
               Todos os campeões
             </a>
+            <a href="#comparador" className="transition-colors hover:text-gold-bright">
+              Comparador
+            </a>
+            <a href="#favoritos" className="transition-colors hover:text-gold-bright">
+              Favoritos
+            </a>
             <a href="#inicio" className="transition-colors hover:text-gold-bright">
               Voltar ao topo
             </a>
@@ -93,7 +126,7 @@ function Footer() {
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
           Patch {PATCH_VERSION} · Conteúdo educativo feito por fãs.{" "}
           Topo do Rift não é afiliado à Riot Games. League of Legends e todos os
-          nomes de campeões são marcas da Riot Games, Inc.
+          nomes e ícones de campeões são marcas da Riot Games, Inc.
         </p>
       </div>
     </footer>
@@ -137,8 +170,15 @@ function FilterChip({
 // ------------------------------------------------------------
 export default function Home() {
   const [filters, setFilters] = React.useState<ChampionFilters>(DEFAULT_FILTERS);
+  const [favoriteOnly, setFavoriteOnly] = React.useState(false);
   const [selected, setSelected] = React.useState<Champion | null>(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const { favorites, isFavorite } = useFavorites();
+
+  const favoriteChampions = React.useMemo(
+    () => CHAMPIONS.filter((c) => isFavorite(c.id)),
+    [favorites, isFavorite]
+  );
 
   const popular = React.useMemo(() => {
     const pop = getPopularChampions();
@@ -151,15 +191,19 @@ export default function Home() {
   }, [filters.query]);
 
   const results = React.useMemo(
-    () => filterChampions(filters),
-    [filters]
+    () =>
+      favoriteOnly
+        ? filterChampions(filters).filter((c) => isFavorite(c.id))
+        : filterChampions(filters),
+    [filters, favoriteOnly, favorites, isFavorite]
   );
 
   const hasActiveFilters =
     filters.classe !== "todas" ||
     filters.dificuldade !== "todas" ||
     filters.tier !== "todos" ||
-    filters.query.trim() !== "";
+    filters.query.trim() !== "" ||
+    favoriteOnly;
 
   const handleSelect = (champion: Champion) => {
     setSelected(champion);
@@ -170,7 +214,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header favoritesCount={favorites.length} />
 
       <main id="inicio" className="flex-1">
         {/* ---------- Hero + busca ---------- */}
@@ -192,9 +236,9 @@ export default function Home() {
               Domine a rota superior
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Builds atualizadas, runas, feitiços, ordem de habilidades e dicas
-              dos melhores top laners do League of Legends — direto ao ponto,
-              para iniciantes e intermediários.
+              Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
+              habilidades, comparador de matchups e favoritos salvos no seu
+              navegador — direto ao ponto, para iniciantes e intermediários.
             </p>
 
             {/* Busca */}
@@ -231,11 +275,12 @@ export default function Home() {
             </div>
 
             {/* Estatísticas rápidas */}
-            <dl className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3 text-center">
+            <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-3 text-center sm:grid-cols-4">
               {[
                 { label: "Campeões", value: CHAMPIONS.length },
                 { label: "Builds completas", value: CHAMPIONS.length },
                 { label: "Tier S", value: CHAMPIONS.filter((c) => c.tier === "S").length },
+                { label: "Seus favoritos", value: favorites.length },
               ].map((s) => (
                 <div
                   key={s.label}
@@ -279,6 +324,59 @@ export default function Home() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* ---------- Favoritos ---------- */}
+        <section id="favoritos" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+          <div className="mb-6 flex items-center gap-3">
+            <Heart className="h-6 w-6 text-rose-400" aria-hidden="true" />
+            <div>
+              <h2 className="font-display text-2xl font-bold text-gold-bright">
+                Seus favoritos
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Salvos no navegador — estejam aqui sempre que você voltar
+              </p>
+            </div>
+          </div>
+
+          {favoriteChampions.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-border bg-card/40 p-8 text-center">
+              <p className="flex items-center justify-center gap-2 font-display text-lg font-bold text-gold-bright">
+                <Star className="h-5 w-5 text-gold" aria-hidden="true" />
+                Nenhum favorito ainda
+              </p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+                Toque no <Heart className="inline h-3.5 w-3.5 text-rose-400" aria-hidden="true" /> no
+                canto de qualquer card para salvar a build aqui — fica gravado no
+                seu navegador, sem cadastro.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+              {favoriteChampions.map((c) => (
+                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ---------- Comparador ---------- */}
+        <section id="comparador" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+          <div className="mb-6 flex items-center gap-3">
+            <GitCompareArrows className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="font-display text-2xl font-bold text-gold-bright">
+                Comparador de matchups
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Escolha dois campeões e veja runas, feitiços e build lado a lado —
+                com veredito de quem leva vantagem
+              </p>
+            </div>
+          </div>
+
+          <Comparator onSelectDetail={handleSelect} />
         </section>
 
         {/* ---------- Todos os campeões + filtros ---------- */}
@@ -352,6 +450,16 @@ export default function Home() {
                 </FilterChip>
               ))}
             </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                Extras
+              </span>
+              <FilterChip active={favoriteOnly} onClick={() => setFavoriteOnly(!favoriteOnly)}>
+                <Heart className={cn("mr-1 inline h-3 w-3", favoriteOnly ? "fill-current" : "")} aria-hidden="true" />
+                Só favoritos ({favorites.length})
+              </FilterChip>
+            </div>
           </div>
 
           {/* Contagem + limpar */}
@@ -364,7 +472,10 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={clearFilters}
+                onClick={() => {
+                  clearFilters();
+                  setFavoriteOnly(false);
+                }}
                 className="border-border text-muted-foreground hover:border-gold/50 hover:text-gold-bright"
               >
                 <X className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />

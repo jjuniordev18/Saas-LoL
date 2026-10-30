@@ -4,8 +4,15 @@
 import type { Champion, ChampionClass, Difficulty, Tier } from "./data";
 import { CHAMPIONS_A } from "./champions-a";
 import { CHAMPIONS_B } from "./champions-b";
+import { CHAMPIONS_C } from "./champions-c";
+import { CHAMPIONS_D } from "./champions-d";
 
-export const CHAMPIONS: Champion[] = [...CHAMPIONS_A, ...CHAMPIONS_B];
+export const CHAMPIONS: Champion[] = [
+  ...CHAMPIONS_A,
+  ...CHAMPIONS_B,
+  ...CHAMPIONS_C,
+  ...CHAMPIONS_D,
+];
 
 export function getChampionById(id: string): Champion | undefined {
   return CHAMPIONS.find((c) => c.id === id);
@@ -63,10 +70,15 @@ export function filterChampions(filters: ChampionFilters): Champion[] {
 }
 
 // URL das imagens oficiais (Data Dragon / Riot Games)
-export const DDRAGON_VERSION = "16.21.1";
+// A versão vem do arquivo gerado por scripts/fetch-ddragon.mjs
+import { DDRAGON_VERSION } from "./ddragon";
+export { DDRAGON_VERSION };
 
 export function championImageUrl(image: string): string {
-  // Capitaliza o nome para o padrão do Data Dragon (ex.: "darius" -> "Darius")
-  const key = image.charAt(0).toUpperCase() + image.slice(1);
+  // Nomes simples em minúsculas ("darius") viram "Darius";
+  // chaves com caixa mista ("DrMundo", "KSante") são usadas como estão.
+  const key = /^[a-z]+$/.test(image)
+    ? image.charAt(0).toUpperCase() + image.slice(1)
+    : image;
   return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${key}.png`;
 }

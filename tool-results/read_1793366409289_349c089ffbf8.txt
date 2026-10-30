@@ -1,0 +1,1082 @@
+     1→// ============================================================
+     2→// Campeões (parte 1/2) — Darius, Garen, Sett, Mordekaiser,
+     3→// Aatrox, Renekton, Jax, Fiora
+     4→// Builds baseadas no patch 26.21 (Temporada 2026)
+     5→// ============================================================
+     6→import type { Champion } from "./data";
+     7→
+     8→export const CHAMPIONS_A: Champion[] = [
+     9→  // ------------------------------------------------------------
+    10→  // DARIUS
+    11→  // ------------------------------------------------------------
+    12→  {
+    13→    id: "darius",
+    14→    name: "Darius",
+    15→    title: "a Mão de Noxus",
+    16→    classes: ["lutador"],
+    17→    difficulty: 1,
+    18→    tier: "S",
+    19→    popular: true,
+    20→    image: "darius",
+    21→    color: "#D4472F",
+    22→    playstyle: "Juggernaut dominante",
+    23→    summary:
+    24→      "O algoz de Noxus. Darius pune qualquer erro na rota: uma vez que a Hemorragia chega a 5 stacks, o Guilhotina Noxiana se torna execução em área. Melhor pick de topo do patch 26.21 segundo estatísticas de alto elo.",
+    25→    strengths: [
+    26→      "Dano bruto altíssimo em trocas estendidas",
+    27→      "Execução resetável com o ultimate (R)",
+    28→      "Pressão de rota e controle de brush",
+    29→    ],
+    30→    weaknesses: [
+    31→      "Sem mobilidade — sofre contra kite e lentidões",
+    32→      "Depende de acertar o E (Apanhador) para engajar",
+    33→      "Pode ser pokeado à distância antes da briga",
+    34→    ],
+    35→    startItems: [
+    36→      { id: "dorans-blade", note: "Pressão de troca padrão" },
+    37→      { id: "health-potion" },
+    38→      { id: "health-potion" },
+    39→    ],
+    40→    boots: [
+    41→      { id: "plated-steelcaps", note: "Padrão contra lutadores AD" },
+    42→      { id: "mercury-treads", note: "Contra AP pesado ou CC demais" },
+    43→    ],
+    44→    coreItems: [
+    45→      { id: "youmuus-ghostblade", note: "Meta 26.21: velocidade para colar no alvo e completar stacks" },
+    46→      { id: "black-cleaver", note: "Rasga armadura e dá aceleração" },
+    47→      { id: "dead-mans-plate", note: "Armadura + investida carregada" },
+    48→    ],
+    49→    situationalItems: [
+    50→      { id: "steraks-gage", note: "Escudo anti-burst em brigas caóticas" },
+    51→      { id: "deaths-dance", note: "Contra times de dano físico" },
+    52→      { id: "force-of-nature", note: "Contra magos de dano em área" },
+    53→      { id: "maw-of-malmortius", note: "Anti-burst AP" },
+    54→      { id: "chempunk-chainsword", note: "Contra cura (Soraka/Fiora/Nasus)" },
+    55→      { id: "guardian-angel", note: "Seguro para forçar jogadas" },
+    56→    ],
+    57→    runes: {
+    58→      primaryTree: "sorcery",
+    59→      keystone: "stormraiders-surge",
+    60→      primary: ["nimbus-cloak", "celerity", "gathering-storm"],
+    61→      secondaryTree: "precision",
+    62→      secondary: ["legend-alacrity", "last-stand"],
+    63→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+    64→      explanation:
+    65→        "Stormraider's Surge (de volta desde o patch 26.9) resolve o maior problema do Darius: colar no alvo. Acerte Q + W + básico e a runa te dá corrida + resistência a lentidão — quase impossível escapar. A secundária em Precision acelera os stacks de Hemorragia.",
+    66→    },
+    67→    altRunesNote:
+    68→      "Alternativa sólida: Conqueror (Precision) + Resolve (Second Wind + Unflinching) para trocas mais longas e matchups de poke.",
+    69→    spells: [
+    70→      { id: "flash", note: "Engajar com E ou corrigir posicionamento" },
+    71→      { id: "ghost", note: "Persegue o time inteiro em teamfights longos" },
+    72→    ],
+    73→    skillPriority: ["Q", "E", "W"],
+    74→    abilities: [
+    75→      { key: "P", name: "Hemorragia", desc: "Ataques e habilidades aplicam sangramento acumulável. Com 5 stacks, você ganha Noxian Might: dano de ataque gigante e o R pode executar vários alvos." },
+    76→      { key: "Q", name: "Dilacerar", desc: "Golpe circular: a lâmina causa dano alto e cura você; o cabo causa menos dano. Inimigos atingidos pela lâmina ganham stack de Hemorragia." },
+    77→      { key: "W", name: "Golpe Debilitante", desc: "Básico carregado que desacelera e aplica um stack de Hemorragia. Reset de ataque básico." },
+    78→      { key: "E", name: "Apresar", desc: "Puxa todos os inimigos na área para perto de você. Sua ferramenta de engajar — errou o E, perdeu a troca." },
+    79→      { key: "R", name: "Guilhotina Noxiana", desc: "Salto com dano verdadeiro que escala com Hemorragia. ABATE reinicia a recarga parcialmente: pode executar o time inteiro." },
+    80→    ],
+    81→    comboTips: [
+    82→      "E (puxa) → W (lentidão) → básico → Q na lâmina: o combo de troca básico.",
+    83→      "Guarde o R para o alvo com 5 stacks de Hemorragia — o dano verdadeiro quase dobra.",
+    84→      "No 5º stack (Noxian Might), force a briga: seu dano de ataque fica absurdo.",
+    85→    ],
+    86→    tips: {
+    87→      early: [
+    88→        "Use Q na lâmina (borda) para curar e aplicar stack; o cabo do machado quase não machuca.",
+    89→        "Nível 1–3 é seu pico contra a maioria dos lutadores: troque no básico + W.",
+    90→        "E puxa o inimigo que foge — guarde para quando ele usar dash ou recuar.",
+    91→      ],
+    92→      mid: [
+    93→        "Com Stormraider's + Youmuu's, transforme abates de rota em invasões na jungle inimiga com seu jungler.",
+    94→        "Empurre a onda e procure o 5v5: Darius brilha em brigas em corredor.",
+    95→        "Sem E disponível, não force engajamento — é sua única forma de prender o alvo.",
+    96→      ],
+    97→      late: [
+    98→        "Em teamfight, deixe o frontline absorver o CC e entre para limpar com R resetado.",
+    99→        "Fantasma + Stormraider's te mantém grudado nos carregadores do time inimigo.",
+   100→        "Priorize execução em alvos já sangrando: R de abate reinicia e cria efeito dominó.",
+   101→      ],
+   102→    },
+   103→    strongAgainst: [
+   104→      { champion: "Nasus", note: "Bate NA cabeça do cachorro antes dos stacks: troque sempre no early." },
+   105→      { champion: "Garen", note: "Trocas estendidas favorecem Darius: 5 stacks vencem a regeneração dele." },
+   106→      { champion: "Mordekaiser", note: "Puxa com E antes do combo dele e vence o dano bruto no early." },
+   107→      { champion: "Sett", note: "Dano bruto superior em trocas curtas com Q na lâmina." },
+   108→    ],
+   109→    weakAgainst: [
+   110→      { champion: "Quinn", note: "Kite à distância: só entre com E confirmado ou ajuda do jungler." },
+   111→      { champion: "Jayce", note: "Poke antes da briga: busque all-in nível 6 com Fantasma." },
+   112→      { champion: "Kennen", note: "Desacelera e ataca à distância; segundo Wind/escudo inicial ajudam a sobreviver." },
+   113→      { champion: "Vayne", note: "Condem na parede te mata antes do R. Só pegue com ajuda." },
+   114→    ],
+   115→    counterTips: [
+   116→      "Contra range, comece com Doran's Shield + Second Wind e empurre a onda para negar farm sob torre.",
+   117→      "Guarde Fantasma para o momento do engage — sem ele você vira alvo fácil de kite.",
+   118→      "Peça ganks nos matchups de range: Darius + jungler com CC é abate quase garantido.",
+   119→    ],
+   120→    altBuilds: [
+   121→      {
+   122→        name: "Bruiser Clássico",
+   123→        when: "Quando o time precisa de frontline e você vai brigar muito",
+   124→        items: [
+   125→          { id: "stridebreaker", note: "Desaceleração em área para prender alvos" },
+   126→          { id: "steraks-gage" },
+   127→          { id: "deaths-dance" },
+   128→        ],
+   129→        note: "Mais vida e utilidade; menos velocidade de caça.",
+   130→      },
+   131→      {
+   132→        name: "Anti-Tank",
+   133→        when: "Contra dois ou mais tanques na composição inimiga",
+   134→        items: [
+   135→          { id: "black-cleaver" },
+   136→          { id: "botrk" },
+   137→          { id: "seryldas-grudge" },
+   138→        ],
+   139→        note: "Penetração total: % da vida atual + redução de armadura.",
+   140→      },
+   141→    ],
+   142→  },
+   143→
+   144→  // ------------------------------------------------------------
+   145→  // GAREN
+   146→  // ------------------------------------------------------------
+   147→  {
+   148→    id: "garen",
+   149→    name: "Garen",
+   150→    title: "o Poder de Demacia",
+   151→    classes: ["lutador", "tank"],
+   152→    difficulty: 1,
+   153→    tier: "A",
+   154→    popular: true,
+   155→    image: "garen",
+   156→    color: "#6BA8E0",
+   157→    playstyle: "Lutador rotativo com regeneração",
+   158→    summary:
+   159→      "O campeão mais recomendado para iniciantes no topo. Sem mana, kit direto e uma regeneração passiva que perdoa erros. Garen gira, silencia e executa com Justiça de Demacia.",
+   160→    strengths: [
+   161→      "Sem mana — pode errar sem custo",
+   162→      "Regeneração passiva fora de combate",
+   163→      "Execução verdadeira no R (ignora escudos)",
+   164→    ],
+   165→    weaknesses: [
+   166→      "Sem mobilidade real (Q é o único turbo)",
+   167→      "Facilmente kiteado por lentidões",
+   168→      "Dano cai contra tanques armados",
+   169→    ],
+   170→    startItems: [
+   171→      { id: "dorans-shield", note: "Rota mais segura" },
+   172→      { id: "health-potion" },
+   173→    ],
+   174→    boots: [
+   175→      { id: "plated-steelcaps", note: "Padrão" },
+   176→      { id: "mercury-treads", note: "Contra CC/AP" },
+   177→    ],
+   178→    coreItems: [
+   179→      { id: "stridebreaker", note: "Desacelera em área — resolve o problema de kite" },
+   180→      { id: "phantom-dancer", note: "AS + fantasma temporário ao atacar" },
+   181→      { id: "dead-mans-plate", note: "Tanque + investida" },
+   182→    ],
+   183→    situationalItems: [
+   184→      { id: "steraks-gage", note: "Escudo salva-vidas" },
+   185→      { id: "force-of-nature", note: "Contra AP" },
+   186→      { id: "thornmail", note: "Contra cura e lutadores AD" },
+   187→      { id: "warmogs", note: "Vida + regen infinita" },
+   188→      { id: "mortal-reminder", note: "Anti-cura (Soraka, Aatrox, Fiora)" },
+   189→      { id: "guardian-angel" },
+   190→    ],
+   191→    runes: {
+   192→      primaryTree: "sorcery",
+   193→      keystone: "phase-rush",
+   194→      primary: ["nimbus-cloak", "celerity", "transcendence"],
+   195→      secondaryTree: "resolve",
+   196→      secondary: ["second-wind", "unflinching"],
+   197→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+   198→      explanation:
+   199→        "Phase Rush dá a rajada de velocidade que o Garen precisa após o combo Q+E para colar ou escapar. Second Wind + Unflinching compensam matchups de poke e CC.",
+   200→    },
+   201→    altRunesNote:
+   202→      "Contra tanques pesados: Conqueror (Precision) + Resolve aguenta trocas longas e escala melhor no late.",
+   203→    spells: [
+   204→      { id: "flash", note: "Correção de posicionamento" },
+   205→      { id: "ignite", note: "Fecha abates que o E não completa" },
+   206→    ],
+   207→    skillPriority: ["E", "Q", "W"],
+   208→    abilities: [
+   209→      { key: "P", name: "Perseverança", desc: "Fora de combate, regenera percentual da vida máxima por segundo. Errou a troca? Recue e volte cheio." },
+   210→      { key: "Q", name: "Golpe Decisivo", desc: "Remove lentidões, acelera, silencia no próximo básico e causa dano extra. Use para iniciar trocas ou fugir." },
+   211→      { key: "W", name: "Coragem", desc: "Escudo com redução de dano e tenacidade. Ativa passivamente ao abater tropas — use nos momentos de burst." },
+   212→      { key: "E", name: "Julgamento", desc: "Gira a espada causando dano por segundo; a cada golpe aplica corte. Críticos aumentam contra alvo único." },
+   213→      { key: "R", name: "Justiça de Demacia", desc: "Dano verdadeiro baseado na vida que FALTA ao alvo. Ignora escudos — o finisher mais honesto do jogo." },
+   214→    ],
+   215→    comboTips: [
+   216→      "Q (silencia) → E (gira) → R quando o alvo está abaixo de 25% de vida.",
+   217→      "Ative W no instante do burst inimigo (por exemplo: R do Darius) para reduzir muito o dano.",
+   218→      "O Q remove lentidões: guarde para depois do primeiro slow inimigo.",
+   219→    ],
+   220→    tips: {
+   221→      early: [
+   222→        "Troque com Q+alguns giros de E e saia com Phase Rush antes do contra-ataque.",
+   223→        "Farme sob torre tranquilamente: sem mana, só preocupe-se com o cooldown do Q.",
+   224→        "Regeneração passiva: recue alguns segundos após tomar poke e volte com vantagem de vida.",
+   225→      ],
+   226→      mid: [
+   227→        "Garen tem rotação de mapa forte: empurre a onda e invada a jungle com o jungler.",
+   228→        "Com Stridebreaker você finalmente prende alvos móveis — force brigas no rio.",
+   229→        "Procure o alvo de maior ameaça e silencie com Q no início do teamfight.",
+   230→      ],
+   231→      late: [
+   232→        "R ignora escudos: execute o carry mesmo com Sterak/Lifeline ativos.",
+   233→        "Seja o frontline barato: a regeneração te traz toda a briga.",
+   234→        "Splitpush com Demolish quando o time inimigo agrupa no outro lado do mapa.",
+   235→      ],
+   236→    },
+   237→    strongAgainst: [
+   238→      { champion: "Mordekaiser", note: "Silencia o combo e gira mais rápido que o dano dele no early." },
+   239→      { champion: "Nasus", note: "Silencia o Q dele na troca e executa antes dos stacks." },
+   240→      { champion: "Sett", note: "Troca curta com Q+E e Phase Rush para sair antes do W." },
+   241→      { champion: "Darius", note: "Skill matchup: silencia e saia rápido da Hemorragia estendida." },
+   242→    ],
+   243→    weakAgainst: [
+   244→      { champion: "Quinn", note: "Kite e cegueira; farme sob torre e espere gank." },
+   245→      { champion: "Vayne", note: "Dano % da vida e condenação; evite trocas a qualquer custo." },
+   246→      { champion: "Jayce", note: "Poke de canhão te impede de regenerar; busque all-in nível 6." },
+   247→      { champion: "Fiora", note: "Riposte no seu Q e true damage; troque só sem cooldown do W dela." },
+   248→    ],
+   249→    counterTips: [
+   250→      "Contra range, martele a onda na torre deles e use a regeneração para absorver o poke.",
+   251→      "Nunca gaste o Q para iniciar contra campeões com parry (Fiora/Camille): use E primeiro.",
+   252→      "Chame o jungler quando a onda estiver congelada na sua metade — Garen com gank é abate fácil.",
+   253→    ],
+   254→    altBuilds: [
+   255→      {
+   256→        name: "Tanque Puro",
+   257→        when: "Time sem frontline / contra dano físico em massa",
+   258→        items: [
+   259→          { id: "sunfire-aegis" },
+   260→          { id: "thornmail" },
+   261→          { id: "warmogs" },
+   262→        ],
+   263→        note: "Giren ainda dá dano com E e R; vira muralha que regenera.",
+   264→      },
+   265→      {
+   266→        name: "Crítico Rotativo",
+   267→        when: "Quando você está feedado e precisa carregar",
+   268→        items: [
+   269→          { id: "trinity-force", note: "Sinergia de Sheen com Q" },
+   270→          { id: "steraks-gage" },
+   271→          { id: "guardian-angel" },
+   272→        ],
+   273→        note: "Dano de troca maior mantendo vida decente.",
+   274→      },
+   275→    ],
+   276→  },
+   277→
+   278→  // ------------------------------------------------------------
+   279→  // SETT
+   280→  // ------------------------------------------------------------
+   281→  {
+   282→    id: "sett",
+   283→    name: "Sett",
+   284→    title: "o Chefe",
+   285→    classes: ["lutador"],
+   286→    difficulty: 1,
+   287→    tier: "A",
+   288→    popular: true,
+   289→    image: "sett",
+   290→    color: "#E8A33D",
+   291→    playstyle: "Brigão de trocas curtas",
+   292→    summary:
+   293→      "O Rei da Arena. Sett acumula agressão em trocas e explode tudo com o Trabalho Pesado (W) — quanto mais apanhou, mais devolve. Simples, forte e divertido.",
+   294→    strengths: [
+   295→      "W devolve todo o dano tomado como soco verdadeiro",
+   296→      "Regeneração de vida por atividade em combate (P)",
+   297→      "Ultimate que sequestra o tanque inimigo",
+   298→    ],
+   299→    weaknesses: [
+   300→      "Sem alcance: sofre com poke e kite",
+   301→      "Depende de acumular o W no tempo certo",
+   302→      "Gap curto no E limita engajamento à distância",
+   303→    ],
+   304→    startItems: [
+   305→      { id: "dorans-blade" },
+   306→      { id: "health-potion" },
+   307→    ],
+   308→    boots: [
+   309→      { id: "plated-steelcaps", note: "Padrão — aumenta o valor do seu W" },
+   310→      { id: "mercury-treads", note: "Contra CC" },
+   311→    ],
+   312→    coreItems: [
+   313→      { id: "sundered-sky", note: "Soco crítico no primeiro hit + cura: feito para o Sett" },
+   314→      { id: "steraks-gage", note: "Escudo quando a briga aperta" },
+   315→      { id: "deaths-dance", note: "Converte burst em sangramento lento" },
+   316→    ],
+   317→    situationalItems: [
+   318→      { id: "titanic-hydra", note: "Vida + dano em área nos básicos" },
+   319→      { id: "force-of-nature", note: "Contra AP" },
+   320→      { id: "thornmail", note: "Anti-cura contra lutadores" },
+   321→      { id: "warmogs", note: "Tanque rochoso" },
+   322→      { id: "guardian-angel", note: "Para forçar jogadas agressivas" },
+   323→      { id: "chempunk-chainsword", note: "Anti-cura" },
+   324→    ],
+   325→    runes: {
+   326→      primaryTree: "precision",
+   327→      keystone: "conqueror",
+   328→      primary: ["triumph", "legend-alacrity", "last-stand"],
+   329→      secondaryTree: "resolve",
+   330→      secondary: ["second-wind", "unflinching"],
+   331→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+   332→      explanation:
+   333→        "Conqueror enche rápido com os punhos duplos do Q e da sustain de briga que o Sett ama. Second Wind segura o poke da rota; Last Stand multiplica o W quando você está baixo.",
+   334→    },
+   335→    altRunesNote:
+   336→      "Contra matchups de burst (Pantheon/Renekton): Fleet Footwork + Resolve para sobreviver à fase de rota.",
+   337→    spells: [
+   338→      { id: "flash", note: "Flash + R: jogada de sequestro" },
+   339→      { id: "ignite", note: "Pressão de abate" },
+   340→    ],
+   341→    skillPriority: ["Q", "E", "W"],
+   342→    abilities: [
+   343→      { key: "P", name: "Pit Grit", desc: "Ataques alternam punhos; punhos à direita batem mais e mais rápido. Fora de combate, regenera vida com base no dano recente tomado." },
+   344→      { key: "Q", name: "Knuckle Down", desc: "Dois punhos carregados com dano extra baseado na vida MÁXIMA do alvo e velocidade de movimento para alcançar." },
+   345→      { key: "W", name: "Trabalho Pesado", desc: "Acumula guarda conforme apanha; libera um soco em cone com dano verdadeiro proporcional e escudo. O momento perfeito decide trocas." },
+   346→      { key: "E", name: "Quebra-Cara", desc: "Puxa inimigos das duas laterais; se acertar dos dois lados, atordoa. Ferramenta de engajar e impedir fuga." },
+   347→      { key: "R", name: "Roubo de Cena", desc: "Carrega o inimigo, salta e o esmaga no chão com dano baseado na vida extra do alvo. Roube o tanque para derrubar o time no seu W." },
+   348→    ],
+   349→    comboTips: [
+   350→      "E (puxa/atordoa) → Q (dois punhos) → saia com o restante da velocidade do Q.",
+   351→      "Guarde o W para DEPOIS de tomar o combo inimigo — o dano verdadeiro escala com o que você apanhou.",
+   352→      "R no tanque inimigo no meio do time deles = W em área com dano gigante.",
+   353→    ],
+   354→    tips: {
+   355→      early: [
+   356→        "Troque com Q sempre que o inimigo chegar — os punhos de direita são gratuitos e fortes.",
+   357→        "Nível 1–3 você ganha da maioria dos lutadores: procure troca, não fuja dela.",
+   358→        "W tem recarga longa no early: não o desperdice em harass inútil.",
+   359→      ],
+   360→      mid: [
+   361→        "Com Sundered Sky + Sterak, force duelos 1v1 na rota lateral e force rotação inimiga.",
+   362→        "R sequestra o frontline: jogue o tanque/bruiser deles na direção dos carries.",
+   363→        "Regen passiva te permite jogar agressivo mesmo depois de trocas ruins.",
+   364→      ],
+   365→      late: [
+   366→        "Em teamfight, quem entra primeiro em você perde: guarde o W para o burst mais pesado.",
+   367→        "Flash + R + E é a jogada de sequestro que vira jogos — treine o timing.",
+   368→        "Com Last Stand e vida baixa, seu W é o soco mais forte do jogo: não entre em pânico.",
+   369→      ],
+   370→    },
+   371→    strongAgainst: [
+   372→      { champion: "Yasuo", note: "Sem energia para kite; E cancela o dash dele no vazio." },
+   373→      { champion: "Yone", note: "Troca de perto favorece: W pune o combo inteiro dele." },
+   374→      { champion: "Jax", note: "Punhos do Q batem mais que o counter do E dele em trocas curtas." },
+   375→      { champion: "Aatrox", note: "Espera o combo dele e devolve com W carregado." },
+   376→    ],
+   377→    weakAgainst: [
+   378→      { champion: "Vayne", note: "Kite e condemn; só entre com E confirmado." },
+   379→      { champion: "Jayce", note: "Poke de canhão impede acumular guarda em paz." },
+   380→      { champion: "Kennen", note: "Range + atordoamento; farme com Second Wind." },
+   381→      { champion: "Quinn", note: "Ataque à distância negam os punhos." },
+   382→    ],
+   383→    counterTips: [
+   384→      "Contra range: Doran's Shield + Second Wind e procure o all-in com Fantasma no nível 6+.",
+   385→      "Nunca use W primeiro: deixe o inimigo commitar o combo antes de liberar o soco.",
+   386→      "E puxa dois lados: posicione entre a tropa e o campeão para o stun garantido.",
+   387→    ],
+   388→    altBuilds: [
+   389→      {
+   390→        name: "Muralha do Bosque",
+   391→        when: "Contra composição de dano físico concentrado",
+   392→        items: [
+   393→          { id: "heartsteel", note: "Vida infinita com punhos % vida" },
+   394→          { id: "titanic-hydra" },
+   395→          { id: "thornmail" },
+   396→        ],
+   397→        note: "Sett com 4k de vida vira o chefe de verdade: W e Q escalam com vida.",
+   398→      },
+   399→      {
+   400→        name: "Splitpush Pesado",
+   401→        when: "Quando seu time tem vantagem em outro lado",
+   402→        items: [
+   403→          { id: "hullbreaker", note: "Sozinho em rota = torre cai" },
+   404→          { id: "titanic-hydra" },
+   405→          { id: "steraks-gage" },
+   406→        ],
+   407→        note: "Difícil de duelar 1v1; força dois inimigos a irem até você.",
+   408→      },
+   409→    ],
+   410→  },
+   411→
+   412→  // ------------------------------------------------------------
+   413→  // MORDEKAISER
+   414→  // ------------------------------------------------------------
+   415→  {
+   416→    id: "mordekaiser",
+   417→    name: "Mordekaiser",
+   418→    title: "o Renegado de Ferro",
+   419→    classes: ["mago", "lutador"],
+   420→    difficulty: 1,
+   421→    tier: "A",
+   422→    popular: true,
+   423→    image: "mordekaiser",
+   424→    color: "#8656E8",
+   425→    playstyle: "Lutador AP de área",
+   426→    summary:
+   427→      "Um mago de armadura que vence brigas longas e sequestra o carry inimigo para o Reino da Morte — um duelo 1v1 onde o R dele decide tudo. Simples de pilotar, difícil de escapar.",
+   428→    strengths: [
+   429→      "Dano em área constante com passiva",
+   430→      "R isola o inimigo mais perigoso em duelo forçado",
+   431→      "Escudo frequente com W",
+   432→    ],
+   433→    weaknesses: [
+   434→      "Sem dash: sofre com kite",
+   435→      "Habilidades telegrafadas (fáceis de desviar)",
+   436→      "Early fraco contra pressão física",
+   437→    ],
+   438→    startItems: [
+   439→      { id: "dorans-shield", note: "Segurança na rota" },
+   440→      { id: "health-potion" },
+   441→    ],
+   442→    boots: [
+   443→      { id: "plated-steelcaps", note: "Padrão contra AD" },
+   444→      { id: "sorcerers-shoes", note: "Mais dano quando você está à frente" },
+   445→    ],
+   446→    coreItems: [
+   447→      { id: "riftmaker", note: "AP + vida + dano crescente em combate" },
+   448→      { id: "rylais", note: "Todas as habilidades desaceleram: resolve o kite" },
+   449→      { id: "zhonyas", note: "Sobrevive ao burst e espera o próximo ciclo" },
+   450→    ],
+   451→    situationalItems: [
+   452→      { id: "liandrys", note: "Contra tanques de muita vida" },
+   453→      { id: "spirit-visage", note: "Amplifica o escudo/cura do W" },
+   454→      { id: "thornmail", note: "Anti-cura e armadura" },
+   455→      { id: "force-of-nature", note: "Contra AP pesado" },
+   456→      { id: "void-staff", note: "Penetração contra MR comprada" },
+   457→      { id: "morellonomicon", note: "Anti-cura AP" },
+   458→    ],
+   459→    runes: {
+   460→      primaryTree: "precision",
+   461→      keystone: "conqueror",
+   462→      primary: ["triumph", "legend-alacrity", "last-stand"],
+   463→      secondaryTree: "resolve",
+   464→      secondary: ["second-wind", "unflinching"],
+   465→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AP)", "+Vida bônus (escala com nível)"],
+   466→      explanation:
+   467→        "Conqueror enche rapidinho com a passiva em área e transforma o Morde numa parede que se cura. Rylai's + Stormraider's? Não precisa: com Rylai's na build, o kite vira história antiga.",
+   468→    },
+   469→    altRunesNote:
+   470→      "Contra times de muito CC: troque a secundária por Sorcery (Nimbus Cloak + Transcendence) para mobilidade e aceleração.",
+   471→    spells: [
+   472→      { id: "flash", note: "Necessário — você não tem dash" },
+   473→      { id: "ghost", note: "Cola no alvo durante o Reino da Morte" },
+   474→    ],
+   475→    skillPriority: ["Q", "E", "W"],
+   476→    abilities: [
+   477→      { key: "P", name: "Escuridão Ascendente", desc: "Habilidades causam dano em área e aplicam Escuridão; com 3 stacks, a aura queima ao redor por alguns segundos e dá parte do dano como cura." },
+   478→      { key: "Q", name: "Obliterar", desc: "Esmaga a clava em área: dano alto num alvo único, dividido entre vários. Acertar só o campeão maximiza o dano." },
+   479→      { key: "W", name: "Indestrutível", desc: "Converte parte do dano causado/tomado em escudo; reusa para consumir o escudo como cura. Gire o ritmo das trocas com ele." },
+   480→      { key: "E", name: "Mão da Morte", desc: "Puxa todos os inimigos numa cone à frente. Seu engajar — mesmo problema do Darius: errou, puniu." },
+   481→      { key: "R", name: "Reino da Morte", desc: "Sequestra um campeão por 7 segundos num duelo isolado; quem viver rouba stats parciais do outro. Delete o carry deles da teamfight." },
+   482→    ],
+   483→    comboTips: [
+   484→      "E (puxa) → Q → básicos com a aura acesa → W quando o escudo acumular.",
+   485→      "R no carry mais perigoso no início do teamfight: 7 segundos de 4v4.",
+   486→      "A passiva em área empurra onda rápido: use-a para resetar a rota antes de fazer jogadas.",
+   487→    ],
+   488→    tips: {
+   489→      early: [
+   490→        "Use Q para farmar e pokear ao mesmo tempo quando o inimigo se aproxima das tropas.",
+   491→        "Nível 1–5, evite trocas longas contra lutadores AD — seu pico vem com itens.",
+   492→        "E também rouba escudo/magia? Não: só puxa. Guarde-o para cancelar dashes inimigos.",
+   493→      ],
+   494→      mid: [
+   495→        "Com Riftmaker + Rylai's você vira o pior pesadelo de atiradores sem dash.",
+   496→        "Force duelos 1v1 com R ativo: dentro do Reino você cura com W e queima com passiva.",
+   497→        "Aguarde o inimigo gastar o dash para acertar o E com segurança.",
+   498→      ],
+   499→      late: [
+   500→        "R remove o carry do mapa por 7s: use no início da briga, não no final.",
+   501→        "Zhonya's dentro do Reino da Morte é legal? Sim — a duração continua correndo a seu favor.",
+   502→        "Fique na linha de frente: sua aura passiva pune quem chegar perto do seu time.",
+   503→      ],
+   504→    },
+   505→    strongAgainst: [
+   506→      { champion: "Volibear", note: "Dano em área vence a troca parada do urso; R anula o R dele." },
+   507→      { champion: "Nasus", note: "Reino da Morte rouba os stacks? Não, mas isola o duelão." },
+   508→      { champion: "Sett", note: "Rouba stats do soco; cuidado apenas com o W carregado." },
+   509→      { champion: "Garen", note: "Skill matchup: pokeie com Q e desacelere com Rylai's." },
+   510→    ],
+   511→    weakAgainst: [
+   512→      { champion: "Fiora", note: "Riposte no seu E e true damage; jogue com cautela." },
+   513→      { champion: "Jax", note: "Counter Strike nega seu combo; espere o E dele." },
+   514→      { champion: "Kayle", note: "Outscale: termine o jogo antes do minuto 30." },
+   515→      { champion: "Quinn", note: "Kite pesado sem o seu R disponível." },
+   516→    ],
+   517→    counterTips: [
+   518→      "Contra Fiora/Jax: guarde o E e aposte em poke de Q; nunca jogue E no vácuo.",
+   519→      "Rylai's é prioridade contra kite — desaceleração em toda habilidade.",
+   520→      "No Reino da Morte, lutar é obrigatório: entre com vida alta e W pronto.",
+   521→    ],
+   522→    altBuilds: [
+   523→      {
+   524→        name: "Derretedor de Tanques",
+   525→        when: "Contra composição com 2+ tanques/vida alta",
+   526→        items: [
+   527→          { id: "liandrys" },
+   528→          { id: "riftmaker" },
+   529→          { id: "void-staff" },
+   530→        ],
+   531→        note: "Dano percentual + penetração: vida máxima vira alvo fácil.",
+   532→      },
+   533→      {
+   534→        name: "Muro AP",
+   535→        when: "Quando seu time precisa de frontline mágico",
+   536→        items: [
+   537→          { id: "rod-of-ages" },
+   538→          { id: "spirit-visage" },
+   539→          { id: "thornmail" },
+   540→        ],
+   541→        note: "Mais sobrevivência; o dano vem da passiva e Conqueror.",
+   542→      },
+   543→    ],
+   544→  },
+   545→
+   546→  // ------------------------------------------------------------
+   547→  // AATROX
+   548→  // ------------------------------------------------------------
+   549→  {
+   550→    id: "aatrox",
+   551→    name: "Aatrox",
+   552→    title: "a Espada Darkin",
+   553→    classes: ["lutador"],
+   554→    difficulty: 2,
+   555→    tier: "S",
+   556→    popular: true,
+   557→    image: "aatrox",
+   558→    color: "#C43B4E",
+   559→    playstyle: "Lutador de combos com cura",
+   560→    summary:
+   561→      "O Darkin combina golpes de espada em três combos com o sweet spot da ponta. Requer timing, mas recompensa com sustain brutal e presença de teamfight dominante.",
+   562→    strengths: [
+   563→      "Cura enorme em combos bem acertados",
+   564→      "Punição severa em errors de posicionamento",
+   565→      "Presença de teamfight com R (revive possibilidade)",
+   566→    ],
+   567→    weaknesses: [
+   568→      "Combos dependem de sweet spots (ponta da lâmina)",
+   569→      "Qs telegrafados e desviáveis",
+   570→      "Depende de cadência — sem habilidades, é alvo fácil",
+   571→    ],
+   572→    startItems: [
+   573→      { id: "dorans-blade" },
+   574→      { id: "health-potion" },
+   575→    ],
+   576→    boots: [
+   577→      { id: "plated-steelcaps", note: "Padrão" },
+   578→      { id: "mercury-treads", note: "Contra CC/AP" },
+   579→    ],
+   580→    coreItems: [
+   581→      { id: "sundered-sky", note: "Cura no primeiro hit — sinergia perfeita com combos" },
+   582→      { id: "black-cleaver", note: "Penetração + aceleração" },
+   583→      { id: "deaths-dance", note: "Converte burst físico em sangramento" },
+   584→    ],
+   585→    situationalItems: [
+   586→      { id: "steraks-gage", note: "Escudo de emergência" },
+   587→      { id: "maw-of-malmortius", note: "Contra AP" },
+   588→      { id: "seryldas-grudge", note: "Penetração + slow nas habilidades" },
+   589→      { id: "guardian-angel", note: "Ressuscite e reentre na briga" },
+   590→      { id: "chempunk-chainsword", note: "Anti-cura" },
+   591→      { id: "kaenic-rookern", note: "MR + escudo (contra poke mágico)" },
+   592→    ],
+   593→    runes: {
+   594→      primaryTree: "precision",
+   595→      keystone: "conqueror",
+   596→      primary: ["triumph", "legend-alacrity", "last-stand"],
+   597→      secondaryTree: "resolve",
+   598→      secondary: ["second-wind", "unflinching"],
+   599→      shards: ["+9 Adaptativo (AD)", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+   600→      explanation:
+   601→        "Conqueror é a engine do Aatrox: cada sweet spot cura e mantém a agressão. Second Wind segura o poke da rota até você comprar sustain.",
+   602→    },
+   603→    altRunesNote:
+   604→      "Contra matchups difíceis de acerto (Quinn/Vayne): Grasp + Resolve para trocas curtas com Q isolado.",
+   605→    spells: [
+   606→      { id: "flash", note: "Flash + W puxa o alvo de volta" },
+   607→      { id: "teleport", note: "Rota segura e presença de mapa" },
+   608→    ],
+   609→    skillPriority: ["Q", "E", "W"],
+   610→    abilities: [
+   611→      { key: "P", name: "Devorador de Guerra", desc: "Próximo básico após habilidade causa dano extra e cura baseado no dano causado. Ritmo de combo = sustain." },
+   612→      { key: "Q", name: "Darkin Blade", desc: "Três golpes em sequência; a PONTA da lâmina (sweet spot) causa dano extra, empurra e dobra a cura. Acertar 3 sweet spots vence qualquer troca." },
+   613→      { key: "W", name: "Cadeia Infernal", desc: "Golpe em linha; atinge dois: primeiro causa dano, segundo prende o inimigo numa parede. Chame-o de volta com um segundo golpe." },
+   614→      { key: "E", name: "Ombro Bestial", desc: "Dash curto com recarga baixa; pode ser usado durante o Q para reposicionar os sweet spots. O coração do kit." },
+   615→      { key: "R", name: "Final do Massacre", desc: "Aumenta tamanho, dano e cura recebida; participar de abate estende a duração. Vire o terror do teamfight." },
+   616→    ],
+   617→    comboTips: [
+   618→      "Q1 → E lateral (reposiciona a lâmina) → Q2 no sweet spot: o arco que pega quem foge.",
+   619→      "W acerta na direção do dash inimigo; use E para cortar a rota de fuga antes.",
+   620→      "Abates com R ativo estendem o massacre: procure alvos fáceis para manter o modo gigante.",
+   621→    ],
+   622→    tips: {
+   623→      early: [
+   624→        "Acerte Q na ponta contra a tropa + campeão para pokear sem tomar dano.",
+   625→        "Use E para REPOSICIONAR o Q, não apenas para chegar perto.",
+   626→        "Nível 1–3 tem dano absurdo nos sweet spots: force trocas contra lutadores de perto.",
+   627→      ],
+   628→      mid: [
+   629→        "Com Sundered Sky + Cleaver, você vira o bulwark que também mata: force 1v1 e 2v2.",
+   630→        "W prende na parede: coordene com o jungler para ganks garantidos.",
+   631→        "Empurre a onda e use TP para flanquear teamfights no rio.",
+   632→      ],
+   633→      late: [
+   634→        "R + GA + Sterak: você simplesmente não morre nas primeiras trocas do teamfight.",
+   635→        "Procure o alvo sem dash e martele W + Q3: preso na parede é alvo fácil.",
+   636→        "Cura do passivo + Death's Dance converte briga caótica em massacre prolongado.",
+   637→      ],
+   638→    },
+   639→    strongAgainst: [
+   640→      { champion: "Sett", note: "Punho a punho, sweet spots ganham: poke com Q e desengage com E." },
+   641→      { champion: "Volibear", note: "Kite com Q pontas e W; ele precisa chegar em você." },
+   642→      { champion: "Nasus", note: "Impede farm livre com pressão constante de Q." },
+   643→      { champion: "Mordekaiser", note: "Dano maior no early e cura equipara; cuidado com o R dele." },
+   644→    ],
+   645→    weakAgainst: [
+   646→      { champion: "Jax", note: "Counter Strike nega seu combo; espere o E de defesa dele." },
+   647→      { champion: "Fiora", note: "Riposte no W/Q e true damage; troque apenas com Q isolado." },
+   648→      { champion: "Quinn", note: "Kite à distância: use TP e farme sob torre." },
+   649→      { champion: "Kayle", note: "Escala melhor: termine antes do minuto 30." },
+   650→    ],
+   651→    counterTips: [
+   652→      "Contra Jax/Fiora: guarde o W e aposte em poke de Q na ponta — nunca desperdice os 3 Qs.",
+   653→      "Contra range: E tem recarga dupla (2 cargas), use uma para farm e guarde a outra.",
+   654→      "R cura aumentada + Death's Dance: brigar com vida baixa muitas vezes te favorece.",
+   655→    ],
+   656→    altBuilds: [
+   657→      {
+   658→        name: "Assassino de Rota",
+   659→        when: "Contra times frágeis sem tanque",
+   660→        items: [
+   661→          { id: "eclipse", note: "Dano % vida + escudo em 2 hits" },
+   662→          { id: "youmuus-ghostblade", note: "Velocidade de caça" },
+   663→          { id: "seryldas-grudge" },
+   664→        ],
+   665→        note: "Mais letalidade para caçar carries; menos vida.",
+   666→      },
+   667→      {
+   668→        name: "Colosso",
+   669→        when: "Contra composição física pesada",
+   670→        items: [
+   671→          { id: "steraks-gage" },
+   672→          { id: "deaths-dance" },
+   673→          { id: "guardian-angel" },
+   674→        ],
+   675→        note: "Frontline com R: quase impossível de derrubar no teamfight.",
+   676→      },
+   677→    ],
+   678→  },
+   679→
+   680→  // ------------------------------------------------------------
+   681→  // RENEKTON
+   682→  // ------------------------------------------------------------
+   683→  {
+   684→    id: "renekton",
+   685→    name: "Renekton",
+   686→    title: "o Massacrador",
+   687→    classes: ["lutador"],
+   688→    difficulty: 2,
+   689→    tier: "A",
+   690→    popular: false,
+   691→    image: "renekton",
+   692→    color: "#B8A44A",
+   693→    playstyle: "Lutador de fúria",
+   694→    summary:
+   695→      "O crocodilo domina os primeiros minutos com Fúria: habilidades carregadas batem forte e curam. Se você gosta de punir early game e ditar o ritmo da rota, este é o seu lagarto.",
+   696→    strengths: [
+   697→      "Early game dominante com Fúria",
+   698→      "Trocas rápidas com dash duplo (E)",
+   699→      "Stun garantido no W carregado",
+   700→    ],
+   701→    weaknesses: [
+   702→      "Cai no late game comparado a escaladores",
+   703→      "Depende de ritmo: atrás, vira tanque mediano",
+   704→      "Fúria exige gestão entre dano e sustain",
+   705→    ],
+   706→    startItems: [
+   707→      { id: "dorans-blade" },
+   708→      { id: "health-potion" },
+   709→    ],
+   710→    boots: [
+   711→      { id: "plated-steelcaps", note: "Padrão" },
+   712→      { id: "mercury-treads", note: "Contra CC" },
+   713→    ],
+   714→    coreItems: [
+   715→      { id: "sundered-sky", note: "Cura + crítico no primeiro hit" },
+   716→      { id: "black-cleaver", note: "Penetração + vida" },
+   717→      { id: "steraks-gage", note: "Escudo nas brigas que você começa" },
+   718→    ],
+   719→    situationalItems: [
+   720→      { id: "deaths-dance", note: "Contra AD" },
+   721→      { id: "maw-of-malmortius", note: "Contra AP" },
+   722→      { id: "guardian-angel", note: "Para forçar jogadas" },
+   723→      { id: "chempunk-chainsword", note: "Anti-cura" },
+   724→      { id: "force-of-nature", note: "MR" },
+   725→      { id: "thornmail", note: "Armadura + anti-cura" },
+   726→    ],
+   727→    runes: {
+   728→      primaryTree: "precision",
+   729→      keystone: "conqueror",
+   730→      primary: ["triumph", "legend-alacrity", "last-stand"],
+   731→      secondaryTree: "resolve",
+   732→      secondary: ["second-wind", "unflinching"],
+   733→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+   734→      explanation:
+   735→        "Conqueror enche nas trocas de W + básicos e devolve vida para continuar agressivo. Second Wind cobre o poke; Unflinching mantém a mobilidade mesmo com CC.",
+   736→    },
+   737→    altRunesNote:
+   738→      "Para splitpush puro: Press the Attack? Não use — Conqueror é o padrão em todas as situações.",
+   739→    spells: [
+   740→      { id: "flash", note: "Correção de erro ou jogada ofensiva" },
+   741→      { id: "teleport", note: "Rota e presença de mapa" },
+   742→    ],
+   743→    skillPriority: ["Q", "E", "W"],
+   744→    abilities: [
+   745→      { key: "P", name: "Reinado da Fúria", desc: "Gera Fúria ao atacar/danificar; acima de 50, as habilidades ficam turbinadas (mais dano/efeitos) e consomem a barra." },
+   746→      { key: "Q", name: "Tyrant's Spin? Não: Dilaceração Tyrânica", desc: "Gira a espada causando dano em área e curando por inimigo atingido. Com Fúria: mais dano e mais cura. Sua ferramenta de troca e sustain." },
+   747→      { key: "W", name: "Pulverização Impiedosa", desc: "Dois golpes brutais com stun; com Fúria, bate três vezes e destrói escudos. Troca completa = stun + dano alto." },
+   748→      { key: "E", name: "Avanço Dominante", desc: "Dash em linha; ao acertar inimigo, pode reusar em segundos. Entrada e saída de troca no mesmo movimento." },
+   749→      { key: "R", name: "Reinado do Dominador", desc: "Cresce, ganha vida instantânea e aura de dano mágico ao redor. Fúria extra enquanto ativo. Vira o centro das brigas." },
+   750→    ],
+   751→    comboTips: [
+   752→      "E (entrada) → W com Fúria (stun) → Q (área + cura) → E (saída): o drive-by perfeito.",
+   753→      "Guarde 50+ de Fúria antes de trocar: W carregado muda completamente o dano da troca.",
+   754→      "R antes de mergulhar na torre: a vida instantânea absorve o dive.",
+   755→    ],
+   756→    tips: {
+   757→      early: [
+   758→        "Níveis 1–3 são seus: Q nas tropas + campeão cura e machuca ao mesmo tempo.",
+   759→        "Gerencie a Fúria: 50 para trocas ofensivas (W turbinado), cure com Q quando baixo.",
+   760→        "Congele a onda perto da sua torre contra counters e pune o overextend com E.",
+   761→      ],
+   762→      mid: [
+   763→        "Você é o relógio do jogo: forças no mid game valem mais que farm passivo.",
+   764→        "R + Fantasma? Não: com TP, mergulhe de rota e volte com o teleporte.",
+   765→        "Force objetivos (Herald/drake) com o jungler: seu stun garante abates.",
+   766→      ],
+   767→      late: [
+   768→        "Late game você vira frontline utilitário: stun o carry e tanque o burst.",
+   769→        "Ainda pune erros: E duplo alcança alvos mal posicionados atrás da tropa.",
+   770→        "Não se desespere por escala: feche o jogo cedo quando à frente.",
+   771→      ],
+   772→    },
+   773→    strongAgainst: [
+   774→      { champion: "Nasus", note: "Bate no cachorro antes dos stacks: negue farm com W." },
+   775→      { champion: "Kayle", note: "Janela enorme de domínio antes do nível 16." },
+   776→      { champion: "Yasuo", note: "Stun no W consome o escudo/passiva dele." },
+   777→      { champion: "Gwen", note: "Early agressivo pune o level 1–5 fraco dela." },
+   778→    ],
+   779→    weakAgainst: [
+   780→      { champion: "Quinn", note: "Range e kite: aposte em ganks e TP criativo." },
+   781→      { champion: "Vayne", note: "Condem + invisibilidade: jogo difícil." },
+   782→      { champion: "Kennen", note: "Poke elétrico à distância; aguarde o erro de posição." },
+   783→      { champion: "Riven", note: "Skill matchup clássica: cuidado com o burst dela no nível 6." },
+   784→    ],
+   785→    counterTips: [
+   786→      "Contra range: freeze sob a torre e castigue o passo em falso com E → W.",
+   787→      "W destrói escudos (ex.: W do Sett? não — escudos tipo Malphite W): use-o antes do dano principal.",
+   788→      "Não troque sem Fúria: espere a barra encher antes de commitar.",
+   789→    ],
+   790→    altBuilds: [
+   791→      {
+   792→        name: "Ladrão de Torres",
+   793→        when: "Contra times que agrupam cedo",
+   794→        items: [
+   795→          { id: "hullbreaker" },
+   796→          { id: "titanic-hydra" },
+   797→          { id: "steraks-gage" },
+   798→        ],
+   799→        note: "Splitpush pesado com TP: força resposta inimiga constante.",
+   800→      },
+   801→      {
+   802→        name: "Anti-AP",
+   803→        when: "Contra composição mágica (Kennen/Lissandra/Rumble)",
+   804→        items: [
+   805→          { id: "maw-of-malmortius" },
+   806→          { id: "kaenic-rookern", note: "Escudo mágico recarregável" },
+   807→          { id: "force-of-nature" },
+   808→        ],
+   809→        note: "Resistências para continuar na frente mesmo contra poke.",
+   810→      },
+   811→    ],
+   812→  },
+   813→
+   814→  // ------------------------------------------------------------
+   815→  // JAX
+   816→  // ------------------------------------------------------------
+   817→  {
+   818→    id: "jax",
+   819→    name: "Jax",
+   820→    title: "o Mestre das Armas",
+   821→    classes: ["duelista", "lutador"],
+   822→    difficulty: 2,
+   823→    tier: "S",
+   824→    popular: true,
+   825→    image: "jax",
+   826→    color: "#8E63D9",
+   827→    playstyle: "Duelista escalador",
+   828→    summary:
+   829→      "O grande duelista late game. Jax perde a fase de rota para poucos no late: com Trinity e stacks de passiva, ele vence 1v1 contra quase qualquer coisa e destrói torres em segundos.",
+   830→    strengths: [
+   831→      "Melhor duelo 1v1 do late game",
+   832→      "E nega dano básico e causa stun em área",
+   833→      "Splitpush destruidor com passiva + Trinity",
+   834→    ],
+   835→    weaknesses: [
+   836→      "Early frágil antes dos itens",
+   837→      "Depende de acertar o E (stun) em trocas",
+   838→      "Vira alvo de ganks por pressionar rota",
+   839→    ],
+   840→    startItems: [
+   841→      { id: "dorans-blade" },
+   842→      { id: "health-potion" },
+   843→    ],
+   844→    boots: [
+   845→      { id: "berserker-greaves", note: "DPS com passiva" },
+   846→      { id: "plated-steelcaps", note: "Contra AD pesado" },
+   847→    ],
+   848→    coreItems: [
+   849→      { id: "trinity-force", note: "Sheen + AS: coração da build" },
+   850→      { id: "steraks-gage", note: "Vida + escudo para o duelo" },
+   851→      { id: "deaths-dance", note: "Sobrevivência contra dano físico" },
+   852→    ],
+   853→    situationalItems: [
+   854→      { id: "botrk", note: "Contra tanques de muita vida" },
+   855→      { id: "wits-end", note: "MR + on-hit contra AP" },
+   856→      { id: "hullbreaker", note: "Splitpush absoluto" },
+   857→      { id: "guardian-angel", note: "Ressuscite no duelo" },
+   858→      { id: "frozen-heart", note: "Armadura + AS reduction contra atiradores" },
+   859→      { id: "maw-of-malmortius", note: "Anti-burst AP" },
+   860→    ],
+   861→    runes: {
+   862→      primaryTree: "resolve",
+   863→      keystone: "grasp",
+   864→      primary: ["demolish", "second-wind", "overgrowth"],
+   865→      secondaryTree: "precision",
+   866→      secondary: ["triumph", "legend-alacrity"],
+   867→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+   868→      explanation:
+   869→        "Grasp dá sustain e vida permanente para atravessar o early frágil; Demolish converre pressão de rota em torres. A secundária em Precision devolve o DPS que o Grasp tira.",
+   870→    },
+   871→    altRunesNote:
+   872→      "Contra matchups tranquilas (Mordekaiser/Nasus): Conqueror + Resolve acelera o duelo e o splitpush.",
+   873→    spells: [
+   874→      { id: "flash", note: "Escapar de ganks (você será gankado)" },
+   875→      { id: "teleport", note: "Segurança de early + splitpush com TP" },
+   876→    ],
+   877→    skillPriority: ["W", "Q", "E"],
+   878→    abilities: [
+   879→      { key: "P", name: "Ataque Relentless", desc: "Ataques básicos consecutivos acumulam velocidade de ataque — o motor do DPS e do splitpush." },
+   880→      { key: "Q", name: "Salto Mortal? Leap Strike", desc: "Salta até um alvo (unidade ou ward) causando dano. Entrada, saída e perseguição — dá para saltar em wards para fugir." },
+   881→      { key: "W", name: "Empower", desc: "Carrega o próximo básico com dano mágico extra. Custo baixo, recarga curta: principal fonte de dano e troca." },
+   882→      { key: "E", name: "Counter Strike", desc: "Entra em defesa: DESVIA todos os ataques básicos e ao final atordoa em área. Counter de duelistas de básico." },
+   883→      { key: "R", name: "Grandmaster's Might", desc: "Terceiro básico causa dano mágico em área; ativa resistências bônus por vários segundos. O duelo final." },
+   884→    ],
+   885→    comboTips: [
+   886→      "Q (salta) → E (desvia o básico de resposta) → W carregado → básicos com passiva.",
+   887→      "Contra lutadores de básico (Yasuo/Tryn): E DEPOIS do engages deles = stun grátis.",
+   888→      "Salte numa ward para atravessar paredes na fuga: sempre deixe uma no bolso.",
+   889→    ],
+   890→    tips: {
+   891→      early: [
+   892→        "Level 1 é fraco: farme com W e evite trocar até ter E disponível.",
+   893→        "Use Q em tropa para escapar de ganks — mantenha mana para isso.",
+   894→        "Congele perto da torre: o early do Jax perde para a maioria dos juggernauts.",
+   895→      ],
+   896→      mid: [
+   897→        "Com Trinity completa, procure duelos 1v1: poucos te vencem com passiva cheia.",
+   898→        "Splitpush com Demolish + ward no brush: force o inimigo a te caçar.",
+   899→        "E nega tudo de Yasuo/Yone/Tryndamere: guarde para o momento do commito deles.",
+   900→      ],
+   901→      late: [
+   902→        "Você é o 1v1 king: force duelos laterais e pune o mapa dividido.",
+   903→        "Em teamfight, salte no carry com E + R: resistências aguentam o contra-ataque.",
+   904→        "GA + Sterak: mergulhe sem medo — ressuscite e continue a caçada.",
+   905→      ],
+   906→    },
+   907→    strongAgainst: [
+   908→      { champion: "Yasuo", note: "E desvia o dano dele todo: puna cada tentativa de troca." },
+   909→      { champion: "Yone", note: "Mesma história: Counter Strike resolve o combo de básicos." },
+   910→      { champion: "Mordekaiser", note: "E nega o combo? Melhor: W carregado + passiva vence o duelo estendido." },
+   911→      { champion: "Volibear", note: "DPS superior com passiva no late; cuide do early." },
+   912→    ],
+   913→    weakAgainst: [
+   914→      { champion: "Quinn", note: "Range + cegueira; farme e espere o late." },
+   915→      { champion: "Vayne", note: "Kite infernal; exija ajuda do jungler." },
+   916→      { champion: "Jayce", note: "Poke de canhão antes do seu primeiro item." },
+   917→      { champion: "Kennen", note: "Atordoamentos à distância negam o seu E." },
+   918→    ],
+   919→    counterTips: [
+   920→      "Nunca entre em troca sem E disponível — ele é sua defesa e seu stun.",
+   921→      "Contra range: compre Wit's End cedo ou aposte em ganks (você tem stun garantido).",
+   922→      "Salte em wards/animais para fugir: controle de visão é metade do jogo de splitpush.",
+   923→    ],
+   924→    altBuilds: [
+   925→      {
+   926→        name: "On-Hit Híbrido",
+   927→        when: "Contra tanques e vida alta em massa",
+   928→        items: [
+   929→          { id: "botrk" },
+   930→          { id: "wits-end" },
+   931→          { id: "trinity-force" },
+   932→        ],
+   933→        note: "Dano mágico + físico misturado: quase impossível de itemizar contra.",
+   934→      },
+   935→      {
+   936→        name: "Muralha Splitpush",
+   937→        when: "Quando o plano é pressão lateral total",
+   938→        items: [
+   939→          { id: "hullbreaker" },
+   940→          { id: "trinity-force" },
+   941→          { id: "frozen-heart", note: "AS reduzida nos caçadores" },
+   942→        ],
+   943→        note: "Torres derretem; duelos continuam vencíveis.",
+   944→      },
+   945→    ],
+   946→  },
+   947→
+   948→  // ------------------------------------------------------------
+   949→  // FIORA
+   950→  // ------------------------------------------------------------
+   951→  {
+   952→    id: "fiora",
+   953→    name: "Fiora",
+   954→    title: "a Grande Duelista",
+   955→    classes: ["duelista"],
+   956→    difficulty: 3,
+   957→    tier: "A",
+   958→    popular: true,
+   959→    image: "fiora",
+   960→    color: "#4EC0C8",
+   961→    playstyle: "Duelista de precisão",
+   962→    summary:
+   963→      "A espadachina que identifica pontos vitais e os perfura com dano verdadeiro. Difícil de dominar, mas recompensada com o melhor duelo do jogo — e a capacidade de carregar sozinha no splitpush.",
+   964→    strengths: [
+   965→      "Dano verdadeiro % vida: ignora resistências",
+   966→      "Mobilidade com Q de baixa recarga",
+   967→      "R cura em área ao acertar todos os vitais",
+   968→    ],
+   969→    weaknesses: [
+   970→      "Exige leitura de pontos vitais (mecânica alta)",
+   971→      "Early frágil contra pressão pesada",
+   972→      "W (riposte) exige previsão do inimigo",
+   973→    ],
+   974→    startItems: [
+   975→      { id: "dorans-blade" },
+   976→      { id: "health-potion" },
+   977→    ],
+   978→    boots: [
+   979→      { id: "plated-steelcaps", note: "Sobrevivência de rota" },
+   980→      { id: "mercury-treads", note: "Contra CC (riposte não pega tudo)" },
+   981→    ],
+   982→    coreItems: [
+   983→      { id: "ravenous-hydra", note: "Omnivamp + área: sustain de duelo" },
+   984→      { id: "deaths-dance", note: "Converte o burst físico em sangramento" },
+   985→      { id: "steraks-gage", note: "Escudo quando a briga fecha" },
+   986→    ],
+   987→    situationalItems: [
+   988→      { id: "maw-of-malmortius", note: "Contra AP" },
+   989→      { id: "guardian-angel", note: "Seguro para duelos arriscados" },
+   990→      { id: "hullbreaker", note: "Splitpush máximo" },
+   991→      { id: "wits-end", note: "MR + on-hit" },
+   992→      { id: "seryldas-grudge", note: "Penetração + slow" },
+   993→      { id: "mortal-reminder", note: "Anti-cura" },
+   994→    ],
+   995→    runes: {
+   996→      primaryTree: "precision",
+   997→      keystone: "conqueror",
+   998→      primary: ["triumph", "legend-alacrity", "last-stand"],
+   999→      secondaryTree: "resolve",
+  1000→      secondary: ["bone-plating", "demolish"],
+  1001→      shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
+  1002→      explanation:
+  1003→        "Conqueror enche rápido com os vitais e devolve sustain para duelos infinitos. Bone Plating + Demolish equilibram o early e amplificam o splitpush.",
+  1004→    },
+  1005→    altRunesNote:
+  1006→      "Contra matchups de burst físico (Renekton/Pantheon): troque Bone Plating por Second Wind + comece Doran's Shield.",
+  1007→    spells: [
+  1008→      { id: "flash", note: "Necessário — sem escape real no Q" },
+  1009→      { id: "teleport", note: "Escala com segurança e presença" },
+  1010→    ],
+  1011→    skillPriority: ["Q", "E", "W"],
+  1012→    abilities: [
+  1013→      { key: "P", name: "Duelista", desc: "Pontos vitais aparecem nos lados do inimigo; acertá-los causa dano verdadeiro % vida e concede cura + velocidade. O coração do campeão." },
+  1014→      { key: "Q", name: "Investida", desc: "Dash curto que causa dano no ponto vital se alinhado. Recarga muito baixa: mobilidade constante e reset ao acertar vital." },
+  1015→      { key: "W", name: "Riposte", desc: "Bloqueia TODO dano e CC de uma habilidade inimiga por um instante; atordoa se bloquear CC, desacelera caso contrário. Prever o inimigo é a maestoria." },
+  1016→      { key: "E", name: "Bladework", desc: "Dois básicos turbinados: o primeiro nunca erra (reset de ataque), o segundo causa crítico. Sinergia perfeita com vitais." },
+  1017→      { key: "R", name: "Grand Challenge", desc: "Marca 4 vitais no alvo; acertar todos (ou 2 + abater) cura você e aliados próximos em área. Duelo de vida ou morte — geralmente de vida." },
+  1018→    ],
+  1019→    comboTips: [
+  1020→      "Q no vital → E (reset de básico) → segundo E crítico → recue com a velocidade do passivo.",
+  1021→      "W no momento do CC inimigo (stun do Renekton, puxão do Darius): bloqueia e ATORDOA.",
+  1022→      "R + Hydra + Conqueror: dentro do duelo, o sustain vira impossível de equiparar.",
+  1023→    ],
+  1024→    tips: {
+  1025→      early: [
+  1026→        "Ataque o vital quando ele aparecer do lado seguro (voltado para você).",
+  1027→        "Use Q em ângulos diferentes para alcançar vitais sem tomar dano de tropa.",
+  1028→        "Level 1–3 respeite juggernauts: seu pico real chega com itens.",
+  1029→      ],
+  1030→      mid: [
+  1031→        "Com Hydra, procure duelos: poucos campeões vencem o sustain de vitais + omnivamp.",
+  1032→        "Force splitpush com TP: o inimigo precisa mandar 2 para te parar.",
+  1033→        "W é seu seguro de vida: guarde para o CC que mata (Jax E, Darius R?).",
+  1034→      ],
+  1035→      late: [
+  1036→        "Dano verdadeiro % vida: tanques viram papel; ache o vital e perfure.",
+  1037→        "R em teamfight no tanque = cura em área para o time todo.",
+  1038→        "Você define o ritmo: force o mapa a se dividir e vence os 1v1 laterais.",
+  1039→      ],
+  1040→    },
+  1041→    strongAgainst: [
+  1042→      { champion: "Mordekaiser", note: "Riposte no combo e true damage através do escudo." },
+  1043→      { champion: "Ornn", note: "Vitais perfuram a armadura do ferreiro." },
+  1044→      { champion: "Nasus", note: "Duelo vencido em praticamente qualquer estágio pós-item." },
+  1045→      { champion: "Sett", note: "Riposte no W carregado dele: bloqueia o soco verdadeiro." },
+  1046→    ],
+  1047→    weakAgainst: [
+  1048→      { champion: "Quinn", note: "Range e cegueira negam vitais fáceis." },
+  1049→      { champion: "Renekton", note: "Pressão early pesada antes dos seus itens." },
+  1050→      { champion: "Pantheon", note: "Burst impossível de ripostar bem; jogue para escalar." },
+  1051→      { champion: "Kennen", note: "Poke e stun à distância: busque TP criativo." },
+  1052→    ],
+  1053→    counterTips: [
+  1054→      "Guarde o W para o golpe que define a troca — errar o timing é perder metade do HP.",
+  1055→      "Contra range: vitais ainda curam; farme passivo e espere gank ou item power spike.",
+  1056→      "Nunca comprometa o Q ofensivamente contra ganks: ele é sua única fuga.",
+  1057→    ],
+  1058→    altBuilds: [
+  1059→      {
+  1060→        name: "Perfuradora de Tanques",
+  1061→        when: "Contra 2+ tanques com armadura alta",
+  1062→        items: [
+  1063→          { id: "ravenous-hydra" },
+  1064→          { id: "black-cleaver", note: "Reduz a armadura para o time inteiro" },
+  1065→          { id: "seryldas-grudge" },
+  1066→        ],
+  1067→        note: "True damage + penetração: muralhas viram alvos.",
+  1068→      },
+  1069→      {
+  1070→        name: "Assassina Latera? Não: Duelista Imortal",
+  1071→        when: "Contra burst mágico pesado",
+  1072→        items: [
+  1073→          { id: "maw-of-malmortius" },
+  1074→          { id: "steraks-gage" },
+  1075→          { id: "guardian-angel" },
+  1076→        ],
+  1077→        note: "Dois escudos + ressurreição: quase impossível de focar.",
+  1078→      },
+  1079→    ],
+  1080→  },
+  1081→];
+  1082→

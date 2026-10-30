@@ -14,6 +14,7 @@ import { Coins, Boot, Sparkles, Layers, GitBranch, Wand2, ListOrdered, Lightbulb
 import type { Champion } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
 import { ChampionDetail } from "./ChampionDetail";
+import { FavoriteButton } from "./FavoriteButton";
 
 const NAV = [
   { id: "build", label: "Build", icon: Coins },
@@ -72,6 +73,9 @@ export function ChampionDialog({
               {n.label}
             </button>
           ))}
+          <span className="ml-auto flex shrink-0 items-center pl-2">
+            <FavoriteButton championId={champion.id} championName={champion.name} />
+          </span>
         </nav>
 
         <div className="min-w-0 flex-1 p-4 sm:p-6">

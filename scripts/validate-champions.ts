@@ -2,8 +2,10 @@
 import { ITEMS, RUNES, SPELLS, buildSkillSequence } from "../src/lib/lol/data";
 import { CHAMPIONS_A } from "../src/lib/lol/champions-a";
 import { CHAMPIONS_B } from "../src/lib/lol/champions-b";
+import { CHAMPIONS_C } from "../src/lib/lol/champions-c";
+import { CHAMPIONS_D } from "../src/lib/lol/champions-d";
 
-const ALL = [...CHAMPIONS_A, ...CHAMPIONS_B];
+const ALL = [...CHAMPIONS_A, ...CHAMPIONS_B, ...CHAMPIONS_C, ...CHAMPIONS_D];
 
 let errors = 0;
 const seen = new Set<string>();

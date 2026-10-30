@@ -1,7 +1,7 @@
 // ============================================================
 // Campeões (parte 1/2) — Darius, Garen, Sett, Mordekaiser,
 // Aatrox, Renekton, Jax, Fiora
-// Builds baseadas no patch 26.21 (Temporada 2026)
+// Builds baseadas no patch 16.21 (Temporada 2026)
 // ============================================================
 import type { Champion } from "./data";
 
@@ -21,7 +21,7 @@ export const CHAMPIONS_A: Champion[] = [
     color: "#D4472F",
     playstyle: "Juggernaut dominante",
     summary:
-      "O algoz de Noxus. Darius pune qualquer erro na rota: uma vez que a Hemorragia chega a 5 stacks, o Guilhotina Noxiana se torna execução em área. Melhor pick de topo do patch 26.21 segundo estatísticas de alto elo.",
+      "O algoz de Noxus. Darius pune qualquer erro na rota: uma vez que a Hemorragia chega a 5 stacks, o Guilhotina Noxiana se torna execução em área. Melhor pick de topo do patch 16.21 segundo estatísticas de alto elo.",
     strengths: [
       "Dano bruto altíssimo em trocas estendidas",
       "Execução resetável com o ultimate (R)",
@@ -42,7 +42,7 @@ export const CHAMPIONS_A: Champion[] = [
       { id: "mercury-treads", note: "Contra AP pesado ou CC demais" },
     ],
     coreItems: [
-      { id: "youmuus-ghostblade", note: "Meta 26.21: velocidade para colar no alvo e completar stacks" },
+      { id: "youmuus-ghostblade", note: "Meta 16.21: velocidade para colar no alvo e completar stacks" },
       { id: "black-cleaver", note: "Rasga armadura e dá aceleração" },
       { id: "dead-mans-plate", note: "Armadura + investida carregada" },
     ],
@@ -190,13 +190,13 @@ export const CHAMPIONS_A: Champion[] = [
     ],
     runes: {
       primaryTree: "sorcery",
-      keystone: "phase-rush",
+      keystone: "stormraiders-surge",
       primary: ["nimbus-cloak", "celerity", "transcendence"],
       secondaryTree: "resolve",
       secondary: ["second-wind", "unflinching"],
       shards: ["+10% Velocidade de Ataque", "+9 Adaptativo (AD)", "+Vida bônus (escala com nível)"],
       explanation:
-        "Phase Rush dá a rajada de velocidade que o Garen precisa após o combo Q+E para colar ou escapar. Second Wind + Unflinching compensam matchups de poke e CC.",
+        "Stormraider's Surge dispara quando o combo Q+E enche a barra de dano rápido: você ganha uma rajada de velocidade e resistência a desaceleração — entra, gira e sai (ou persegue). Second Wind + Unflinching compensam matchups de poke e CC.",
     },
     altRunesNote:
       "Contra tanques pesados: Conqueror (Precision) + Resolve aguenta trocas longas e escala melhor no late.",
@@ -219,7 +219,7 @@ export const CHAMPIONS_A: Champion[] = [
     ],
     tips: {
       early: [
-        "Troque com Q+alguns giros de E e saia com Phase Rush antes do contra-ataque.",
+        "Troque com Q+alguns giros de E e saia com Stormraider's Surge antes do contra-ataque.",
         "Farme sob torre tranquilamente: sem mana, só preocupe-se com o cooldown do Q.",
         "Regeneração passiva: recue alguns segundos após tomar poke e volte com vantagem de vida.",
       ],

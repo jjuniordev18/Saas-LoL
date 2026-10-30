@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Champion } from "@/lib/lol/data";
 import { RUNE_TREES } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
+import { championImageUrl } from "@/lib/lol";
 import {
   ClassBadge,
   DifficultyBadge,
@@ -114,7 +115,7 @@ export function ChampionDetail({ champion }: { champion: Champion }) {
             </div>
           ) : (
             <img
-              src={`https://ddragon.leagueoflegends.com/cdn/16.21.1/img/champion/${champion.image.charAt(0).toUpperCase()}${champion.image.slice(1)}.png`}
+              src={championImageUrl(champion.image)}
               alt={`Retrato de ${champion.name}`}
               width={80}
               height={80}

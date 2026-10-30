@@ -40,6 +40,14 @@ import {
   TIER_META,
   type ItemGlyph,
 } from "@/lib/lol/data";
+import {
+  ITEM_DD,
+  RUNE_DD,
+  SPELL_DD,
+  itemIconUrl,
+  runeIconUrl,
+  spellIconUrl,
+} from "@/lib/lol/ddragon";
 
 // ------------------------------------------------------------
 // Ícone por glifo de item/feitiço
@@ -106,6 +114,7 @@ export function InfoTooltip({
 
 // ------------------------------------------------------------
 // Ícone de item com tooltip (nome, preço, descrição)
+// Usa a arte OFICIAL do jogo (Data Dragon) com fallback para glifo
 // ------------------------------------------------------------
 export function ItemIcon({
   id,
@@ -116,8 +125,10 @@ export function ItemIcon({
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
+  const [failed, setFailed] = React.useState(false);
   const item = ITEMS[id];
   if (!item) return null;
+  const dd = ITEM_DD[id];
 
   const sizes = {
     sm: "h-9 w-9 rounded",
@@ -147,12 +158,24 @@ export function ItemIcon({
         role="img"
         aria-label={`${item.name} — ${item.desc}`}
         className={cn(
-          "flex items-center justify-center border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-gold transition-colors hover:border-gold/80 hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          "relative flex items-center justify-center overflow-hidden border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-gold transition-colors hover:border-gold/80 hover:shadow-[0_0_10px_rgba(200,170,110,0.35)] focus-visible:outline-2 focus-visible:outline-gold cursor-help",
           sizes[size],
           className
         )}
       >
-        <GlyphIcon glyph={item.glyph} className={iconSizes[size]} />
+        {dd && !failed ? (
+          <img
+            src={itemIconUrl(dd.icon)}
+            alt=""
+            width={48}
+            height={48}
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <GlyphIcon glyph={item.glyph} className={iconSizes[size]} />
+        )}
       </div>
     </InfoTooltip>
   );
@@ -191,6 +214,7 @@ export function ItemChip({
 
 // ------------------------------------------------------------
 // Runa (keystone ou pequena) com tooltip
+// Usa o ícone OFICIAL da runa (perk-images) com fallback para iniciais
 // ------------------------------------------------------------
 export function RuneChip({
   id,
@@ -201,10 +225,12 @@ export function RuneChip({
   size?: "sm" | "md";
   showTree?: boolean;
 }) {
+  const [failed, setFailed] = React.useState(false);
   const rune = RUNES[id];
   if (!rune) return null;
   const tree = RUNE_TREES[rune.tree];
   const isKey = !!rune.keystone;
+  const ddIcon = RUNE_DD[id];
 
   const box = isKey
     ? "h-14 w-14 border-2"
@@ -230,7 +256,7 @@ export function RuneChip({
         role="img"
         aria-label={`${rune.name} — ${rune.desc}`}
         className={cn(
-          "flex items-center justify-center rounded-full bg-[#0a1c2e] font-display font-bold transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          "relative flex items-center justify-center overflow-hidden rounded-full bg-[#0a1c2e] font-display font-bold transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
           box
         )}
         style={{
@@ -239,7 +265,19 @@ export function RuneChip({
           boxShadow: isKey ? `0 0 12px ${tree.color}44` : undefined,
         }}
       >
-        {isKey ? rune.name.slice(0, 2).toUpperCase() : rune.name.slice(0, 2).toUpperCase()}
+        {ddIcon && !failed ? (
+          <img
+            src={runeIconUrl(ddIcon)}
+            alt=""
+            width={56}
+            height={56}
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <span className="text-xs">{rune.name.slice(0, 2).toUpperCase()}</span>
+        )}
       </div>
     </InfoTooltip>
   );
@@ -247,6 +285,7 @@ export function RuneChip({
 
 // ------------------------------------------------------------
 // Feitiço de invocador com tooltip
+// Usa o ícone OFICIAL do jogo (SummonerFlash, SummonerDot...)
 // ------------------------------------------------------------
 export function SpellChip({
   id,
@@ -255,8 +294,10 @@ export function SpellChip({
   id: string;
   note?: string;
 }) {
+  const [failed, setFailed] = React.useState(false);
   const spell = SPELLS[id];
   if (!spell) return null;
+  const ddIcon = SPELL_DD[id];
   return (
     <InfoTooltip
       content={
@@ -271,9 +312,21 @@ export function SpellChip({
           tabIndex={0}
           role="img"
           aria-label={`${spell.name} — ${spell.desc}`}
-          className="flex h-12 w-12 items-center justify-center rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-teal-400 transition-colors hover:border-gold/80 focus-visible:outline-2 focus-visible:outline-gold"
+          className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-teal-400 transition-all hover:border-gold/80 hover:shadow-[0_0_10px_rgba(200,170,110,0.35)] focus-visible:outline-2 focus-visible:outline-gold"
         >
-          <GlyphIcon glyph={spell.glyph} className="h-5 w-5" />
+          {ddIcon && !failed ? (
+            <img
+              src={spellIconUrl(ddIcon)}
+              alt=""
+              width={48}
+              height={48}
+              loading="lazy"
+              onError={() => setFailed(true)}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <GlyphIcon glyph={spell.glyph} className="h-5 w-5" />
+          )}
         </div>
         <div className="min-w-0">
           <p className="text-sm font-medium leading-tight text-gold-bright">
@@ -285,6 +338,59 @@ export function SpellChip({
             </p>
           )}
         </div>
+      </div>
+    </InfoTooltip>
+  );
+}
+
+// ------------------------------------------------------------
+// Ícone de feitiço compacto (sem nome ao lado) — para o comparador
+// ------------------------------------------------------------
+export function SpellIcon({
+  id,
+  size = 44,
+  className,
+}: {
+  id: string;
+  size?: number;
+  className?: string;
+}) {
+  const [failed, setFailed] = React.useState(false);
+  const spell = SPELLS[id];
+  if (!spell) return null;
+  const ddIcon = SPELL_DD[id];
+  return (
+    <InfoTooltip
+      content={
+        <div className="space-y-1">
+          <p className="font-semibold text-gold-bright">{spell.name}</p>
+          <p className="text-xs text-muted-foreground">{spell.desc}</p>
+        </div>
+      }
+    >
+      <div
+        tabIndex={0}
+        role="img"
+        aria-label={`${spell.name} — ${spell.desc}`}
+        className={cn(
+          "relative flex items-center justify-center overflow-hidden rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-teal-400 transition-colors hover:border-gold/80 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          className
+        )}
+        style={{ width: size, height: size }}
+      >
+        {ddIcon && !failed ? (
+          <img
+            src={spellIconUrl(ddIcon)}
+            alt=""
+            width={size}
+            height={size}
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <GlyphIcon glyph={spell.glyph} className="h-5 w-5" />
+        )}
       </div>
     </InfoTooltip>
   );

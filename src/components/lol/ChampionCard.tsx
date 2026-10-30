@@ -8,6 +8,7 @@ import { championImageUrl } from "@/lib/lol";
 import type { Champion } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
 import { ClassBadge, DifficultyBadge, TierBadge } from "./pieces";
+import { FavoriteButton } from "./FavoriteButton";
 
 export function ChampionAvatar({
   champion,
@@ -61,37 +62,50 @@ export function ChampionCard({
   onSelect: (champion: Champion) => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(champion)}
-      aria-label={`Ver build de ${champion.name}`}
-      className="card-hover-lift group flex w-full flex-col items-center gap-3 rounded-lg border border-border bg-card p-4 text-center focus-visible:outline-2 focus-visible:outline-gold"
-    >
-      <div className="relative">
-        <ChampionAvatar
-          champion={champion}
-          size={88}
-          className="transition-transform duration-200 group-hover:scale-105"
+    // Envoltório: o coração fica FORA do <button> do card (HTML não permite
+    // botão aninhado) e os dois são posicionados juntos.
+    <div className="group/card relative h-full">
+      <div className="absolute -left-2 -top-2 z-10">
+        <FavoriteButton
+          championId={champion.id}
+          championName={champion.name}
+          iconClassName="h-3.5 w-3.5"
+          className="p-1.5"
         />
-        <div className="absolute -right-2 -top-2">
-          <TierBadge tier={champion.tier} />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onSelect(champion)}
+        aria-label={`Ver build de ${champion.name}`}
+        className="card-hover-lift group flex h-full w-full flex-col items-center gap-3 rounded-lg border border-border bg-card p-4 text-center focus-visible:outline-2 focus-visible:outline-gold"
+      >
+        <div className="relative">
+          <ChampionAvatar
+            champion={champion}
+            size={88}
+            className="transition-transform duration-200 group-hover:scale-105"
+          />
+          <div className="absolute -right-2 -top-2">
+            <TierBadge tier={champion.tier} />
+          </div>
         </div>
-      </div>
 
-      <div className="space-y-1">
-        <h3 className="font-display text-base font-bold leading-tight text-gold-bright">
-          {champion.name}
-        </h3>
-        <p className="text-xs text-muted-foreground">{champion.playstyle}</p>
-      </div>
+        <div className="space-y-1">
+          <h3 className="font-display text-base font-bold leading-tight text-gold-bright">
+            {champion.name}
+          </h3>
+          <p className="text-xs text-muted-foreground">{champion.playstyle}</p>
+        </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
-        {champion.classes.map((c) => (
-          <ClassBadge key={c} classe={c} />
-        ))}
-      </div>
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
+          {champion.classes.map((c) => (
+            <ClassBadge key={c} classe={c} />
+          ))}
+        </div>
 
-      <DifficultyBadge level={champion.difficulty} />
-    </button>
+        <DifficultyBadge level={champion.difficulty} />
+      </button>
+    </div>
   );
 }
