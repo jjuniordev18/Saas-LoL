@@ -151,6 +151,13 @@ export const ITEMS: Record<string, ItemInfo> = {
     category: "starter",
     desc: "Duas cargas que recarregam ao voltar à base. Economiza ouro no longo prazo.",
   },
+  "corrupting-potion": {
+    name: "Poção Corruptora",
+    cost: 500,
+    glyph: "flask",
+    category: "starter",
+    desc: "Três cargas que curam, devolvem mana e aplicam queimadura nos ataques enquanto ativas. Para trocas agressivas.",
+  },
 
   // Botas
   "plated-steelcaps": {

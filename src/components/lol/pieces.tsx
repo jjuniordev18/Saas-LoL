@@ -103,7 +103,7 @@ export function InfoTooltip({
         </TooltipTrigger>
         <TooltipContent
           side={side}
-          className="max-w-64 border border-[#785a28]/60 bg-popover text-popover-foreground shadow-xl"
+          className="max-w-64 border border-frame/60 bg-popover text-popover-foreground shadow-xl"
         >
           {content}
         </TooltipContent>
@@ -158,7 +158,7 @@ export function ItemIcon({
         role="img"
         aria-label={`${item.name} — ${item.desc}`}
         className={cn(
-          "relative flex items-center justify-center overflow-hidden border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-gold transition-colors hover:border-gold/80 hover:shadow-[0_0_10px_rgba(200,170,110,0.35)] focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          "relative flex items-center justify-center overflow-hidden border border-frame/70 bg-gradient-to-b from-secondary to-abyss text-gold transition-all hover:scale-105 hover:border-gold/80 hover:shadow-[0_0_10px_var(--gold)] focus-visible:outline-2 focus-visible:outline-gold cursor-help",
           sizes[size],
           className
         )}
@@ -256,7 +256,7 @@ export function RuneChip({
         role="img"
         aria-label={`${rune.name} — ${rune.desc}`}
         className={cn(
-          "relative flex items-center justify-center overflow-hidden rounded-full bg-[#0a1c2e] font-display font-bold transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          "relative flex items-center justify-center overflow-hidden rounded-full bg-abyss font-display font-bold transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
           box
         )}
         style={{
@@ -312,7 +312,7 @@ export function SpellChip({
           tabIndex={0}
           role="img"
           aria-label={`${spell.name} — ${spell.desc}`}
-          className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-teal-400 transition-all hover:border-gold/80 hover:shadow-[0_0_10px_rgba(200,170,110,0.35)] focus-visible:outline-2 focus-visible:outline-gold"
+          className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss text-teal-400 transition-all hover:scale-105 hover:border-gold/80 hover:shadow-[0_0_10px_var(--gold)] focus-visible:outline-2 focus-visible:outline-gold cursor-help"
         >
           {ddIcon && !failed ? (
             <img
@@ -373,7 +373,7 @@ export function SpellIcon({
         role="img"
         aria-label={`${spell.name} — ${spell.desc}`}
         className={cn(
-          "relative flex items-center justify-center overflow-hidden rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e] text-teal-400 transition-colors hover:border-gold/80 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
+          "relative flex items-center justify-center overflow-hidden rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss text-teal-400 transition-all hover:scale-105 hover:border-gold/80 focus-visible:outline-2 focus-visible:outline-gold cursor-help",
           className
         )}
         style={{ width: size, height: size }}

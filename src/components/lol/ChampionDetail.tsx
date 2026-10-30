@@ -100,14 +100,14 @@ export function ChampionDetail({ champion }: { champion: Champion }) {
       <header
         className="relative overflow-hidden rounded-lg border border-border p-5"
         style={{
-          background: `linear-gradient(135deg, ${champion.color}22 0%, #0c1c30 60%)`,
+          background: `linear-gradient(135deg, ${champion.color}22 0%, var(--card) 60%)`,
         }}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           {imgFailed ? (
             <div
               className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-2 font-display text-2xl font-bold text-white"
-              style={{ borderColor: `${champion.color}80`, background: `linear-gradient(160deg, ${champion.color}, #0a1428)` }}
+              style={{ borderColor: `${champion.color}80`, background: `linear-gradient(160deg, ${champion.color}, var(--hex-navy))` }}
               role="img"
               aria-label={champion.name}
             >

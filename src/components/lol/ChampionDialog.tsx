@@ -47,7 +47,7 @@ export function ChampionDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="gold-scrollbar max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-[#785a28]/60 bg-[#0a1428] p-0 sm:max-w-3xl md:max-w-4xl"
+        className="gold-scrollbar max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-frame/60 bg-hex-navy p-0 sm:max-w-3xl md:max-w-4xl"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">
@@ -60,7 +60,7 @@ export function ChampionDialog({
         {/* Barra de navegação interna */}
         <nav
           aria-label="Seções da build"
-          className="gold-scrollbar sticky top-0 z-20 flex min-w-0 items-center gap-1 overflow-x-auto border-b border-[#785a28]/40 bg-[#0a1428]/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-[#0a1428]/85"
+          className="gold-scrollbar sticky top-0 z-20 flex min-w-0 items-center gap-1 overflow-x-auto border-b border-frame/40 bg-hex-navy/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-hex-navy/85"
         >
           {NAV.map((n) => (
             <button

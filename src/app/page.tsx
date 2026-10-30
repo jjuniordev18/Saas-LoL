@@ -5,7 +5,7 @@
 // Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,26 +18,29 @@ import {
   TIER_FILTERS,
   type ChampionFilters,
 } from "@/lib/lol";
-import { CLASS_META, DIFFICULTY_META, TIER_META, PATCH_VERSION } from "@/lib/lol/data";
+import { CLASS_META, DIFFICULTY_META, TIER_META, PATCH_VERSION, ITEMS } from "@/lib/lol/data";
 import type { Champion } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
 import { useFavorites } from "@/lib/lol/favorites";
 import { ChampionCard } from "@/components/lol/ChampionCard";
 import { ChampionDialog } from "@/components/lol/ChampionDialog";
 import { Comparator } from "@/components/lol/Comparator";
+import { ItemSearch } from "@/components/lol/ItemSearch";
+import { RiftMap } from "@/components/lol/RiftMap";
+import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
 
 // ------------------------------------------------------------
 // Cabeçalho fixo
 // ------------------------------------------------------------
 function Header({ favoritesCount }: { favoritesCount: number }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-[#785a28]/40 bg-[#0a1428]/90 backdrop-blur supports-[backdrop-filter]:bg-[#0a1428]/80">
+    <header className="sticky top-0 z-30 border-b border-frame/40 bg-hex-navy/90 backdrop-blur supports-[backdrop-filter]:bg-hex-navy/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
         <a
           href="#inicio"
           className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-gold rounded"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
             <Swords className="h-5 w-5 text-gold" aria-hidden="true" />
           </span>
           <span className="whitespace-nowrap font-display text-base font-black tracking-wide text-gold-gradient sm:text-lg">
@@ -47,16 +50,11 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
 
         <nav aria-label="Navegação principal" className="flex items-center gap-0.5 sm:gap-2">
           <a
-            href="#populares"
-            className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+            href="#mapa"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
           >
-            Populares
-          </a>
-          <a
-            href="#campeoes"
-            className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
-          >
-            Campeões
+            <Map className="h-4 w-4 text-gold" aria-hidden="true" />
+            Mapa
           </a>
           <a
             href="#comparador"
@@ -64,6 +62,19 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
           >
             <GitCompareArrows className="h-4 w-4 text-gold" aria-hidden="true" />
             Comparador
+          </a>
+          <a
+            href="#itens"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+          >
+            <Package className="h-4 w-4 text-gold" aria-hidden="true" />
+            Itens
+          </a>
+          <a
+            href="#campeoes"
+            className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+          >
+            Campeões
           </a>
           <a
             href="#favoritos"
@@ -83,6 +94,7 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
               {favoritesCount}
             </span>
           </a>
+          <ThemeSwitcher />
         </nav>
       </div>
     </header>
@@ -94,11 +106,11 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
 // ------------------------------------------------------------
 function Footer() {
   return (
-    <footer className="mt-auto border-t border-[#785a28]/40 bg-[#081120] pb-[env(safe-area-inset-bottom)]">
+    <footer className="mt-auto border-t border-frame/40 bg-hex-deep pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-[#785a28]/70 bg-gradient-to-b from-[#12314e] to-[#0a1c2e]">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
               <Swords className="h-4 w-4 text-gold" aria-hidden="true" />
             </span>
             <span className="font-display text-sm font-bold text-gold-bright">
@@ -106,14 +118,17 @@ function Footer() {
             </span>
           </div>
           <nav aria-label="Links do rodapé" className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
-            <a href="#populares" className="transition-colors hover:text-gold-bright">
-              Populares
+            <a href="#mapa" className="transition-colors hover:text-gold-bright">
+              Mapa
             </a>
             <a href="#campeoes" className="transition-colors hover:text-gold-bright">
               Todos os campeões
             </a>
             <a href="#comparador" className="transition-colors hover:text-gold-bright">
               Comparador
+            </a>
+            <a href="#itens" className="transition-colors hover:text-gold-bright">
+              Busca de itens
             </a>
             <a href="#favoritos" className="transition-colors hover:text-gold-bright">
               Favoritos
@@ -218,17 +233,17 @@ export default function Home() {
 
       <main id="inicio" className="flex-1">
         {/* ---------- Hero + busca ---------- */}
-        <section className="relative overflow-hidden border-b border-[#785a28]/30">
+        <section className="relative overflow-hidden border-b border-frame/30">
           <div
             className="pointer-events-none absolute inset-0"
             aria-hidden="true"
             style={{
               background:
-                "radial-gradient(ellipse 60% 55% at 50% 0%, rgba(200,170,110,0.12), transparent 70%)",
+                "radial-gradient(ellipse 60% 55% at 50% 0%, var(--glow-1), transparent 70%)",
             }}
           />
           <div className="relative mx-auto max-w-6xl px-4 py-14 text-center sm:py-20">
-            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#785a28]/50 bg-card px-3.5 py-1.5 text-xs font-semibold text-gold">
+            <p className="animate-float mb-3 inline-flex items-center gap-2 rounded-full border border-frame/50 bg-card px-3.5 py-1.5 text-xs font-semibold text-gold">
               <Flame className="h-3.5 w-3.5" aria-hidden="true" />
               Patch {PATCH_VERSION} · Temporada 2026
             </p>
@@ -237,8 +252,9 @@ export default function Home() {
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
               Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
-              habilidades, comparador de matchups e favoritos salvos no seu
-              navegador — direto ao ponto, para iniciantes e intermediários.
+              habilidades, comparador de matchups de até 3 campeões, busca de
+              itens e favoritos salvos no seu navegador — direto ao ponto, para
+              iniciantes e intermediários.
             </p>
 
             {/* Busca */}
@@ -275,16 +291,16 @@ export default function Home() {
             </div>
 
             {/* Estatísticas rápidas */}
-            <dl className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-3 text-center sm:grid-cols-4">
+            <dl className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-3 text-center sm:grid-cols-4">
               {[
                 { label: "Campeões", value: CHAMPIONS.length },
-                { label: "Builds completas", value: CHAMPIONS.length },
+                { label: "Itens catalogados", value: Object.keys(ITEMS).length },
                 { label: "Tier S", value: CHAMPIONS.filter((c) => c.tier === "S").length },
                 { label: "Seus favoritos", value: favorites.length },
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-lg border border-border bg-card/60 px-3 py-3"
+                  className="card-hover-lift rounded-lg border border-border bg-card/60 px-3 py-3"
                 >
                   <dt className="sr-only">{s.label}</dt>
                   <dd className="font-display text-2xl font-black text-gold">
@@ -299,15 +315,32 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ---------- Mapa do Summoner's Rift ---------- */}
+        <section id="mapa" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+          <div className="mb-8 flex items-center gap-3">
+            <Map className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                O Summoner's Rift
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                O mapa oficial 5v5 incorporado ao guia — passe o mouse pelos
+                pontos para entender onde a rota superior se encaixa no jogo
+              </p>
+            </div>
+          </div>
+          <RiftMap />
+        </section>
+
         {/* ---------- Populares ---------- */}
         <section id="populares" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
           <div className="mb-6 flex items-center gap-3">
             <Crown className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
-              <h2 className="font-display text-2xl font-bold text-gold-bright">
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
                 Campeões populares
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Os picks mais jogados e confiáveis da rota superior agora
               </p>
             </div>
@@ -331,10 +364,10 @@ export default function Home() {
           <div className="mb-6 flex items-center gap-3">
             <Heart className="h-6 w-6 text-rose-400" aria-hidden="true" />
             <div>
-              <h2 className="font-display text-2xl font-bold text-gold-bright">
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
                 Seus favoritos
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Salvos no navegador — estejam aqui sempre que você voltar
               </p>
             </div>
@@ -366,17 +399,36 @@ export default function Home() {
           <div className="mb-6 flex items-center gap-3">
             <GitCompareArrows className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
-              <h2 className="font-display text-2xl font-bold text-gold-bright">
-                Comparador de matchups
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Comparador de matchups — até 3 lados
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Escolha dois campeões e veja runas, feitiços e build lado a lado —
-                com veredito de quem leva vantagem
+              <p className="mt-2 text-sm text-muted-foreground">
+                Escolha dois ou três campeões e veja runas, feitiços e build
+                lado a lado — com ranking de quem leva vantagem em cada
+                confronto
               </p>
             </div>
           </div>
 
           <Comparator onSelectDetail={handleSelect} />
+        </section>
+
+        {/* ---------- Busca de itens ---------- */}
+        <section id="itens" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+          <div className="mb-6 flex items-center gap-3">
+            <Package className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Busca por item
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Pesquise qualquer item do guia, filtre por categoria, ordene por
+                preço e descubra quem usa — com ícones oficiais do patch
+              </p>
+            </div>
+          </div>
+
+          <ItemSearch onSelectDetail={handleSelect} />
         </section>
 
         {/* ---------- Todos os campeões + filtros ---------- */}
@@ -387,10 +439,10 @@ export default function Home() {
           <div className="mb-6 flex items-center gap-3">
             <ListFilter className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
-              <h2 className="font-display text-2xl font-bold text-gold-bright">
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
                 Todos os campeões
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Filtre por função, dificuldade e tier para achar seu pick
               </p>
             </div>

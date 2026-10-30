@@ -1,17 +1,21 @@
 // ============================================================
 // Topo do Rift — Índice agregado dos campeões + helpers
 // ============================================================
-import type { Champion, ChampionClass, Difficulty, Tier } from "./data";
+import type { Champion, ChampionClass, Difficulty, Tier, ItemCategory } from "./data";
 import { CHAMPIONS_A } from "./champions-a";
 import { CHAMPIONS_B } from "./champions-b";
 import { CHAMPIONS_C } from "./champions-c";
 import { CHAMPIONS_D } from "./champions-d";
+import { CHAMPIONS_E } from "./champions-e";
+import { CHAMPIONS_F } from "./champions-f";
 
 export const CHAMPIONS: Champion[] = [
   ...CHAMPIONS_A,
   ...CHAMPIONS_B,
   ...CHAMPIONS_C,
   ...CHAMPIONS_D,
+  ...CHAMPIONS_E,
+  ...CHAMPIONS_F,
 ];
 
 export function getChampionById(id: string): Champion | undefined {
@@ -67,6 +71,44 @@ export function filterChampions(filters: ChampionFilters): Champion[] {
     if (filters.tier !== "todos" && c.tier !== filters.tier) return false;
     return true;
   });
+}
+
+// ------------------------------------------------------------
+// Helpers de busca por item
+// ------------------------------------------------------------
+export const ITEM_CATEGORY_FILTERS: { value: ItemCategory | "todas"; label: string }[] = [
+  { value: "todas", label: "Todas" },
+  { value: "starter", label: "Iniciais" },
+  { value: "boots", label: "Botas" },
+  { value: "ad", label: "Dano / AD" },
+  { value: "tank", label: "Tanque" },
+  { value: "ap", label: "Poder Mágico" },
+];
+
+/** Normaliza texto para busca tolerante (sem acentos, apóstrofos, caixa) */
+export function normalizeText(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/['’.]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Campeões que usam o item em qualquer parte da build (core, boot, situacional, alternativa) */
+export function championsUsingItem(itemId: string): { champion: Champion; where: string }[] {
+  const out: { champion: Champion; where: string }[] = [];
+  for (const c of CHAMPIONS) {
+    const spots: string[] = [];
+    if (c.startItems.some((r) => r.id === itemId)) spots.push("Inicial");
+    if (c.boots.some((r) => r.id === itemId)) spots.push("Botas");
+    if (c.coreItems.some((r) => r.id === itemId)) spots.push("Core");
+    if (c.situationalItems.some((r) => r.id === itemId)) spots.push("Situacional");
+    if (c.altBuilds.some((b) => b.items.some((r) => r.id === itemId))) spots.push("Alt. build");
+    if (spots.length > 0) out.push({ champion: c, where: spots.join(" · ") });
+  }
+  return out;
 }
 
 // URL das imagens oficiais (Data Dragon / Riot Games)

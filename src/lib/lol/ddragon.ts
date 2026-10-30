@@ -361,6 +361,46 @@ export const CHAMPION_PT: Record<string, { name: string; title: string }> = {
   "Urgot": {
     "name": "Urgot",
     "title": "o Encouraçado"
+  },
+  "Yone": {
+    "name": "Yone",
+    "title": "o Inesquecido"
+  },
+  "Irelia": {
+    "name": "Irelia",
+    "title": "a Dançarina das Lâminas"
+  },
+  "Gangplank": {
+    "name": "Gangplank",
+    "title": "o Flagelo dos Mares"
+  },
+  "Sion": {
+    "name": "Sion",
+    "title": "o Colosso Não-Morto"
+  },
+  "MonkeyKing": {
+    "name": "Wukong",
+    "title": "o Rei dos Macacos"
+  },
+  "Kled": {
+    "name": "Kled",
+    "title": "o Cavaleiro Caçamba"
+  },
+  "Gnar": {
+    "name": "Gnar",
+    "title": "o Elo Perdido"
+  },
+  "Singed": {
+    "name": "Singed",
+    "title": "o Químico Louco"
+  },
+  "Vladimir": {
+    "name": "Vladimir",
+    "title": "o Terror Escarlate"
+  },
+  "Jayce": {
+    "name": "Jayce",
+    "title": "o Defensor do Amanhã"
   }
 };
 
@@ -380,3 +420,8 @@ export function runeIconUrl(iconPath: string): string {
 export function championSquareUrl(champKey: string): string {
   return `https://ddragon.leagueoflegends.com/cdn/16.21.1/img/champion/${champKey}.png`;
 }
+
+/** Mapa oficial do Summoner's Rift (minimapa 8-bit carregado do patch atual) */
+export const RIFT_MAP_URL = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/map/map11.png`;
+/** Minimapa com o desenho estilo "mapa-múndi" alternativo */
+export const RIFT_MAP_ALT_URL = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/map/map11_shrouded.png`;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { THEME_BOOT_SCRIPT } from "@/lib/lol/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Aplica o tema salvo ANTES da hidratação para evitar flash de tema errado */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
