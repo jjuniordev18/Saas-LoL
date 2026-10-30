@@ -1,0 +1,860 @@
+     1→// ============================================================
+     2→// Topo do Rift — Camada de dados (Patch 16.21)
+     3→// Catálogos de itens, runas e feitiços + tipos compartilhados
+     4→// ============================================================
+     5→
+     6→export type ChampionClass = "lutador" | "tank" | "duelista" | "mago";
+     7→export type Difficulty = 1 | 2 | 3;
+     8→export type Tier = "S" | "A" | "B";
+     9→
+    10→export interface ItemInfo {
+    11→  name: string;
+    12→  cost: number;
+    13→  glyph: ItemGlyph;
+    14→  category: ItemCategory;
+    15→  desc: string;
+    16→}
+    17→
+    18→export type ItemGlyph =
+    19→  | "sword"
+    20→  | "axe"
+    21→  | "shield"
+    22→  | "boot"
+    23→  | "flask"
+    24→  | "heart"
+    25→  | "bolt"
+    26→  | "bow"
+    27→  | "staff"
+    28→  | "crown"
+    29→  | "clock"
+    30→  | "flame"
+    31→  | "fist";
+    32→
+    33→export type ItemCategory = "starter" | "boots" | "ad" | "tank" | "ap";
+    34→
+    35→export interface ItemRef {
+    36→  id: string;
+    37→  note?: string;
+    38→}
+    39→
+    40→export type RuneTree = "precision" | "sorcery" | "resolve" | "inspiration" | "domination";
+    41→
+    42→export interface RuneInfo {
+    43→  name: string;
+    44→  tree: RuneTree;
+    45→  keystone?: boolean;
+    46→  desc: string;
+    47→}
+    48→
+    49→export interface RuneSetup {
+    50→  primaryTree: RuneTree;
+    51→  keystone: string;
+    52→  primary: string[];
+    53→  secondaryTree: RuneTree;
+    54→  secondary: string[];
+    55→  shards: string[];
+    56→  explanation: string;
+    57→}
+    58→
+    59→export interface SpellInfo {
+    60→  name: string;
+    61→  glyph: "bolt" | "portal" | "flame" | "ghost";
+    62→  desc: string;
+    63→}
+    64→
+    65→export interface Ability {
+    66→  key: "P" | "Q" | "W" | "E" | "R";
+    67→  name: string;
+    68→  desc: string;
+    69→}
+    70→
+    71→export interface Matchup {
+    72→  champion: string;
+    73→  note: string;
+    74→}
+    75→
+    76→export interface AltBuild {
+    77→  name: string;
+    78→  when: string;
+    79→  items: ItemRef[];
+    80→  note?: string;
+    81→}
+    82→
+    83→export interface Champion {
+    84→  id: string;
+    85→  name: string;
+    86→  title: string;
+    87→  classes: ChampionClass[];
+    88→  difficulty: Difficulty;
+    89→  tier: Tier;
+    90→  popular?: boolean;
+    91→  image: string;
+    92→  color: string;
+    93→  playstyle: string;
+    94→  summary: string;
+    95→  strengths: string[];
+    96→  weaknesses: string[];
+    97→  startItems: ItemRef[];
+    98→  boots: ItemRef[];
+    99→  coreItems: ItemRef[];
+   100→  situationalItems: ItemRef[];
+   101→  runes: RuneSetup;
+   102→  altRunesNote: string;
+   103→  spells: { id: string; note: string }[];
+   104→  skillPriority: ("Q" | "W" | "E")[];
+   105→  abilities: Ability[];
+   106→  comboTips: string[];
+   107→  tips: { early: string[]; mid: string[]; late: string[] };
+   108→  strongAgainst: Matchup[];
+   109→  weakAgainst: Matchup[];
+   110→  counterTips: string[];
+   111→  altBuilds: AltBuild[];
+   112→}
+   113→
+   114→// ------------------------------------------------------------
+   115→// Catálogo de itens
+   116→// ------------------------------------------------------------
+   117→export const ITEMS: Record<string, ItemInfo> = {
+   118→  // Iniciais
+   119→  "dorans-blade": {
+   120→    name: "Doran's Blade",
+   121→    cost: 450,
+   122→    glyph: "sword",
+   123→    category: "starter",
+   124→    desc: "Dano de ataque, vida e um pouco de roubo de vida. Inicial clássica de lutadores AD.",
+   125→  },
+   126→  "dorans-shield": {
+   127→    name: "Doran's Shield",
+   128→    cost: 450,
+   129→    glyph: "shield",
+   130→    category: "starter",
+   131→    desc: "Vida e regeneração; após tomar dano de campeão, seus básicos causam dano extra. Inicial contra poke e matchups difíceis.",
+   132→  },
+   133→  "dorans-ring": {
+   134→    name: "Doran's Ring",
+   135→    cost: 400,
+   136→    glyph: "crown",
+   137→    category: "starter",
+   138→    desc: "Poder de habilidade, vida e regeneração de mana (restaura mana ao abater tropas). Inicial de magos.",
+   139→  },
+   140→  "health-potion": {
+   141→    name: "Poção de Vida",
+   142→    cost: 50,
+   143→    glyph: "flask",
+   144→    category: "starter",
+   145→    desc: "Restaura vida ao longo de 15 segundos. Sempre leve ao menos uma.",
+   146→  },
+   147→  "refillable-potion": {
+   148→    name: "Poção Reutilizável",
+   149→    cost: 150,
+   150→    glyph: "flask",
+   151→    category: "starter",
+   152→    desc: "Duas cargas que recarregam ao voltar à base. Economiza ouro no longo prazo.",
+   153→  },
+   154→  "corrupting-potion": {
+   155→    name: "Poção Corruptora",
+   156→    cost: 500,
+   157→    glyph: "flask",
+   158→    category: "starter",
+   159→    desc: "Três cargas que curam, devolvem mana e aplicam queimadura nos ataques enquanto ativas. Para trocas agressivas.",
+   160→  },
+   161→
+   162→  // Botas
+   163→  "plated-steelcaps": {
+   164→    name: "Plated Steelcaps",
+   165→    cost: 1200,
+   166→    glyph: "boot",
+   167→    category: "boots",
+   168→    desc: "Armadura e reduz 12% do dano de ataques básicos. Essencial contra lutadores e atiradores AD.",
+   169→  },
+   170→  "mercury-treads": {
+   171→    name: "Mercury's Treads",
+   172→    cost: 1250,
+   173→    glyph: "boot",
+   174→    category: "boots",
+   175→    desc: "Resistência mágica e Tenacidade (reduz a duração de desacelerações e atordoamentos).",
+   176→  },
+   177→  "berserker-greaves": {
+   178→    name: "Berserker's Greaves",
+   179→    cost: 1100,
+   180→    glyph: "boot",
+   181→    category: "boots",
+   182→    desc: "Velocidade de ataque para campeões que dependem de básicos.",
+   183→  },
+   184→  "sorcerers-shoes": {
+   185→    name: "Sorcerer's Shoes",
+   186→    cost: 1100,
+   187→    glyph: "boot",
+   188→    category: "boots",
+   189→    desc: "Penetração mágica para maximizar o dano de habilidades.",
+   190→  },
+   191→  "ionian-boots": {
+   192→    name: "Ionian Boots of Lucidity",
+   193→    cost: 900,
+   194→    glyph: "boot",
+   195→    category: "boots",
+   196→    desc: "Aceleração de habilidade e redução do tempo de recarga de feitiços de invocador.",
+   197→  },
+   198→  "boots-of-swiftness": {
+   199→    name: "Boots of Swiftness",
+   200→    cost: 1000,
+   201→    glyph: "boot",
+   202→    category: "boots",
+   203→    desc: "Velocidade de movimento alta e resistência a desacelerações.",
+   204→  },
+   205→
+   206→  // Lutadores / AD
+   207→  "sundered-sky": {
+   208→    name: "Sundered Sky",
+   209→    cost: 3100,
+   210→    glyph: "sword",
+   211→    category: "ad",
+   212→    desc: "Seu primeiro básico contra cada alvo causa dano crítico garantido e cura você. Excelente em trocas curtas.",
+   213→  },
+   214→  "black-cleaver": {
+   215→    name: "Black Cleaver",
+   216→    cost: 3000,
+   217→    glyph: "axe",
+   218→    category: "ad",
+   219→    desc: "Acumula redução de armadura no alvo e concede aceleração. Item anti-tank clássico.",
+   220→  },
+   221→  "steraks-gage": {
+   222→    name: "Sterak's Gage",
+   223→    cost: 3200,
+   224→    glyph: "fist",
+   225→    category: "ad",
+   226→    desc: "Vida e dano; quando você cai de vida, ativa um escudo salva-vidas. Ideal para brigas prolongadas.",
+   227→  },
+   228→  "stridebreaker": {
+   229→    name: "Stridebreaker",
+   230→    cost: 3300,
+   231→    glyph: "axe",
+   232→    category: "ad",
+   233→    desc: "Ativo em área ao redor que desacelera todos os inimigos. Ajuda a colar em alvos móveis.",
+   234→  },
+   235→  "titanic-hydra": {
+   236→    name: "Titanic Hydra",
+   237→    cost: 3300,
+   238→    glyph: "axe",
+   239→    category: "ad",
+   240→    desc: "Muita vida; seus básicos causam dano em área que escala com sua vida máxima.",
+   241→  },
+   242→  "ravenous-hydra": {
+   243→    name: "Ravenous Hydra",
+   244→    cost: 3300,
+   245→    glyph: "axe",
+   246→    category: "ad",
+   247→    desc: "Omnivamp e dano em área com básicos. Sustain e limpeza de onda fortes.",
+   248→  },
+   249→  botrk: {
+   250→    name: "Blade of the Ruined King",
+   251→    cost: 3200,
+   252→    glyph: "sword",
+   253→    category: "ad",
+   254→    desc: "Básicos causam dano baseado na vida atual do alvo — tritura tanques e campeões de muita vida.",
+   255→  },
+   256→  "trinity-force": {
+   257→    name: "Trinity Force",
+   258→    cost: 3333,
+   259→    glyph: "sword",
+   260→    category: "ad",
+   261→    desc: "Ataque, vida e passiva tipo Sheen: após usar habilidade, o próximo básico causa dano extra.",
+   262→  },
+   263→  hullbreaker: {
+   264→    name: "Hullbreaker",
+   265→    cost: 3000,
+   266→    glyph: "shield",
+   267→    category: "ad",
+   268→    desc: "Enorme poder de splitpush: resistências extras e mais dano a estruturas quando sozinho em rota.",
+   269→  },
+   270→  "dead-mans-plate": {
+   271→    name: "Dead Man's Plate",
+   272→    cost: 2900,
+   273→    glyph: "shield",
+   274→    category: "tank",
+   275→    desc: "Armadura e vida; acumula velocidade em movimento e o básico carregado desacelera o alvo.",
+   276→  },
+   277→  "youmuus-ghostblade": {
+   278→    name: "Youmuu's Ghostblade",
+   279→    cost: 2800,
+   280→    glyph: "bolt",
+   281→    category: "ad",
+   282→    desc: "Letalidade e ativo de velocidade de movimento para caçar alvos frágeis ou alcançar quem foge.",
+   283→  },
+   284→  eclipse: {
+   285→    name: "Eclipse",
+   286→    cost: 2900,
+   287→    glyph: "bolt",
+   288→    category: "ad",
+   289→    desc: "Dois golpes seguidos no mesmo alvo causam dano baseado na vida máxima e geram um escudo.",
+   290→  },
+   291→  "deaths-dance": {
+   292→    name: "Death's Dance",
+   293→    cost: 3300,
+   294→    glyph: "shield",
+   295→    category: "ad",
+   296→    desc: "Armadura; converte parte do dano físico recebido em sangramento gradual — evita mortes instantâneas.",
+   297→  },
+   298→  "maw-of-malmortius": {
+   299→    name: "Maw of Malmortius",
+   300→    cost: 3100,
+   301→    glyph: "shield",
+   302→    category: "ad",
+   303→    desc: "Resistência mágica; escudo poderoso quando sua vida cai baixo contra dano mágico.",
+   304→  },
+   305→  "guardian-angel": {
+   306→    name: "Guardian Angel",
+   307→    cost: 3200,
+   308→    glyph: "crown",
+   309→    category: "ad",
+   310→    desc: "Armadura e dano; ressuscita com parte da vida uma vez a cada intervalo. Seguro para brigas arriscadas.",
+   311→  },
+   312→  "chempunk-chainsword": {
+   313→    name: "Chempunk Chainsword",
+   314→    cost: 3000,
+   315→    glyph: "flame",
+   316→    category: "ad",
+   317→    desc: "Vida e dano; aplica Ferimentos Graves (reduz curas). Contra campeões com muita regeneração.",
+   318→  },
+   319→  "mortal-reminder": {
+   320→    name: "Mortal Reminder",
+   321→    cost: 3000,
+   322→    glyph: "flame",
+   323→    category: "ad",
+   324→    desc: "Penetração de armadura e Ferimentos Graves. Anti-cura para finalizar a build.",
+   325→  },
+   326→  "seryldas-grudge": {
+   327→    name: "Serylda's Grudge",
+   328→    cost: 3000,
+   329→    glyph: "bolt",
+   330→    category: "ad",
+   331→    desc: "Penetração de armadura; suas habilidades desaceleram os alvos atingidos.",
+   332→  },
+   333→  "wits-end": {
+   334→    name: "Wit's End",
+   335→    cost: 2800,
+   336→    glyph: "bow",
+   337→    category: "ad",
+   338→    desc: "Resistência mágica e dano mágico on-hit nos básicos. Item híbrido contra times AP.",
+   339→  },
+   340→  "phantom-dancer": {
+   341→    name: "Phantom Dancer",
+   342→    cost: 2800,
+   343→    glyph: "bow",
+   344→    category: "ad",
+   345→    desc: "Velocidade de ataque e movimento; ao atacar, ganha um fantasma temporário que acelera você. Para lutadores que dependem de básicos constantes.",
+   346→  },
+   347→
+   348→  // Tanques
+   349→  heartsteel: {
+   350→    name: "Heartsteel",
+   351→    cost: 3000,
+   352→    glyph: "heart",
+   353→    category: "tank",
+   354→    desc: "Vida gigante; próximo básico com 3 stacks causa dano e converte parte em vida permanente.",
+   355→  },
+   356→  warmogs: {
+   357→    name: "Warmog's Armor",
+   358→    cost: 3100,
+   359→    glyph: "heart",
+   360→    category: "tank",
+   361→    desc: "Vida massiva e regeneração aceleradíssima fora de combate. Recupere entre brigas.",
+   362→  },
+   363→  jaksho: {
+   364→    name: "Jak'Sho, The Protean",
+   365→    cost: 3200,
+   366→    glyph: "shield",
+   367→    category: "tank",
+   368→    desc: "Resistências que crescem a cada segundo em combate prolongado — quanto mais a briga dura, mais tanque você fica.",
+   369→  },
+   370→  "sunfire-aegis": {
+   371→    name: "Sunfire Aegis",
+   372→    cost: 2800,
+   373→    glyph: "flame",
+   374→    category: "tank",
+   375→    desc: "Imolação: dano mágico constante em área ao redor. Dano e pressão de rota.",
+   376→  },
+   377→  "hollow-radiance": {
+   378→    name: "Hollow Radiance",
+   379→    cost: 2800,
+   380→    glyph: "flame",
+   381→    category: "tank",
+   382→    desc: "Versão com resistência mágica da Sunfire e limpeza de ondas ainda mais forte.",
+   383→  },
+   384→  "kaenic-rookern": {
+   385→    name: "Kaenic Rookern",
+   386→    cost: 2900,
+   387→    glyph: "shield",
+   388→    category: "tank",
+   389→    desc: "Grande resistência mágica com escudo mágico que regenera fora de combate.",
+   390→  },
+   391→  "force-of-nature": {
+   392→    name: "Force of Nature",
+   393→    cost: 2800,
+   394→    glyph: "bolt",
+   395→    category: "tank",
+   396→    desc: "Resistência mágica; acumula velocidade e redução de dano mágico ao receber habilidades.",
+   397→  },
+   398→  "spirit-visage": {
+   399→    name: "Spirit Visage",
+   400→    cost: 2700,
+   401→    glyph: "heart",
+   402→    category: "tank",
+   403→    desc: "Resistência mágica e vida; amplifica todas as suas curas e regenerações.",
+   404→  },
+   405→  thornmail: {
+   406→    name: "Thornmail",
+   407→    cost: 2450,
+   408→    glyph: "shield",
+   409→    category: "tank",
+   410→    desc: "Armadura pesada; quem te ataca sofre dano e Ferimentos Graves. Contra lutadores de básico.",
+   411→  },
+   412→  "frozen-heart": {
+   413→    name: "Frozen Heart",
+   414→    cost: 2500,
+   415→    glyph: "clock",
+   416→    category: "tank",
+   417→    desc: "Armadura e mana; reduz a velocidade de ataque de inimigos próximos. Contra atiradores e lutadores de AS.",
+   418→  },
+   419→  "randuins-omen": {
+   420→    name: "Randuin's Omen",
+   421→    cost: 2700,
+   422→    glyph: "shield",
+   423→    category: "tank",
+   424→    desc: "Armadura e vida; reduz dano crítico recebido e o ativo desacelera em área.",
+   425→  },
+   426→  "unending-despair": {
+   427→    name: "Unending Despair",
+   428→    cost: 2800,
+   429→    glyph: "heart",
+   430→    category: "tank",
+   431→    desc: "Vida e resistências; drena vida e causa dano percentual nos inimigos ao redor periodicamente.",
+   432→  },
+   433→  "iceborn-gauntlet": {
+   434→    name: "Iceborn Gauntlet",
+   435→    cost: 2900,
+   436→    glyph: "fist",
+   437→    category: "tank",
+   438→    desc: "Passiva tipo Sheen para tanques: cria campo de gelo que desacelera após usar habilidade.",
+   439→  },
+   440→  "abyssal-mask": {
+   441→    name: "Abyssal Mask",
+   442→    cost: 2650,
+   443→    glyph: "staff",
+   444→    category: "tank",
+   445→    desc: "Vida e MR; reduz a resistência mágica dos inimigos próximos — amplifica o AP do seu time.",
+   446→  },
+   447→
+   448→  // AP
+   449→  riftmaker: {
+   450→    name: "Riftmaker",
+   451→    cost: 3100,
+   452→    glyph: "staff",
+   453→    category: "ap",
+   454→    desc: "AP, vida e omnivamp; dano crescente enquanto você permanece em combate. O 'Sundered Sky' dos lutadores AP.",
+   455→  },
+   456→  "rod-of-ages": {
+   457→    name: "Rod of Ages",
+   458→    cost: 2600,
+   459→    glyph: "staff",
+   460→    category: "ap",
+   461→    desc: "AP, vida e mana que escalam com o tempo — seguro para early fraco e late forte.",
+   462→  },
+   463→  rylais: {
+   464→    name: "Rylai's Crystal Scepter",
+   465→    cost: 2600,
+   466→    glyph: "staff",
+   467→    category: "ap",
+   468→    desc: "Vida e AP; suas habilidades desaceleram os alvos. Fácil de acertar combos.",
+   469→  },
+   470→  liandrys: {
+   471→    name: "Liandry's Torment",
+   472→    cost: 3000,
+   473→    glyph: "flame",
+   474→    category: "ap",
+   475→    desc: "AP e vida; dano contínuo baseado na vida máxima do alvo. Derrete tanques.",
+   476→  },
+   477→  zhonyas: {
+   478→    name: "Zhonya's Hourglass",
+   479→    cost: 3250,
+   480→    glyph: "clock",
+   481→    category: "ap",
+   482→    desc: "AP e armadura; ativo de invulnerabilidade por 2,5s. Adia ultimates e agressões.",
+   483→  },
+   484→  rabaddons: {
+   485→    name: "Rabadon's Deathcap",
+   486→    cost: 3500,
+   487→    glyph: "crown",
+   488→    category: "ap",
+   489→    desc: "AP altíssimo; amplifica todo o seu poder de habilidade. Item de late game.",
+   490→  },
+   491→  "void-staff": {
+   492→    name: "Void Staff",
+   493→    cost: 3000,
+   494→    glyph: "staff",
+   495→    category: "ap",
+   496→    desc: "Penetração mágica alta — obrigatório quando o inimigo compra resistência mágica.",
+   497→  },
+   498→  cryptbloom: {
+   499→    name: "Cryptbloom",
+   500→    cost: 3000,
+   501→    glyph: "flask",
+   502→    category: "ap",
+   503→    desc: "Penetração mágica; ao abater um inimigo, explode em cura em área para o seu time.",
+   504→  },
+   505→  "nashors-tooth": {
+   506→    name: "Nashor's Tooth",
+   507→    cost: 2900,
+   508→    glyph: "bow",
+   509→    category: "ap",
+   510→    desc: "AP, velocidade de ataque e dano mágico nos básicos. Para magos que lutam corpo a corpo.",
+   511→  },
+   512→  stormsurge: {
+   513→    name: "Stormsurge",
+   514→    cost: 2800,
+   515→    glyph: "bolt",
+   516→    category: "ap",
+   517→    desc: "AP; ao acumular dano suficiente em um alvo, causa uma explosão mágica em área e dá velocidade.",
+   518→  },
+   519→  morellonomicon: {
+   520→    name: "Morellonomicon",
+   521→    cost: 2850,
+   522→    glyph: "flame",
+   523→    category: "ap",
+   524→    desc: "AP e vida; aplica Ferimentos Graves ao causar dano mágico. Anti-cura AP.",
+   525→  },
+   526→  shadowflame: {
+   527→    name: "Shadowflame",
+   528→    cost: 3000,
+   529→    glyph: "bolt",
+   530→    category: "ap",
+   531→    desc: "AP e penetração mágica; contra alvos escudados, causa dano crítico extra. Execute de poke.",
+   532→  },
+   533→};
+   534→
+   535→// ------------------------------------------------------------
+   536→// Catálogo de runas
+   537→// ------------------------------------------------------------
+   538→export const RUNES: Record<string, RuneInfo> = {
+   539→  // Precision
+   540→  conqueror: {
+   541→    name: "Conqueror",
+   542→    tree: "precision",
+   543→    keystone: true,
+   544→    desc: "Acumula dano adaptativo a cada ataque/habilidade em combate; ao encher, cura parte do dano causado. Ideal para brigas longas.",
+   545→  },
+   546→  "press-the-attack": {
+   547→    name: "Press the Attack",
+   548→    tree: "precision",
+   549→    keystone: true,
+   550→    desc: "3 básicos seguidos no mesmo alvo expõem uma fraqueza: o alvo sofre dano extra de TODAS as fontes por alguns segundos. Perfeito para trocas curtas de 3 golpes.",
+   551→  },
+   552→  "lethal-tempo": {
+   553→    name: "Lethal Tempo",
+   554→    tree: "precision",
+   555→    keystone: true,
+   556→    desc: "Ataques seguidos concedem velocidade de ataque acumulável (pode ultrapassar o limite) e estendem a duração em combate. Para quem depende de básicos constantes.",
+   557→  },
+   558→  "fleet-footwork": {
+   559→    name: "Fleet Footwork",
+   560→    tree: "precision",
+   561→    keystone: true,
+   562→    desc: "Básicos carregam energia; o básico carregado causa dano extra, cura e dá velocidade. Para fases de rota tranquilas.",
+   563→  },
+   564→  triumph: {
+   565→    name: "Triumph",
+   566→    tree: "precision",
+   567→    desc: "Restaura vida (e dá ouro) ao participar de abates — salva em trocas muito próximas.",
+   568→  },
+   569→  "presence-of-mind": {
+   570→    name: "Presence of Mind",
+   571→    tree: "precision",
+   572→    desc: "Restaura mana/energia em abates e participações e reduz custos por alguns segundos.",
+   573→  },
+   574→  "legend-alacrity": {
+   575→    name: "Legend: Alacrity",
+   576→    tree: "precision",
+   577→    desc: "Velocidade de ataque acumulável com tropas, monstros e abates.",
+   578→  },
+   579→  "legend-haste": {
+   580→    name: "Legend: Haste",
+   581→    tree: "precision",
+   582→    desc: "Aceleração de habilidade acumulável com tropas, monstros e abates — mais Qs por minuto.",
+   583→  },
+   584→  "legend-bloodline": {
+   585→    name: "Legend: Bloodline",
+   586→    tree: "precision",
+   587→    desc: "Vida e omnivamp acumuláveis. Sustain passivo para a rota.",
+   588→  },
+   589→  "last-stand": {
+   590→    name: "Last Stand",
+   591→    tree: "precision",
+   592→    desc: "Causa mais dano quando você está com pouca vida — sinergia com escudos e salvamentos.",
+   593→  },
+   594→  "taste-of-blood": {
+   595→    name: "Taste of Blood",
+   596→    tree: "domination",
+   597→    desc: "Cura periódica ao atacar campeões — sustain barato para a rota.",
+   598→  },
+   599→  "treasure-hunter": {
+   600→    name: "Treasure Hunter",
+   601→    tree: "domination",
+   602→    desc: "Ouro extra por abate único, acelerando seu primeiro item.",
+   603→  },
+   604→  "cut-down": {
+   605→    name: "Cut Down",
+   606→    tree: "precision",
+   607→    desc: "Dano extra contra alvos com mais vida que você.",
+   608→  },
+   609→
+   610→  // Sorcery
+   611→  "arcane-comet": {
+   612→    name: "Arcane Comet",
+   613→    tree: "sorcery",
+   614→    keystone: true,
+   615→    desc: "O primeiro dano em um campeão a cada intervalo chama um cometa em área. O poke de habilidades fica muito mais doloroso.",
+   616→  },
+   617→  "manaflow-band": {
+   618→    name: "Manaflow Band",
+   619→    tree: "sorcery",
+   620→    desc: "Mana máxima extra e restauração periódica de mana — sustenta o spam de habilidades na rota.",
+   621→  },
+   622→  "stormraiders-surge": {
+   623→    name: "Stormraider's Surge",
+   624→    tree: "sorcery",
+   625→    keystone: true,
+   626→    desc: "Ao causar dano suficiente em um campeão em pouco tempo, ganha velocidade de movimento e resistência a desaceleração. Perfeito para colar nos alvos (retornou no patch 26.9).",
+   627→  },
+   628→  "nimbus-cloak": {
+   629→    name: "Nimbus Cloak",
+   630→    tree: "sorcery",
+   631→    desc: "Após usar Flash ou outro feitiço de invocador, ganha velocidade de movimento por alguns segundos.",
+   632→  },
+   633→  celerity: {
+   634→    name: "Celerity",
+   635→    tree: "sorcery",
+   636→    desc: "Velocidade de movimento extra convertida em dano adaptativo.",
+   637→  },
+   638→  transcendence: {
+   639→    name: "Transcendence",
+   640→    tree: "sorcery",
+   641→    desc: "Concede aceleração de habilidade bônus conforme o jogo avança.",
+   642→  },
+   643→  scorch: {
+   644→    name: "Scorch",
+   645→    tree: "sorcery",
+   646→    desc: "O primeiro dano em um campeão a cada intervalo queima por dano mágico extra. Pressão de rota.",
+   647→  },
+   648→  "gathering-storm": {
+   649→    name: "Gathering Storm",
+   650→    tree: "sorcery",
+   651→    desc: "Dano adaptativo que cresce a cada minuto — fortalece o late game.",
+   652→  },
+   653→
+   654→  // Resolve
+   655→  aftershock: {
+   656→    name: "Aftershock",
+   657→    tree: "resolve",
+   658→    keystone: true,
+   659→    desc: "Após imobilizar um inimigo, ganha resistências e explode em dano ao redor. Para tanques que iniciam com CC.",
+   660→  },
+   661→  grasp: {
+   662→    name: "Grasp of the Undying",
+   663→    tree: "resolve",
+   664→    keystone: true,
+   665→    desc: "A cada 4s em combate, seu próximo básico causa dano baseado na sua vida máxima, cura você e dá vida permanente. Runa de trocas curtas.",
+   666→  },
+   667→  demolish: {
+   668→    name: "Demolish",
+   669→    tree: "resolve",
+   670→    desc: "Quando sozinho perto de uma torre, carrega um golpe extra contra ela — pressão de rota e placas de ouro.",
+   671→  },
+   672→  "second-wind": {
+   673→    name: "Second Wind",
+   674→    tree: "resolve",
+   675→    desc: "Regenera vida após receber dano de campeões. Essencial contra poke e trocas desgastantes.",
+   676→  },
+   677→  "bone-plating": {
+   678→    name: "Bone Plating",
+   679→    tree: "resolve",
+   680→    desc: "Após ser atingido por uma habilidade, reduz o dano dos próximos 3 golpes. Anti-burst.",
+   681→  },
+   682→  overgrowth: {
+   683→    name: "Overgrowth",
+   684→    tree: "resolve",
+   685→    desc: "Acumula vida permanente conforme tropas morrem perto de você.",
+   686→  },
+   687→  unflinching: {
+   688→    name: "Unflinching",
+   689→    tree: "resolve",
+   690→    desc: "Tenacidade e resistência a desaceleração; aumenta ao usar feitiços de invocador.",
+   691→  },
+   692→
+   693→  // Inspiration
+   694→  "magical-footwear": {
+   695→    name: "Magical Footwear",
+   696→    tree: "inspiration",
+   697→    desc: "Recebe botas gratuitas aos 12 minutos (com velocidade extra). Economia de ouro.",
+   698→  },
+   699→  "cosmic-insight": {
+   700→    name: "Cosmic Insight",
+   701→    tree: "inspiration",
+   702→    desc: "Aceleração de habilidade e redução de recarga de feitiços de invocador e itens.",
+   703→  },
+   704→
+   705→  // Domination
+   706→  "sudden-impact": {
+   707→    name: "Sudden Impact",
+   708→    tree: "domination",
+   709→    desc: "Após um dash, teleporte ou sair de furtividade, ganha penetração por alguns segundos.",
+   710→  },
+   711→  "ultimate-hunter": {
+   712→    name: "Ultimate Hunter",
+   713→    tree: "domination",
+   714→    desc: "Redução de recarga do ultimate acumulável com abates. Mais Rs por partida.",
+   715→  },
+   716→};
+   717→
+   718→export const RUNE_TREES: Record<RuneTree, { name: string; color: string }> = {
+   719→  precision: { name: "Precision", color: "#C8AA6E" },
+   720→  sorcery: { name: "Sorcery", color: "#4EC9D4" },
+   721→  resolve: { name: "Resolve", color: "#5FAF6E" },
+   722→  inspiration: { name: "Inspiration", color: "#A0A8B8" },
+   723→  domination: { name: "Domination", color: "#C8324B" },
+   724→};
+   725→
+   726→// ------------------------------------------------------------
+   727→// Feitiços de invocador
+   728→// ------------------------------------------------------------
+   729→export const SPELLS: Record<string, SpellInfo> = {
+   730→  flash: {
+   731→    name: "Flash",
+   732→    glyph: "bolt",
+   733→    desc: "Teleporte instantâneo de curta distância. O feitiço mais importante do jogo — use para escapar, caçar ou corrigir o posicionamento.",
+   734→  },
+   735→  teleport: {
+   736→    name: "Teleporte",
+   737→    glyph: "portal",
+   738→    desc: "Viaja até uma torre, tropa ou ward. Volta rápido à rota, alcança brigas no mapa e cria pressão de splitpush.",
+   739→  },
+   740→  ignite: {
+   741→    name: "Incendiar",
+   742→    glyph: "flame",
+   743→    desc: "Dano verdadeiro ao longo do tempo e reduz curas. Pressão de abate na rota — cuidado, pois você fica sem TP.",
+   744→  },
+   745→  ghost: {
+   746→    name: "Fantasma",
+   747→    glyph: "ghost",
+   748→    desc: "Velocidade de movimento por muito tempo. Para campeões que precisam colar no alvo durante toda a briga.",
+   749→  },
+   750→};
+   751→
+   752→// ------------------------------------------------------------
+   753→// Metadados de classes / dificuldade / tier
+   754→// ------------------------------------------------------------
+   755→export const CLASS_META: Record<ChampionClass, { label: string; color: string; desc: string }> = {
+   756→  lutador: {
+   757→    label: "Lutador",
+   758→    color: "#E8902F",
+   759→    desc: "Vida e dano equilibrados; briga corpo a corpo prolongada.",
+   760→  },
+   761→  tank: {
+   762→    label: "Tanque",
+   763→    color: "#5C8AA0",
+   764→    desc: "Muita vida e resistências; inicia brigas e protege o time.",
+   765→  },
+   766→  duelista: {
+   767→    label: "Duelista",
+   768→    color: "#C8324B",
+   769→    desc: "Dano altíssimo 1v1 e mobilidade; vence trocas isoladas.",
+   770→  },
+   771→  mago: {
+   772→    label: "Mago",
+   773→    color: "#A25CE8",
+   774→    desc: "Dano mágico com habilidades; alcance e área de efeito.",
+   775→  },
+   776→};
+   777→
+   778→export const DIFFICULTY_META: Record<Difficulty, { label: string; desc: string }> = {
+   779→  1: { label: "Fácil", desc: "Kit direto, ótimo para começar na rota." },
+   780→  2: { label: "Moderada", desc: "Exige noção de timing e recursos." },
+   781→  3: { label: "Difícil", desc: "Mecânicas exigentes; recompensa prática." },
+   782→};
+   783→
+   784→export const TIER_META: Record<Tier, { label: string; color: string; desc: string }> = {
+   785→  S: { label: "S", color: "#F0B93C", desc: "Forte no meta atual — prioridade de pick." },
+   786→  A: { label: "A", color: "#0AC8B9", desc: "Sólido e confiável na maioria dos elos." },
+   787→  B: { label: "B", color: "#8C9BA8", desc: "Situacional; exige mais do jogador." },
+   788→};
+   789→
+   790→export const PATCH_VERSION = "16.21";
+   791→export const SEASON_LABEL = "Temporada 2026";
+   792→
+   793→// ------------------------------------------------------------
+   794→// Tier list da rota do topo — dados reais do Blitz.gg
+   795→// ("LoL Meta Ranked Champion Stats for Top", Esmeralda+, Mundo,
+   796→// captura atualizada ~2h antes da inclusão — patch 26.21 no site)
+   797→// ------------------------------------------------------------
+   798→export interface BlitzTierEntry {
+   799→  rank: number;
+   800→  championId: string; // id interno do campeão neste site
+   801→  name: string;
+   802→  tier: "S" | "A";
+   803→  winRate: number; // %
+   804→  wrChange: number; // variação de WR vs. patch anterior (p.p.)
+   805→  banRate: number; // %
+   806→  pickRate: number; // %
+   807→  matches: number;
+   808→}
+   809→
+   810→export const BLITZ_SOURCE = {
+   811→  site: "Blitz.gg",
+   812→  elo: "Esmeralda+",
+   813→  region: "Mundo",
+   814→  updatedLabel: "atualizado há ~2 horas",
+   815→  url: "https://blitz.gg/lol/champions",
+   816→} as const;
+   817→
+   818→export const BLITZ_TIER_LIST: BlitzTierEntry[] = [
+   819→  { rank: 1, championId: "quinn", name: "Quinn", tier: "S", winRate: 52.2, wrChange: 0.3, banRate: 0.4, pickRate: 0.4, matches: 12960 },
+   820→  { rank: 2, championId: "poppy", name: "Poppy", tier: "S", winRate: 52.0, wrChange: 1.5, banRate: 1.8, pickRate: 0.5, matches: 13939 },
+   821→  { rank: 3, championId: "warwick", name: "Warwick", tier: "S", winRate: 52.0, wrChange: 0.9, banRate: 0.9, pickRate: 0.7, matches: 21614 },
+   822→  { rank: 4, championId: "shen", name: "Shen", tier: "S", winRate: 51.6, wrChange: 0.4, banRate: 0.4, pickRate: 2.0, matches: 58513 },
+   823→  { rank: 5, championId: "malphite", name: "Malphite", tier: "S", winRate: 51.4, wrChange: -0.4, banRate: 10.4, pickRate: 3.8, matches: 110382 },
+   824→  { rank: 6, championId: "zac", name: "Zac", tier: "A", winRate: 51.7, wrChange: 0.0, banRate: 0.6, pickRate: 0.3, matches: 7924 },
+   825→  { rank: 7, championId: "singed", name: "Singed", tier: "A", winRate: 51.6, wrChange: 0.0, banRate: 0.4, pickRate: 1.2, matches: 34117 },
+   826→  { rank: 8, championId: "anivia", name: "Anivia", tier: "A", winRate: 51.5, wrChange: -0.2, banRate: 1.2, pickRate: 0.4, matches: 11474 },
+   827→  { rank: 9, championId: "kayle", name: "Kayle", tier: "A", winRate: 51.4, wrChange: 0.2, banRate: 0.7, pickRate: 1.1, matches: 33626 },
+   828→  { rank: 10, championId: "ornn", name: "Ornn", tier: "A", winRate: 51.3, wrChange: -0.5, banRate: 0.3, pickRate: 2.1, matches: 61243 },
+   829→  { rank: 11, championId: "kled", name: "Kled", tier: "A", winRate: 51.3, wrChange: 0.2, banRate: 0.5, pickRate: 0.9, matches: 26398 },
+   830→  { rank: 12, championId: "sion", name: "Sion", tier: "A", winRate: 51.0, wrChange: 1.3, banRate: 0.4, pickRate: 2.0, matches: 58353 },
+   831→];
+   832→
+   833→/** Entrada da tier list Blitz para um campeão (por id interno), se houver */
+   834→export function getBlitzEntry(championId: string): BlitzTierEntry | undefined {
+   835→  return BLITZ_TIER_LIST.find((e) => e.championId === championId);
+   836→}
+   837→
+   838→// ------------------------------------------------------------
+   839→// Gera a sequência de habilidades (níveis 1–18) da prioridade
+   840→// Padrão: 1×P1 / 1×P2 / 1×P3, completa P1, depois P2, por fim P3
+   841→// ------------------------------------------------------------
+   842→export function buildSkillSequence(priority: ("Q" | "W" | "E")[]): ("Q" | "W" | "E" | "R")[] {
+   843→  const [p1, p2, p3] = priority;
+   844→  const pool: ("Q" | "W" | "E")[] = [p1, p2, p3];
+   845→  pool.push(p1, p1, p1, p1); // P1 total = 5 (maximizada ~nível 8)
+   846→  pool.push(p2, p2, p2, p2); // P2 total = 5 (maximizada ~nível 13)
+   847→  pool.push(p3, p3, p3, p3); // P3 total = 5 (maximizada no 18)
+   848→  const result: ("Q" | "W" | "E" | "R")[] = [];
+   849→  let idx = 0;
+   850→  for (let level = 1; level <= 18; level++) {
+   851→    if (level === 6 || level === 11 || level === 16) {
+   852→      result.push("R");
+   853→    } else {
+   854→      result.push(pool[idx] ?? p3);
+   855→      idx++;
+   856→    }
+   857→  }
+   858→  return result;
+   859→}
+   860→

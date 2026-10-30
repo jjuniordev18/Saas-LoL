@@ -1,0 +1,641 @@
+     1→"use client";
+     2→
+     3→// ============================================================
+     4→// Topo do Rift — Página inicial
+     5→// Busca + cards populares + favoritos + comparador + lista com filtros
+     6→// ============================================================
+     7→import * as React from "react";
+     8→import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp } from "lucide-react";
+     9→import { Input } from "@/components/ui/input";
+    10→import { Button } from "@/components/ui/button";
+    11→import {
+    12→  CHAMPIONS,
+    13→  getPopularChampions,
+    14→  filterChampions,
+    15→  DEFAULT_FILTERS,
+    16→  CLASS_FILTERS,
+    17→  DIFFICULTY_FILTERS,
+    18→  TIER_FILTERS,
+    19→  type ChampionFilters,
+    20→} from "@/lib/lol";
+    21→import { CLASS_META, DIFFICULTY_META, TIER_META, PATCH_VERSION, ITEMS } from "@/lib/lol/data";
+    22→import type { Champion } from "@/lib/lol/data";
+    23→import { cn } from "@/lib/utils";
+    24→import { useFavorites } from "@/lib/lol/favorites";
+    25→import { ChampionCard } from "@/components/lol/ChampionCard";
+    26→import { ChampionDialog } from "@/components/lol/ChampionDialog";
+    27→import { Comparator } from "@/components/lol/Comparator";
+    28→import { ItemSearch } from "@/components/lol/ItemSearch";
+    29→import { RiftMap } from "@/components/lol/RiftMap";
+    30→import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
+    31→import { TierList } from "@/components/lol/TierList";
+    32→
+    33→// ------------------------------------------------------------
+    34→// Cabeçalho fixo
+    35→// ------------------------------------------------------------
+    36→function Header({ favoritesCount }: { favoritesCount: number }) {
+    37→  return (
+    38→    <header className="sticky top-0 z-30 border-b border-frame/40 bg-hex-navy/90 backdrop-blur supports-[backdrop-filter]:bg-hex-navy/80">
+    39→      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+    40→        <a
+    41→          href="#inicio"
+    42→          className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-gold rounded"
+    43→        >
+    44→          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
+    45→            <Swords className="h-5 w-5 text-gold" aria-hidden="true" />
+    46→          </span>
+    47→          <span className="hidden whitespace-nowrap font-display text-base font-black tracking-wide text-gold-gradient sm:inline sm:text-lg">
+    48→            Topo do Rift
+    49→          </span>
+    50→        </a>
+    51→
+    52→        <nav aria-label="Navegação principal" className="flex items-center gap-0.5 sm:gap-2">
+    53→          <a
+    54→            href="#tierlist"
+    55→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+    56→          >
+    57→            <BarChart3 className="h-4 w-4 text-gold" aria-hidden="true" />
+    58→            Tier list
+    59→          </a>
+    60→          <a
+    61→            href="#mapa"
+    62→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    63→          >
+    64→            <Map className="h-4 w-4 text-gold" aria-hidden="true" />
+    65→            Mapa
+    66→          </a>
+    67→          <a
+    68→            href="#comparador"
+    69→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+    70→          >
+    71→            <GitCompareArrows className="h-4 w-4 text-gold" aria-hidden="true" />
+    72→            Comparador
+    73→          </a>
+    74→          <a
+    75→            href="#itens"
+    76→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    77→          >
+    78→            <Package className="h-4 w-4 text-gold" aria-hidden="true" />
+    79→            Itens
+    80→          </a>
+    81→          <a
+    82→            href="#campeoes"
+    83→            className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+    84→          >
+    85→            Campeões
+    86→          </a>
+    87→          <a
+    88→            href="#favoritos"
+    89→            className="flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+    90→          >
+    91→            <Heart className="h-4 w-4 text-rose-400" aria-hidden="true" />
+    92→            <span className="hidden sm:inline">Favoritos</span>
+    93→            <span
+    94→              className={cn(
+    95→                "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold",
+    96→                favoritesCount > 0
+    97→                  ? "bg-rose-500/20 text-rose-300"
+    98→                  : "bg-muted text-muted-foreground"
+    99→              )}
+   100→              aria-label={`${favoritesCount} favoritos salvos`}
+   101→            >
+   102→              {favoritesCount}
+   103→            </span>
+   104→          </a>
+   105→          <ThemeSwitcher />
+   106→        </nav>
+   107→      </div>
+   108→    </header>
+   109→  );
+   110→}
+   111→
+   112→// ------------------------------------------------------------
+   113→// Rodapé (sempre no fim da página)
+   114→// ------------------------------------------------------------
+   115→function Footer() {
+   116→  return (
+   117→    <footer className="mt-auto border-t border-frame/40 bg-hex-deep pb-[env(safe-area-inset-bottom)]">
+   118→      <div className="mx-auto max-w-6xl px-4 py-8">
+   119→        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+   120→          <div className="flex items-center gap-2.5">
+   121→            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
+   122→              <Swords className="h-4 w-4 text-gold" aria-hidden="true" />
+   123→            </span>
+   124→            <span className="font-display text-sm font-bold text-gold-bright">
+   125→              Topo do Rift
+   126→            </span>
+   127→          </div>
+   128→          <nav aria-label="Links do rodapé" className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+   129→            <a href="#tierlist" className="transition-colors hover:text-gold-bright">
+   130→              Tier list
+   131→            </a>
+   132→            <a href="#mapa" className="transition-colors hover:text-gold-bright">
+   133→              Mapa
+   134→            </a>
+   135→            <a href="#campeoes" className="transition-colors hover:text-gold-bright">
+   136→              Todos os campeões
+   137→            </a>
+   138→            <a href="#comparador" className="transition-colors hover:text-gold-bright">
+   139→              Comparador
+   140→            </a>
+   141→            <a href="#itens" className="transition-colors hover:text-gold-bright">
+   142→              Busca de itens
+   143→            </a>
+   144→            <a href="#favoritos" className="transition-colors hover:text-gold-bright">
+   145→              Favoritos
+   146→            </a>
+   147→            <a href="#inicio" className="transition-colors hover:text-gold-bright">
+   148→              Voltar ao topo
+   149→            </a>
+   150→          </nav>
+   151→        </div>
+   152→        <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+   153→          Patch {PATCH_VERSION} · Taxa de vitória, ban e pick rate: Blitz.gg (Esmeralda+) ·{" "}
+   154→          Conteúdo educativo feito por fãs.{" "}
+   155→          Topo do Rift não é afiliado à Riot Games. League of Legends e todos os
+   156→          nomes e ícones de campeões são marcas da Riot Games, Inc.
+   157→        </p>
+   158→      </div>
+   159→    </footer>
+   160→  );
+   161→}
+   162→
+   163→// ------------------------------------------------------------
+   164→// Chip de filtro
+   165→// ------------------------------------------------------------
+   166→function FilterChip({
+   167→  active,
+   168→  onClick,
+   169→  children,
+   170→  color,
+   171→}: {
+   172→  active: boolean;
+   173→  onClick: () => void;
+   174→  children: React.ReactNode;
+   175→  color?: string;
+   176→}) {
+   177→  return (
+   178→    <button
+   179→      type="button"
+   180→      onClick={onClick}
+   181→      aria-pressed={active}
+   182→      className={cn(
+   183→        "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-gold",
+   184→        active
+   185→          ? "border-gold bg-gold/15 text-gold-bright"
+   186→          : "border-border bg-card text-muted-foreground hover:border-gold/50 hover:text-foreground"
+   187→      )}
+   188→      style={active && color ? { borderColor: color, color } : undefined}
+   189→    >
+   190→      {children}
+   191→    </button>
+   192→  );
+   193→}
+   194→
+   195→// ------------------------------------------------------------
+   196→// Botão "voltar ao topo" — aparece após rolagem
+   197→// ------------------------------------------------------------
+   198→function BackToTop() {
+   199→  const [visible, setVisible] = React.useState(false);
+   200→  React.useEffect(() => {
+   201→    const onScroll = () => setVisible(window.scrollY > 700);
+   202→    onScroll();
+   203→    window.addEventListener("scroll", onScroll, { passive: true });
+   204→    return () => window.removeEventListener("scroll", onScroll);
+   205→  }, []);
+   206→  if (!visible) return null;
+   207→  return (
+   208→    <button
+   209→      type="button"
+   210→      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+   211→      aria-label="Voltar ao topo da página"
+   212→      className="animate-fade-in-up fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-frame/70 bg-card text-gold shadow-lg transition-all hover:scale-105 hover:border-gold hover:shadow-[0_0_14px_color-mix(in_srgb,var(--gold)_40%,transparent)] focus-visible:outline-2 focus-visible:outline-gold"
+   213→    >
+   214→      <ArrowUp className="h-5 w-5" aria-hidden="true" />
+   215→    </button>
+   216→  );
+   217→}
+   218→
+   219→// ------------------------------------------------------------
+   220→// Página
+   221→// ------------------------------------------------------------
+   222→export default function Home() {
+   223→  const [filters, setFilters] = React.useState<ChampionFilters>(DEFAULT_FILTERS);
+   224→  const [favoriteOnly, setFavoriteOnly] = React.useState(false);
+   225→  const [selected, setSelected] = React.useState<Champion | null>(null);
+   226→  const [dialogOpen, setDialogOpen] = React.useState(false);
+   227→  const { favorites, isFavorite } = useFavorites();
+   228→
+   229→  // Atalho de teclado: "/" foca a busca de campeões
+   230→  React.useEffect(() => {
+   231→    const onKey = (e: KeyboardEvent) => {
+   232→      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+   233→      const t = e.target as HTMLElement | null;
+   234→      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+   235→      e.preventDefault();
+   236→      document.getElementById("busca-campeao")?.focus();
+   237→    };
+   238→    window.addEventListener("keydown", onKey);
+   239→    return () => window.removeEventListener("keydown", onKey);
+   240→  }, []);
+   241→
+   242→  const favoriteChampions = React.useMemo(
+   243→    () => CHAMPIONS.filter((c) => isFavorite(c.id)),
+   244→    [favorites, isFavorite]
+   245→  );
+   246→
+   247→  const popular = React.useMemo(() => {
+   248→    const pop = getPopularChampions();
+   249→    const q = filters.query.trim().toLowerCase();
+   250→    if (!q) return pop;
+   251→    return pop.filter(
+   252→      (c) =>
+   253→        c.name.toLowerCase().includes(q) || c.title.toLowerCase().includes(q)
+   254→    );
+   255→  }, [filters.query]);
+   256→
+   257→  const results = React.useMemo(
+   258→    () =>
+   259→      favoriteOnly
+   260→        ? filterChampions(filters).filter((c) => isFavorite(c.id))
+   261→        : filterChampions(filters),
+   262→    [filters, favoriteOnly, favorites, isFavorite]
+   263→  );
+   264→
+   265→  const hasActiveFilters =
+   266→    filters.classe !== "todas" ||
+   267→    filters.dificuldade !== "todas" ||
+   268→    filters.tier !== "todos" ||
+   269→    filters.query.trim() !== "" ||
+   270→    favoriteOnly;
+   271→
+   272→  const handleSelect = (champion: Champion) => {
+   273→    setSelected(champion);
+   274→    setDialogOpen(true);
+   275→  };
+   276→
+   277→  const clearFilters = () => setFilters(DEFAULT_FILTERS);
+   278→
+   279→  return (
+   280→    <>
+   281→      <Header favoritesCount={favorites.length} />
+   282→
+   283→      <main id="inicio" className="flex-1">
+   284→        {/* ---------- Hero + busca ---------- */}
+   285→        <section className="relative overflow-hidden border-b border-frame/30">
+   286→          <div
+   287→            className="pointer-events-none absolute inset-0"
+   288→            aria-hidden="true"
+   289→            style={{
+   290→              background:
+   291→                "radial-gradient(ellipse 60% 55% at 50% 0%, var(--glow-1), transparent 70%)",
+   292→            }}
+   293→          />
+   294→          <div className="relative mx-auto max-w-6xl px-4 py-14 text-center sm:py-20">
+   295→            <p className="animate-float mb-3 inline-flex items-center gap-2 rounded-full border border-frame/50 bg-card px-3.5 py-1.5 text-xs font-semibold text-gold">
+   296→              <Flame className="h-3.5 w-3.5" aria-hidden="true" />
+   297→              Patch {PATCH_VERSION} · Temporada 2026
+   298→            </p>
+   299→            <h1 className="font-display text-4xl font-black leading-tight text-gold-gradient sm:text-5xl md:text-6xl">
+   300→              Domine a rota superior
+   301→            </h1>
+   302→            <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
+   303→              Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
+   304→              habilidades, comparador de matchups de até 3 campeões, busca de
+   305→              itens em português e inglês, tier list com dados do Blitz.gg e
+   306→              favoritos salvos no seu navegador — direto ao ponto, para
+   307→              iniciantes e intermediários.
+   308→            </p>
+   309→
+   310→            {/* Busca */}
+   311→            <div className="mx-auto mt-8 max-w-xl">
+   312→              <label htmlFor="busca-campeao" className="sr-only">
+   313→                Buscar campeão
+   314→              </label>
+   315→              <div className="relative">
+   316→                <Search
+   317→                  className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gold"
+   318→                  aria-hidden="true"
+   319→                />
+   320→                <Input
+   321→                  id="busca-campeao"
+   322→                  type="search"
+   323→                  placeholder="Buscar campeão (ex.: Darius, Garen...)"
+   324→                  value={filters.query}
+   325→                  onChange={(e) =>
+   326→                    setFilters((f) => ({ ...f, query: e.target.value }))
+   327→                  }
+   328→                  className="h-14 rounded-lg border-[#785a28]/60 bg-card pl-12 pr-12 text-base text-foreground shadow-lg placeholder:text-muted-foreground focus-visible:ring-gold"
+   329→                />
+   330→                {filters.query && (
+   331→                  <button
+   332→                    type="button"
+   333→                    onClick={() => setFilters((f) => ({ ...f, query: "" }))}
+   334→                    aria-label="Limpar busca"
+   335→                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-gold"
+   336→                  >
+   337→                    <X className="h-4 w-4" aria-hidden="true" />
+   338→                  </button>
+   339→                )}
+   340→              </div>
+   341→              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+   342→                Dica: aperte{" "}
+   343→                <kbd className="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] font-bold text-gold">/</kbd>{" "}
+   344→                a qualquer momento para buscar
+   345→              </p>
+   346→            </div>
+   347→
+   348→            {/* Estatísticas rápidas */}
+   349→            <dl className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-3 text-center sm:grid-cols-4">
+   350→              {[
+   351→                { label: "Campeões", value: CHAMPIONS.length },
+   352→                { label: "Itens catalogados", value: Object.keys(ITEMS).length },
+   353→                { label: "Tier S", value: CHAMPIONS.filter((c) => c.tier === "S").length },
+   354→                { label: "Seus favoritos", value: favorites.length },
+   355→              ].map((s) => (
+   356→                <div
+   357→                  key={s.label}
+   358→                  className="card-hover-lift rounded-lg border border-border bg-card/60 px-3 py-3"
+   359→                >
+   360→                  <dt className="sr-only">{s.label}</dt>
+   361→                  <dd className="font-display text-2xl font-black text-gold">
+   362→                    {s.value}
+   363→                  </dd>
+   364→                  <dd className="text-[11px] uppercase tracking-wide text-muted-foreground">
+   365→                    {s.label}
+   366→                  </dd>
+   367→                </div>
+   368→              ))}
+   369→            </dl>
+   370→          </div>
+   371→        </section>
+   372→
+   373→        {/* ---------- Tier list da patch (Blitz.gg) ---------- */}
+   374→        <section id="tierlist" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   375→          <div className="mb-8 flex items-center gap-3">
+   376→            <BarChart3 className="h-6 w-6 text-gold" aria-hidden="true" />
+   377→            <div>
+   378→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   379→                Tier list do topo — dados Blitz.gg
+   380→              </h2>
+   381→              <p className="mt-2 text-sm text-muted-foreground">
+   382→                Os 12 maiores win rates da rota superior em Esmeralda+ — clique
+   383→                na linha para abrir a build completa do campeão
+   384→              </p>
+   385→            </div>
+   386→          </div>
+   387→          <TierList onSelectDetail={handleSelect} />
+   388→        </section>
+   389→
+   390→        {/* ---------- Mapa do Summoner's Rift ---------- */}
+   391→        <section id="mapa" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   392→          <div className="mb-8 flex items-center gap-3">
+   393→            <Map className="h-6 w-6 text-gold" aria-hidden="true" />
+   394→            <div>
+   395→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   396→                O Summoner's Rift
+   397→              </h2>
+   398→              <p className="mt-2 text-sm text-muted-foreground">
+   399→                O mapa oficial 5v5 incorporado ao guia — passe o mouse pelos
+   400→                pontos para entender onde a rota superior se encaixa no jogo
+   401→              </p>
+   402→            </div>
+   403→          </div>
+   404→          <RiftMap />
+   405→        </section>
+   406→
+   407→        {/* ---------- Populares ---------- */}
+   408→        <section id="populares" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   409→          <div className="mb-6 flex items-center gap-3">
+   410→            <Crown className="h-6 w-6 text-gold" aria-hidden="true" />
+   411→            <div>
+   412→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   413→                Campeões populares
+   414→              </h2>
+   415→              <p className="mt-2 text-sm text-muted-foreground">
+   416→                Os picks mais jogados e confiáveis da rota superior agora
+   417→              </p>
+   418→            </div>
+   419→          </div>
+   420→
+   421→          {popular.length === 0 ? (
+   422→            <p className="rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+   423→              Nenhum campeão popular corresponde à busca &ldquo;{filters.query}&rdquo;.
+   424→            </p>
+   425→          ) : (
+   426→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+   427→              {popular.map((c) => (
+   428→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   429→              ))}
+   430→            </div>
+   431→          )}
+   432→        </section>
+   433→
+   434→        {/* ---------- Favoritos ---------- */}
+   435→        <section id="favoritos" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   436→          <div className="mb-6 flex items-center gap-3">
+   437→            <Heart className="h-6 w-6 text-rose-400" aria-hidden="true" />
+   438→            <div>
+   439→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   440→                Seus favoritos
+   441→              </h2>
+   442→              <p className="mt-2 text-sm text-muted-foreground">
+   443→                Salvos no navegador — estejam aqui sempre que você voltar
+   444→              </p>
+   445→            </div>
+   446→          </div>
+   447→
+   448→          {favoriteChampions.length === 0 ? (
+   449→            <div className="rounded-lg border border-dashed border-border bg-card/40 p-8 text-center">
+   450→              <p className="flex items-center justify-center gap-2 font-display text-lg font-bold text-gold-bright">
+   451→                <Star className="h-5 w-5 text-gold" aria-hidden="true" />
+   452→                Nenhum favorito ainda
+   453→              </p>
+   454→              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+   455→                Toque no <Heart className="inline h-3.5 w-3.5 text-rose-400" aria-hidden="true" /> no
+   456→                canto de qualquer card para salvar a build aqui — fica gravado no
+   457→                seu navegador, sem cadastro.
+   458→              </p>
+   459→            </div>
+   460→          ) : (
+   461→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+   462→              {favoriteChampions.map((c) => (
+   463→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   464→              ))}
+   465→            </div>
+   466→          )}
+   467→        </section>
+   468→
+   469→        {/* ---------- Comparador ---------- */}
+   470→        <section id="comparador" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   471→          <div className="mb-6 flex items-center gap-3">
+   472→            <GitCompareArrows className="h-6 w-6 text-gold" aria-hidden="true" />
+   473→            <div>
+   474→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   475→                Comparador de matchups — até 3 lados
+   476→              </h2>
+   477→              <p className="mt-2 text-sm text-muted-foreground">
+   478→                Escolha dois ou três campeões e veja runas, feitiços e build
+   479→                lado a lado — com ranking de quem leva vantagem em cada
+   480→                confronto
+   481→              </p>
+   482→            </div>
+   483→          </div>
+   484→
+   485→          <Comparator onSelectDetail={handleSelect} />
+   486→        </section>
+   487→
+   488→        {/* ---------- Busca de itens ---------- */}
+   489→        <section id="itens" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   490→          <div className="mb-6 flex items-center gap-3">
+   491→            <Package className="h-6 w-6 text-gold" aria-hidden="true" />
+   492→            <div>
+   493→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   494→                Busca por item
+   495→              </h2>
+   496→              <p className="mt-2 text-sm text-muted-foreground">
+   497→                Pesquise qualquer item do guia, filtre por categoria, ordene por
+   498→                preço e descubra quem usa — com ícones oficiais do patch
+   499→              </p>
+   500→            </div>
+   501→          </div>
+   502→
+   503→          <ItemSearch onSelectDetail={handleSelect} />
+   504→        </section>
+   505→
+   506→        {/* ---------- Todos os campeões + filtros ---------- */}
+   507→        <section
+   508→          id="campeoes"
+   509→          className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16"
+   510→        >
+   511→          <div className="mb-6 flex items-center gap-3">
+   512→            <ListFilter className="h-6 w-6 text-gold" aria-hidden="true" />
+   513→            <div>
+   514→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   515→                Todos os campeões
+   516→              </h2>
+   517→              <p className="mt-2 text-sm text-muted-foreground">
+   518→                Filtre por função, dificuldade e tier para achar seu pick
+   519→              </p>
+   520→            </div>
+   521→          </div>
+   522→
+   523→          {/* Filtros */}
+   524→          <div className="space-y-3 rounded-lg border border-border bg-card/60 p-4">
+   525→            <div className="flex flex-wrap items-center gap-2">
+   526→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   527→                Função
+   528→              </span>
+   529→              {CLASS_FILTERS.map((f) => (
+   530→                <FilterChip
+   531→                  key={f.value}
+   532→                  active={filters.classe === f.value}
+   533→                  color={
+   534→                    f.value !== "todas" ? CLASS_META[f.value].color : undefined
+   535→                  }
+   536→                  onClick={() =>
+   537→                    setFilters((s) => ({ ...s, classe: f.value }))
+   538→                  }
+   539→                >
+   540→                  {f.label}
+   541→                </FilterChip>
+   542→              ))}
+   543→            </div>
+   544→
+   545→            <div className="flex flex-wrap items-center gap-2">
+   546→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   547→                Dificuldade
+   548→              </span>
+   549→              {DIFFICULTY_FILTERS.map((f) => (
+   550→                <FilterChip
+   551→                  key={String(f.value)}
+   552→                  active={filters.dificuldade === f.value}
+   553→                  onClick={() =>
+   554→                    setFilters((s) => ({ ...s, dificuldade: f.value }))
+   555→                  }
+   556→                >
+   557→                  {f.label}
+   558→                </FilterChip>
+   559→              ))}
+   560→            </div>
+   561→
+   562→            <div className="flex flex-wrap items-center gap-2">
+   563→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   564→                Tier
+   565→              </span>
+   566→              {TIER_FILTERS.map((f) => (
+   567→                <FilterChip
+   568→                  key={f.value}
+   569→                  active={filters.tier === f.value}
+   570→                  color={f.value !== "todos" ? TIER_META[f.value].color : undefined}
+   571→                  onClick={() => setFilters((s) => ({ ...s, tier: f.value }))}
+   572→                >
+   573→                  {f.label}
+   574→                </FilterChip>
+   575→              ))}
+   576→            </div>
+   577→
+   578→            <div className="flex flex-wrap items-center gap-2">
+   579→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   580→                Extras
+   581→              </span>
+   582→              <FilterChip active={favoriteOnly} onClick={() => setFavoriteOnly(!favoriteOnly)}>
+   583→                <Heart className={cn("mr-1 inline h-3 w-3", favoriteOnly ? "fill-current" : "")} aria-hidden="true" />
+   584→                Só favoritos ({favorites.length})
+   585→              </FilterChip>
+   586→            </div>
+   587→          </div>
+   588→
+   589→          {/* Contagem + limpar */}
+   590→          <div className="mb-4 mt-4 flex items-center justify-between gap-3">
+   591→            <p className="text-sm text-muted-foreground" aria-live="polite">
+   592→              <strong className="text-gold-bright">{results.length}</strong>{" "}
+   593→              {results.length === 1 ? "campeão encontrado" : "campeões encontrados"}
+   594→            </p>
+   595→            {hasActiveFilters && (
+   596→              <Button
+   597→                variant="outline"
+   598→                size="sm"
+   599→                onClick={() => {
+   600→                  clearFilters();
+   601→                  setFavoriteOnly(false);
+   602→                }}
+   603→                className="border-border text-muted-foreground hover:border-gold/50 hover:text-gold-bright"
+   604→              >
+   605→                <X className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+   606→                Limpar filtros
+   607→              </Button>
+   608→            )}
+   609→          </div>
+   610→
+   611→          {results.length === 0 ? (
+   612→            <div className="rounded-lg border border-dashed border-border bg-card/40 p-10 text-center">
+   613→              <p className="font-display text-lg font-bold text-gold-bright">
+   614→                Nenhum campeão encontrado
+   615→              </p>
+   616→              <p className="mt-1 text-sm text-muted-foreground">
+   617→                Tente outro nome ou remova alguns filtros.
+   618→              </p>
+   619→            </div>
+   620→          ) : (
+   621→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
+   622→              {results.map((c) => (
+   623→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   624→              ))}
+   625→            </div>
+   626→          )}
+   627→        </section>
+   628→      </main>
+   629→
+   630→      <BackToTop />
+   631→      <Footer />
+   632→
+   633→      <ChampionDialog
+   634→        champion={selected}
+   635→        open={dialogOpen}
+   636→        onOpenChange={setDialogOpen}
+   637→      />
+   638→    </>
+   639→  );
+   640→}
+   641→

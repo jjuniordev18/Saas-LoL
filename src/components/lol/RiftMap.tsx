@@ -5,7 +5,7 @@
 // Arte oficial (Data Dragon) + pontos de interesse interativos.
 // ============================================================
 import * as React from "react";
-import { MapPin, Crown, Flame, Mountain, Skull, Home, ArrowUpRight } from "lucide-react";
+import { MapPin, Crown, Flame, Mountain, Skull, Home, ArrowUpRight, Eye, Sparkles, EyeOff } from "lucide-react";
 import { InfoTooltip } from "./pieces";
 import { RIFT_MAP_URL } from "@/lib/lol/ddragon";
 import { cn } from "@/lib/utils";
@@ -22,8 +22,8 @@ interface Hotspot {
   highlight?: boolean;
 }
 
-// O minimapa oficial: base azul no canto superior-esquerdo, base vermelha
-// no canto inferior-direito, rio na diagonal oposta.
+// No minimapa oficial (map11.png) a base azul fica no canto
+// INFERIOR-esquerdo e a vermelha no canto SUPERIOR-direito.
 const HOTSPOTS: Hotspot[] = [
   {
     id: "top",
@@ -67,9 +67,18 @@ const HOTSPOTS: Hotspot[] = [
     x: 57,
     y: 42,
     label: "Arauto da Fenda",
-    desc: "Nasce no fosso do Barão a partir dos 14 minutos: entregue ao top laner, ela derruba a primeira torre em segundos.",
+    desc: "Nasce no fosso do Barão aos 15 minutos (sai aos 19:45): entregue ao top laner, ela derruba a primeira torre em segundos.",
     icon: Mountain,
     color: "#E8902F",
+  },
+  {
+    id: "atakhan",
+    x: 49,
+    y: 27,
+    label: "Atakhan",
+    desc: "Épico de meio de jogo (forma única, Thornbound): dá um buff de equipe poderoso no estilo de alma. O jogo avisa quando ele nasce — dispute só com visão.",
+    icon: Sparkles,
+    color: "#A25CE8",
   },
   {
     id: "dragon",
@@ -83,35 +92,110 @@ const HOTSPOTS: Hotspot[] = [
   {
     id: "blue-base",
     x: 10,
-    y: 10,
+    y: 90,
     label: "Base Azul",
-    desc: "Fonte, Nexus e loja. Se você é azul, sua torre de top fica no canto superior-direito do mapa.",
+    desc: "Fonte, Nexus e loja — canto inferior-esquerdo. Se você é azul, a sua torre de top fica na lateral esquerda do mapa.",
     icon: Home,
     color: "#3C9BD8",
   },
   {
     id: "red-base",
     x: 90,
-    y: 90,
+    y: 10,
     label: "Base Vermelha",
-    desc: "O Ninho do inimigo. Vitória = destruir o Nexus aqui, com a onda de top empurrada na frente.",
+    desc: "O Ninho do inimigo — canto superior-direito. Vitória = destruir o Nexus aqui, com a onda de top empurrada na frente.",
     icon: Home,
     color: "#E0564B",
+  },
+];
+
+// Pontos de ward (visão) — ligados/desligados por botão
+const WARD_SPOTS: Hotspot[] = [
+  {
+    id: "ward-tri",
+    x: 13,
+    y: 23,
+    label: "Arbusto Tri (top)",
+    desc: "A entrada clássica de gank da rota do topo. Sem ward aqui, todo gank do jungle te pega empurrado.",
+    icon: Eye,
+    color: "#4EC9D4",
+  },
+  {
+    id: "ward-lane",
+    x: 24,
+    y: 10,
+    label: "Arbusto da lane",
+    desc: "Ward de rota: enxerga quem avança pela lane e protege o push além do meio da rota.",
+    icon: Eye,
+    color: "#4EC9D4",
+  },
+  {
+    id: "ward-river",
+    x: 57,
+    y: 19,
+    label: "Arbusto do rio superior",
+    desc: "Enxerga as rotações para o Barão/Arauto. Um TP do inimigo vindo daqui é game-over do side.",
+    icon: Eye,
+    color: "#4EC9D4",
+  },
+  {
+    id: "ward-deep",
+    x: 42,
+    y: 12,
+    label: "Deep ward — selva inimiga",
+    desc: "Ward avançado perto do acampamento vermelho deles: antecipa ganks e dá tempo de recuar ou montar o counter-gank.",
+    icon: Eye,
+    color: "#4EC9D4",
+  },
+  {
+    id: "ward-pit",
+    x: 70,
+    y: 38,
+    label: "Visão do fosso do Barão",
+    desc: "Antes de qualquer Arauto/Barão, a regra é: sem ward no fosso, não se abre objetivo — nunca.",
+    icon: Eye,
+    color: "#4EC9D4",
   },
 ];
 
 export function RiftMap() {
   const [failed, setFailed] = React.useState(false);
   const [active, setActive] = React.useState<string | null>(null);
+  const [showWards, setShowWards] = React.useState(true);
+  const hotspots = React.useMemo(
+    () => (showWards ? [...HOTSPOTS, ...WARD_SPOTS] : HOTSPOTS),
+    [showWards]
+  );
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-start">
       {/* Mapa com pontos */}
-      <div
-        className="hextech-border relative aspect-square w-full overflow-hidden rounded-lg"
-        role="img"
-        aria-label="Mapa do Summoner's Rift com pontos de interesse marcados"
-      >
+      <div>
+        {/* Alternador de wards */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Pontos no mapa: {hotspots.length}
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowWards((v) => !v)}
+            aria-pressed={showWards}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors focus-visible:outline-2 focus-visible:outline-gold",
+              showWards
+                ? "border-[#4EC9D4]/70 bg-[#4EC9D4]/10 text-[#4EC9D4]"
+                : "border-border bg-card text-muted-foreground hover:border-[#4EC9D4]/50 hover:text-foreground"
+            )}
+          >
+            {showWards ? <Eye className="h-3.5 w-3.5" aria-hidden="true" /> : <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />}
+            {showWards ? "Wards visíveis" : "Wards ocultos"}
+          </button>
+        </div>
+        <div
+          className="hextech-border relative aspect-square w-full overflow-hidden rounded-lg"
+          role="img"
+          aria-label="Mapa do Summoner's Rift com objetivos e pontos de ward marcados"
+        >
         {failed ? (
           <div className="flex h-full w-full items-center justify-center bg-abyss text-center">
             <p className="max-w-xs text-sm text-muted-foreground">
@@ -131,9 +215,9 @@ export function RiftMap() {
           />
         )}
 
-        {/* Pontos de interesse */}
+        {/* Pontos de interesse + wards */}
         {!failed &&
-          HOTSPOTS.map((h) => {
+          hotspots.map((h) => {
             const Icon = h.icon;
             const isActive = active === h.id;
             return (
@@ -184,6 +268,7 @@ export function RiftMap() {
             ROTAS 5V5 · FOCO EM TOP
           </span>
         )}
+        </div>
       </div>
 
       {/* Legenda / explicação */}
@@ -196,7 +281,7 @@ export function RiftMap() {
           mapa.
         </p>
         <ul className="space-y-2" aria-label="Pontos de interesse do mapa">
-          {HOTSPOTS.map((h) => {
+          {(showWards ? [...HOTSPOTS, ...WARD_SPOTS] : HOTSPOTS).map((h) => {
             const Icon = h.icon;
             return (
               <li key={h.id}>
@@ -239,7 +324,7 @@ export function RiftMap() {
           <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" aria-hidden="true" />
           Dica de top laner: com Teleporte pronto, você transforma qualquer
           briga no rio em vantagem — o mapa inteiro está a um TP de distância
-          da sua rota.
+          da sua rota. E antes de empurrar: ward no Arbusto Tri primeiro.
         </p>
       </div>
     </div>

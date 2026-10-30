@@ -5,7 +5,7 @@
 // Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,7 @@ import { ChampionDialog } from "@/components/lol/ChampionDialog";
 import { Comparator } from "@/components/lol/Comparator";
 import { ItemSearch } from "@/components/lol/ItemSearch";
 import { RiftMap } from "@/components/lol/RiftMap";
+import { TopAcademy } from "@/components/lol/TopAcademy";
 import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
 import { TierList } from "@/components/lol/TierList";
 
@@ -63,6 +64,13 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
           >
             <Map className="h-4 w-4 text-gold" aria-hidden="true" />
             Mapa
+          </a>
+          <a
+            href="#academia"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+          >
+            <GraduationCap className="h-4 w-4 text-gold" aria-hidden="true" />
+            Academia
           </a>
           <a
             href="#comparador"
@@ -131,6 +139,9 @@ function Footer() {
             </a>
             <a href="#mapa" className="transition-colors hover:text-gold-bright">
               Mapa
+            </a>
+            <a href="#academia" className="transition-colors hover:text-gold-bright">
+              Academia do Topo
             </a>
             <a href="#campeoes" className="transition-colors hover:text-gold-bright">
               Todos os campeões
@@ -402,6 +413,24 @@ export default function Home() {
             </div>
           </div>
           <RiftMap />
+        </section>
+
+        {/* ---------- Academia do Topo (macro) ---------- */}
+        <section id="academia" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+          <div className="mb-6 flex items-center gap-3">
+            <GraduationCap className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Academia do Topo — Macro 101
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                O que separa iniciantes de veteranos: controle de onda, timers de
+                objetivo, metas de farm e o uso correto do Teleporte — o
+                conteúdo que nenhuma build avisa
+              </p>
+            </div>
+          </div>
+          <TopAcademy />
         </section>
 
         {/* ---------- Populares ---------- */}

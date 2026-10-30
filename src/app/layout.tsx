@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -21,9 +21,13 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "Topo do Rift — Builds de Top Lane | League of Legends",
+  metadataBase: new URL("https://topodorift.app"),
+  title: {
+    default: "Topo do Rift — Builds de Top Lane | League of Legends",
+    template: "%s | Topo do Rift",
+  },
   description:
-    "Builds atualizadas de top laners do League of Legends: itens, runas, feitiços, ordem de habilidades, dicas de early/mid/late game, matchups e counters. Feito para jogadores iniciantes e intermediários.",
+    "Builds atualizadas de top laners do League of Legends: itens, runas, feitiços, ordem de habilidades, curva de poder, dicas de early/mid/late game, matchups, counters e Academia do Topo (macro 101). Feito para jogadores iniciantes e intermediários.",
   keywords: [
     "League of Legends",
     "LoL",
@@ -33,14 +37,37 @@ export const metadata: Metadata = {
     "counters",
     "top laners",
     "guia de campeões",
+    "tier list",
+    "wave management",
+    "macro",
   ],
+  applicationName: "Topo do Rift",
+  authors: [{ name: "Topo do Rift" }],
   openGraph: {
     title: "Topo do Rift — Builds de Top Lane",
     description:
-      "Builds, runas, feitiços e dicas para dominar a rota superior no League of Legends.",
+      "Builds, runas, feitiços, curva de poder e macro para dominar a rota superior no League of Legends.",
     type: "website",
     locale: "pt_BR",
+    siteName: "Topo do Rift",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Topo do Rift — Builds de Top Lane",
+    description:
+      "Builds, runas e macro para dominar a rota superior no LoL.",
+  },
+  icons: {
+    icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/logo.svg" }],
+  },
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A1428",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

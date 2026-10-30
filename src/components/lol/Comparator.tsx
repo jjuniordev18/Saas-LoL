@@ -19,6 +19,7 @@ import {
   Medal,
   Plus,
   X,
+  TrendingUp,
 } from "lucide-react";
 import {
   Popover,
@@ -37,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { CHAMPIONS, championImageUrl, normalizeText } from "@/lib/lol";
 import type { Champion } from "@/lib/lol/data";
 import { RUNE_TREES, TIER_META } from "@/lib/lol/data";
+import { getPowerCurve, phaseWinners, PHASE_META } from "@/lib/lol/powercurve";
 import { cn } from "@/lib/utils";
 import {
   ClassBadge,
@@ -412,6 +414,12 @@ export function Comparator({
     return idx + 1;
   };
 
+  // Veredito por fase: quem vence o early/mid/late segundo a curva de poder
+  const phaseVerdict = React.useMemo(
+    () => (active.length >= 2 ? phaseWinners(active) : null),
+    [active]
+  );
+
   const setId = (slot: number, id: string | null) =>
     setIds((prev) => prev.map((v, i) => (i === slot ? id : v)));
 
@@ -534,6 +542,58 @@ export function Comparator({
                 )}
             </p>
           </div>
+
+          {/* Veredito por fase (curva de poder) */}
+          {phaseVerdict && (
+            <div className="rounded-lg border border-border bg-card/60 p-4 sm:p-5">
+              <p className="mb-1 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                <TrendingUp className="h-4 w-4 text-gold" aria-hidden="true" />
+                Veredito por fase da partida
+              </p>
+              <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                Baseado na curva de poder de cada campeão (nível/item, não nas notas de matchup).
+                Quando empate, mostramos todos os vencedores da fase.
+              </p>
+              <div className="grid gap-2.5 sm:grid-cols-3">
+                {(["early", "mid", "late"] as const).map((phase) => {
+                  const meta = PHASE_META[phase];
+                  const winners = phaseVerdict[phase];
+                  return (
+                    <div
+                      key={phase}
+                      className="rounded-md border border-border/70 bg-muted/40 p-3"
+                      style={{ borderColor: `${meta.color}55` }}
+                    >
+                      <p
+                        className="text-[11px] font-black uppercase tracking-wide"
+                        style={{ color: meta.color }}
+                      >
+                        {meta.label}
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        {winners.map((w) => {
+                          const v = getPowerCurve(w)[phase];
+                          return (
+                            <button
+                              key={w.id}
+                              type="button"
+                              onClick={() => onSelectDetail(w)}
+                              aria-label={`Ver build de ${w.name} — vencedor no ${meta.label} (${v}/100)`}
+                              className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-2.5 transition-colors hover:border-gold/60 focus-visible:outline-2 focus-visible:outline-gold"
+                            >
+                              <ChampionAvatar champion={w} size={24} />
+                              <span className="text-xs font-bold text-foreground">{w.name}</span>
+                              <span className="text-[10px] font-black text-gold">{v}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Notas dos confrontos par-a-par */}
           {pairs.some((p) => p.notes.length > 0) && (
