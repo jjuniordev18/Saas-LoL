@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sem conexão — Topo do Rift</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <style>
+    :root { color-scheme: dark; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0A1428 0%, #101D32 100%);
+      color: #F0E6D2;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+    .card {
+      max-width: 420px;
+      border: 1px solid #785a28;
+      border-radius: 12px;
+      padding: 40px 28px;
+      background: rgba(200, 170, 110, 0.05);
+    }
+    .hex {
+      width: 72px; height: 72px;
+      margin: 0 auto 18px;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #C8AA6E;
+      transform: rotate(0deg);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      background: linear-gradient(180deg, rgba(200,170,110,.18), rgba(200,170,110,.05));
+      font-size: 30px;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #F0B93C;
+      letter-spacing: .02em;
+    }
+    p { margin-top: 10px; font-size: .92rem; line-height: 1.6; color: #A9B4C0; }
+    button {
+      margin-top: 22px;
+      padding: 12px 26px;
+      border: 1px solid #C8AA6E;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #C8AA6E, #785A28);
+      color: #0A1428;
+      font-weight: 800;
+      font-size: .85rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.08); }
+    .hint { margin-top: 16px; font-size: .78rem; color: #6B7A8C; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="hex" aria-hidden="true">⚔️</div>
+    <h1>Você está sem conexão</h1>
+    <p>
+      Não foi possível carregar o Topo do Rift agora. As builds que você
+      abriu recentemente continuam disponíveis no cache do app.
+    </p>
+    <button onclick="location.reload()">Tentar novamente</button>
+    <p class="hint">Assim que a internet voltar, o app atualiza sozinho.</p>
+  </main>
+</body>
+</html>

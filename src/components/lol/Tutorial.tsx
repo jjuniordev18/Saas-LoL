@@ -21,6 +21,9 @@ import {
   ArrowLeft,
   Home,
   Lightbulb,
+  Swords,
+  ClipboardCopy,
+  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -67,11 +70,19 @@ const STEPS: Step[] = [
     color: "#E05A75",
   },
   {
+    icon: Swords,
+    href: "#matchup-do-dia",
+    title: "Matchup do dia",
+    desc: "Todo dia um confronto novo em destaque: quem leva vantagem, por quê e o plano de jogo para vencer a lane.",
+    tip: "Volte amanhã — o confronto troca sozinho, sem recarregar nada.",
+    color: "#C8324B",
+  },
+  {
     icon: BarChart3,
     href: "#tierlist",
     title: "Tier list clicável",
     desc: "Os 12 maiores win rates da rota do topo, com variação da patch, ban e pick rate. Clique na linha e a build abre na hora.",
-    tip: "Passe o mouse nas barras para comparar win rate e ban rate.",
+    tip: "Na aba \"Comparar\" você vê quem subiu e quem caiu de tier entre a patch anterior e a atual.",
     color: "#4EC9D4",
   },
   {
@@ -99,6 +110,14 @@ const STEPS: Step[] = [
     color: "#D08B4C",
   },
   {
+    icon: ClipboardCopy,
+    href: "#campeoes",
+    title: "Copiar build em 1 clique",
+    desc: "Abra qualquer campeão e toque em \"Copiar build\" — runas, feitiços, habilidades e itens vão como texto pronto para colar.",
+    tip: "Cole no Discord antes da ranked para o time conferir a composição.",
+    color: "#C8AA6E",
+  },
+  {
     icon: Palette,
     href: "#inicio",
     title: "Temas de cor",
@@ -113,6 +132,14 @@ const STEPS: Step[] = [
     desc: "Macro que nenhuma build ensina: controle de onda, timers de objetivo, metas de farm e o uso do Teleporte.",
     tip: "Comece por \"Gerenciamento de onda\" — é o que mais muda seu elo.",
     color: "#F0B93C",
+  },
+  {
+    icon: Download,
+    href: "#inicio",
+    title: "Instalar no celular",
+    desc: "O guia é um app: toque no botão de instalar (no rodapé ou no topo) e o Topo do Rift entra na sua tela inicial, com ícone próprio.",
+    tip: "No iPhone: use Compartilhar → \"Adicionar à Tela de Início\".",
+    color: "#0AC8B9",
   },
 ];
 

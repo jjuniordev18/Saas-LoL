@@ -21,18 +21,16 @@ import {
   ShieldCheck,
   ShieldAlert,
   GitBranch,
-  ClipboardCopy,
-  Check,
   type LucideIcon,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import type { Champion } from "@/lib/lol/data";
 import { RUNE_TREES, RUNES, SPELLS, ITEMS } from "@/lib/lol/data";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { championImageUrl } from "@/lib/lol";
 import { ITEM_DD, ITEM_PT } from "@/lib/lol/ddragon";
+import { CopyBuildButton } from "./CopyBuildButton";
 import {
   ClassBadge,
   DifficultyBadge,
@@ -96,45 +94,8 @@ function Section({
 // ------------------------------------------------------------
 export function ChampionDetail({ champion }: { champion: Champion }) {
   const [imgFailed, setImgFailed] = React.useState(false);
-  const [copied, setCopied] = React.useState(false);
-  const { toast } = useToast();
   const primaryTree = RUNE_TREES[champion.runes.primaryTree];
   const secondaryTree = RUNE_TREES[champion.runes.secondaryTree];
-
-  const copyBuild = async () => {
-    const itemName = (id: string) => ITEM_PT[id] ?? ITEMS[id]?.name ?? id;
-    const lines = [
-      `${champion.name} — build de topo (Topo do Rift)`,
-      ``,
-      `Runas: ${RUNES[champion.runes.keystone]?.name ?? champion.runes.keystone} (${primaryTree.name}) + ${secondaryTree.name}`,
-      `  • ${champion.runes.primary.map((r) => RUNES[r]?.name ?? r).join(", ")}`,
-      `  • ${champion.runes.secondary.map((r) => RUNES[r]?.name ?? r).join(", ")}`,
-      `  • Shards: ${champion.runes.shards.join(", ")}`,
-      `Feitiços: ${champion.spells.map((s) => SPELLS[s.id]?.name ?? s.id).join(" + ")}`,
-      `Ordem de habilidades: ${champion.skillPriority.join(" > ")} (R nos níveis 6/11/16)`,
-      `Itens core:`,
-      ...champion.coreItems.map((r, i) => `  ${i + 1}. ${itemName(r.id)}${r.note ? ` — ${r.note}` : ""}`),
-      `Iniciais: ${champion.startItems.map((r) => itemName(r.id)).join(", ")}`,
-      `Botas: ${champion.boots.map((r) => itemName(r.id)).join(", ")}`,
-      `Situacionais: ${champion.situationalItems.map((r) => itemName(r.id)).join(", ")}`,
-    ];
-    try {
-      await navigator.clipboard.writeText(lines.join("\n"));
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-      toast({
-        title: "Build copiada!",
-        description: `A build de ${champion.name} está na área de transferência — cole no Discord ou no chat do time.`,
-      });
-    } catch {
-      toast({
-        title: "Não foi possível copiar",
-        description: "Seu navegador bloqueou o acesso à área de transferência.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-5">
       {/* ---------- Cabeçalho ---------- */}
@@ -224,19 +185,7 @@ export function ChampionDetail({ champion }: { champion: Champion }) {
           title="Build recomendada"
           hint="Ordem de compra dos itens principais — siga a numeração"
         />
-        <button
-          type="button"
-          onClick={copyBuild}
-          aria-label={`Copiar build completa de ${champion.name} para a área de transferência`}
-          className="mb-3 inline-flex items-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-1.5 text-xs font-bold text-gold transition-colors hover:bg-gold/20 hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold"
-        >
-          {copied ? (
-            <Check className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-          ) : (
-            <ClipboardCopy className="h-3.5 w-3.5" aria-hidden="true" />
-          )}
-          {copied ? "Copiada!" : "Copiar build (runas + itens)"}
-        </button>
+        <CopyBuildButton champion={champion} className="mb-3" />
         <div className="grid gap-2">
           {champion.coreItems.map((ref, i) => {
             return (

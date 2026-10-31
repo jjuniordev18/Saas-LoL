@@ -1,0 +1,762 @@
+     1→"use client";
+     2→
+     3→// ============================================================
+     4→// Topo do Rift — Página inicial
+     5→// Busca + cards populares + favoritos + comparador + lista com filtros
+     6→// ============================================================
+     7→import * as React from "react";
+     8→import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap, BookOpen } from "lucide-react";
+     9→import { Input } from "@/components/ui/input";
+    10→import { Button } from "@/components/ui/button";
+    11→import {
+    12→  CHAMPIONS,
+    13→  getPopularChampions,
+    14→  filterChampions,
+    15→  DEFAULT_FILTERS,
+    16→  CLASS_FILTERS,
+    17→  DIFFICULTY_FILTERS,
+    18→  TIER_FILTERS,
+    19→  type ChampionFilters,
+    20→} from "@/lib/lol";
+    21→import { CLASS_META, DIFFICULTY_META, TIER_META, PATCH_VERSION, ITEMS } from "@/lib/lol/data";
+    22→import type { Champion } from "@/lib/lol/data";
+    23→import { cn } from "@/lib/utils";
+    24→import { useFavorites } from "@/lib/lol/favorites";
+    25→import { ChampionCard } from "@/components/lol/ChampionCard";
+    26→import { ChampionDialog } from "@/components/lol/ChampionDialog";
+    27→import { Comparator } from "@/components/lol/Comparator";
+    28→import { ItemSearch } from "@/components/lol/ItemSearch";
+    29→import { RiftMap } from "@/components/lol/RiftMap";
+    30→import { TopAcademy } from "@/components/lol/TopAcademy";
+    31→import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
+    32→import { TierList } from "@/components/lol/TierList";
+    33→import { Tutorial } from "@/components/lol/Tutorial";
+    34→
+    35→// ------------------------------------------------------------
+    36→// Cabeçalho fixo
+    37→// ------------------------------------------------------------
+    38→function Header({ favoritesCount }: { favoritesCount: number }) {
+    39→  return (
+    40→    <header className="sticky top-0 z-30 border-b border-frame/40 bg-hex-navy/90 backdrop-blur supports-[backdrop-filter]:bg-hex-navy/80">
+    41→      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+    42→        <a
+    43→          href="#inicio"
+    44→          className="flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-gold rounded"
+    45→        >
+    46→          <span className="flex h-9 w-9 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
+    47→            <Swords className="h-5 w-5 text-gold" aria-hidden="true" />
+    48→          </span>
+    49→          <span className="hidden whitespace-nowrap font-display text-base font-black tracking-wide text-gold-gradient sm:inline sm:text-lg">
+    50→            Topo do Rift
+    51→          </span>
+    52→        </a>
+    53→
+    54→        <nav aria-label="Navegação principal" className="flex items-center gap-0.5 sm:gap-2">
+    55→          <a
+    56→            href="#tierlist"
+    57→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+    58→          >
+    59→            <BarChart3 className="h-4 w-4 text-gold" aria-hidden="true" />
+    60→            Tier list
+    61→          </a>
+    62→          <a
+    63→            href="#mapa"
+    64→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    65→          >
+    66→            <Map className="h-4 w-4 text-gold" aria-hidden="true" />
+    67→            Mapa
+    68→          </a>
+    69→          <a
+    70→            href="#academia"
+    71→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    72→          >
+    73→            <GraduationCap className="h-4 w-4 text-gold" aria-hidden="true" />
+    74→            Academia
+    75→          </a>
+    76→          <a
+    77→            href="#comparador"
+    78→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:flex sm:items-center sm:gap-1.5 sm:px-3 sm:text-sm"
+    79→          >
+    80→            <GitCompareArrows className="h-4 w-4 text-gold" aria-hidden="true" />
+    81→            Comparador
+    82→          </a>
+    83→          <a
+    84→            href="#itens"
+    85→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    86→          >
+    87→            <Package className="h-4 w-4 text-gold" aria-hidden="true" />
+    88→            Itens
+    89→          </a>
+    90→          <a
+    91→            href="#campeoes"
+    92→            className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+    93→          >
+    94→            Campeões
+    95→          </a>
+    96→          <a
+    97→            href="#tutorial"
+    98→            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+    99→          >
+   100→            <BookOpen className="h-4 w-4 text-gold" aria-hidden="true" />
+   101→            Tutorial
+   102→          </a>
+   103→          <a
+   104→            href="#favoritos"
+   105→            className="flex items-center gap-1.5 rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
+   106→          >
+   107→            <Heart className="h-4 w-4 text-rose-400" aria-hidden="true" />
+   108→            <span className="hidden sm:inline">Favoritos</span>
+   109→            <span
+   110→              className={cn(
+   111→                "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold",
+   112→                favoritesCount > 0
+   113→                  ? "bg-rose-500/20 text-rose-300"
+   114→                  : "bg-muted text-muted-foreground"
+   115→              )}
+   116→              aria-label={`${favoritesCount} favoritos salvos`}
+   117→            >
+   118→              {favoritesCount}
+   119→            </span>
+   120→          </a>
+   121→          <ThemeSwitcher />
+   122→        </nav>
+   123→      </div>
+   124→    </header>
+   125→  );
+   126→}
+   127→
+   128→// ------------------------------------------------------------
+   129→// Rodapé (sempre no fim da página)
+   130→// ------------------------------------------------------------
+   131→function Footer() {
+   132→  return (
+   133→    <footer className="mt-auto border-t border-frame/40 bg-hex-deep pb-[env(safe-area-inset-bottom)]">
+   134→      <div className="mx-auto max-w-6xl px-4 py-8">
+   135→        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+   136→          <div className="flex items-center gap-2.5">
+   137→            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
+   138→              <Swords className="h-4 w-4 text-gold" aria-hidden="true" />
+   139→            </span>
+   140→            <span className="font-display text-sm font-bold text-gold-bright">
+   141→              Topo do Rift
+   142→            </span>
+   143→          </div>
+   144→          <nav aria-label="Links do rodapé" className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+   145→            <a href="#tierlist" className="transition-colors hover:text-gold-bright">
+   146→              Tier list
+   147→            </a>
+   148→            <a href="#mapa" className="transition-colors hover:text-gold-bright">
+   149→              Mapa
+   150→            </a>
+   151→            <a href="#academia" className="transition-colors hover:text-gold-bright">
+   152→              Academia do Topo
+   153→            </a>
+   154→            <a href="#campeoes" className="transition-colors hover:text-gold-bright">
+   155→              Todos os campeões
+   156→            </a>
+   157→            <a href="#comparador" className="transition-colors hover:text-gold-bright">
+   158→              Comparador
+   159→            </a>
+   160→            <a href="#itens" className="transition-colors hover:text-gold-bright">
+   161→              Busca de itens
+   162→            </a>
+   163→            <a href="#favoritos" className="transition-colors hover:text-gold-bright">
+   164→              Favoritos
+   165→            </a>
+   166→            <a href="#tutorial" className="transition-colors hover:text-gold-bright">
+   167→              Tutorial
+   168→            </a>
+   169→            <a href="#inicio" className="transition-colors hover:text-gold-bright">
+   170→              Voltar ao topo
+   171→            </a>
+   172→          </nav>
+   173→        </div>
+   174→        <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+   175→          Patch {PATCH_VERSION} · Win rate, ban e pick rate: estatísticas públicas
+   176→          (u.gg · op.gg · LoLalytics · League of Graphs) · Conteúdo educativo
+   177→          feito por fãs.{" "}
+   178→          Topo do Rift não é afiliado à Riot Games. League of Legends e todos os
+   179→          nomes e ícones de campeões são marcas da Riot Games, Inc.
+   180→        </p>
+   181→      </div>
+   182→    </footer>
+   183→  );
+   184→}
+   185→
+   186→// ------------------------------------------------------------
+   187→// Chip de filtro
+   188→// ------------------------------------------------------------
+   189→function FilterChip({
+   190→  active,
+   191→  onClick,
+   192→  children,
+   193→  color,
+   194→}: {
+   195→  active: boolean;
+   196→  onClick: () => void;
+   197→  children: React.ReactNode;
+   198→  color?: string;
+   199→}) {
+   200→  return (
+   201→    <button
+   202→      type="button"
+   203→      onClick={onClick}
+   204→      aria-pressed={active}
+   205→      className={cn(
+   206→        "rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-gold",
+   207→        active
+   208→          ? "border-gold bg-gold/15 text-gold-bright"
+   209→          : "border-border bg-card text-muted-foreground hover:border-gold/50 hover:text-foreground"
+   210→      )}
+   211→      style={active && color ? { borderColor: color, color } : undefined}
+   212→    >
+   213→      {children}
+   214→    </button>
+   215→  );
+   216→}
+   217→
+   218→// ------------------------------------------------------------
+   219→// Botão "voltar ao topo" — aparece após rolagem
+   220→// ------------------------------------------------------------
+   221→function BackToTop() {
+   222→  const [visible, setVisible] = React.useState(false);
+   223→  React.useEffect(() => {
+   224→    const onScroll = () => setVisible(window.scrollY > 700);
+   225→    onScroll();
+   226→    window.addEventListener("scroll", onScroll, { passive: true });
+   227→    return () => window.removeEventListener("scroll", onScroll);
+   228→  }, []);
+   229→  if (!visible) return null;
+   230→  return (
+   231→    <button
+   232→      type="button"
+   233→      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+   234→      aria-label="Voltar ao topo da página"
+   235→      className="animate-fade-in-up fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-frame/70 bg-card text-gold shadow-lg transition-all hover:scale-105 hover:border-gold hover:shadow-[0_0_14px_color-mix(in_srgb,var(--gold)_40%,transparent)] focus-visible:outline-2 focus-visible:outline-gold"
+   236→    >
+   237→      <ArrowUp className="h-5 w-5" aria-hidden="true" />
+   238→    </button>
+   239→  );
+   240→}
+   241→
+   242→// ------------------------------------------------------------
+   243→// Barra de progresso de leitura (topo da página)
+   244→// ------------------------------------------------------------
+   245→function ScrollProgress() {
+   246→  const [progress, setProgress] = React.useState(0);
+   247→  React.useEffect(() => {
+   248→    const onScroll = () => {
+   249→      const el = document.documentElement;
+   250→      const max = el.scrollHeight - el.clientHeight;
+   251→      setProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0);
+   252→    };
+   253→    onScroll();
+   254→    window.addEventListener("scroll", onScroll, { passive: true });
+   255→    window.addEventListener("resize", onScroll);
+   256→    return () => {
+   257→      window.removeEventListener("scroll", onScroll);
+   258→      window.removeEventListener("resize", onScroll);
+   259→    };
+   260→  }, []);
+   261→  return (
+   262→    <div aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-50 h-[3px] w-full">
+   263→      <div
+   264→        className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-bright shadow-[0_0_8px_color-mix(in_srgb,var(--gold)_60%,transparent)]"
+   265→        style={{ width: `${progress}%` }}
+   266→      />
+   267→    </div>
+   268→  );
+   269→}
+   270→
+   271→// ------------------------------------------------------------
+   272→// Página
+   273→// ------------------------------------------------------------
+   274→export default function Home() {
+   275→  const [filters, setFilters] = React.useState<ChampionFilters>(DEFAULT_FILTERS);
+   276→  const [favoriteOnly, setFavoriteOnly] = React.useState(false);
+   277→  const [selected, setSelected] = React.useState<Champion | null>(null);
+   278→  const [dialogOpen, setDialogOpen] = React.useState(false);
+   279→  const { favorites, isFavorite } = useFavorites();
+   280→
+   281→  // Atalho de teclado: "/" foca a busca de campeões
+   282→  React.useEffect(() => {
+   283→    const onKey = (e: KeyboardEvent) => {
+   284→      if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+   285→      const t = e.target as HTMLElement | null;
+   286→      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+   287→      e.preventDefault();
+   288→      document.getElementById("busca-campeao")?.focus();
+   289→    };
+   290→    window.addEventListener("keydown", onKey);
+   291→    return () => window.removeEventListener("keydown", onKey);
+   292→  }, []);
+   293→
+   294→  const favoriteChampions = React.useMemo(
+   295→    () => CHAMPIONS.filter((c) => isFavorite(c.id)),
+   296→    [favorites, isFavorite]
+   297→  );
+   298→
+   299→  const popular = React.useMemo(() => {
+   300→    const pop = getPopularChampions();
+   301→    const q = filters.query.trim().toLowerCase();
+   302→    if (!q) return pop;
+   303→    return pop.filter(
+   304→      (c) =>
+   305→        c.name.toLowerCase().includes(q) || c.title.toLowerCase().includes(q)
+   306→    );
+   307→  }, [filters.query]);
+   308→
+   309→  const results = React.useMemo(
+   310→    () =>
+   311→      favoriteOnly
+   312→        ? filterChampions(filters).filter((c) => isFavorite(c.id))
+   313→        : filterChampions(filters),
+   314→    [filters, favoriteOnly, favorites, isFavorite]
+   315→  );
+   316→
+   317→  const hasActiveFilters =
+   318→    filters.classe !== "todas" ||
+   319→    filters.dificuldade !== "todas" ||
+   320→    filters.tier !== "todos" ||
+   321→    filters.query.trim() !== "" ||
+   322→    favoriteOnly;
+   323→
+   324→  const handleSelect = (champion: Champion) => {
+   325→    setSelected(champion);
+   326→    setDialogOpen(true);
+   327→  };
+   328→
+   329→  const clearFilters = () => setFilters(DEFAULT_FILTERS);
+   330→
+   331→  // Revelação suave das seções ao rolar (IntersectionObserver).
+   332→  // Seções já visíveis no primeiro paint nunca piscam — só as
+   333→  // abaixo da dobra ganham a animação de entrada.
+   334→  React.useEffect(() => {
+   335→    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+   336→    if (els.length === 0) return;
+   337→    if (!("IntersectionObserver" in window)) return;
+   338→    const vh = window.innerHeight;
+   339→    const io = new IntersectionObserver(
+   340→      (entries) => {
+   341→        for (const en of entries) {
+   342→          if (en.isIntersecting) {
+   343→            en.target.classList.add("revealed");
+   344→            io.unobserve(en.target);
+   345→          }
+   346→        }
+   347→      },
+   348→      { threshold: 0.06, rootMargin: "0px 0px -36px 0px" }
+   349→    );
+   350→    for (const el of els) {
+   351→      if (el.getBoundingClientRect().top < vh * 0.9) {
+   352→        el.classList.add("revealed");
+   353→      } else {
+   354→        el.classList.add("reveal-init");
+   355→        io.observe(el);
+   356→      }
+   357→    }
+   358→    return () => io.disconnect();
+   359→  }, []);
+   360→
+   361→  return (
+   362→    <>
+   363→      <ScrollProgress />
+   364→      <Header favoritesCount={favorites.length} />
+   365→
+   366→      <main id="inicio" className="flex-1">
+   367→        {/* ---------- Hero + busca ---------- */}
+   368→        <section className="relative overflow-hidden border-b border-frame/30">
+   369→          <div
+   370→            className="pointer-events-none absolute inset-0"
+   371→            aria-hidden="true"
+   372→            style={{
+   373→              background:
+   374→                "radial-gradient(ellipse 60% 55% at 50% 0%, var(--glow-1), transparent 70%)",
+   375→            }}
+   376→          />
+   377→          <div className="relative mx-auto max-w-6xl px-4 py-14 text-center sm:py-20">
+   378→            <p className="animate-float mb-3 inline-flex items-center gap-2 rounded-full border border-frame/50 bg-card px-3.5 py-1.5 text-xs font-semibold text-gold">
+   379→              <Flame className="h-3.5 w-3.5" aria-hidden="true" />
+   380→              Patch {PATCH_VERSION} · Temporada 2026
+   381→            </p>
+   382→            <h1 className="hero-shimmer font-display text-4xl font-black leading-tight sm:text-5xl md:text-6xl">
+   383→              Domine a rota superior
+   384→            </h1>
+   385→            <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
+   386→              Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
+   387→              habilidades, comparador de matchups de até 3 campeões, busca de
+   388→              itens em português e inglês, tier list com win rates do patch e
+   389→              favoritos salvos no seu navegador — direto ao ponto, para
+   390→              iniciantes e intermediários.
+   391→            </p>
+   392→
+   393→            {/* Busca */}
+   394→            <div className="mx-auto mt-8 max-w-xl">
+   395→              <label htmlFor="busca-campeao" className="sr-only">
+   396→                Buscar campeão
+   397→              </label>
+   398→              <div className="relative">
+   399→                <Search
+   400→                  className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gold"
+   401→                  aria-hidden="true"
+   402→                />
+   403→                <Input
+   404→                  id="busca-campeao"
+   405→                  type="search"
+   406→                  placeholder="Buscar campeão (ex.: Darius, Garen...)"
+   407→                  value={filters.query}
+   408→                  onChange={(e) =>
+   409→                    setFilters((f) => ({ ...f, query: e.target.value }))
+   410→                  }
+   411→                  className="h-14 rounded-lg border-[#785a28]/60 bg-card pl-12 pr-12 text-base text-foreground shadow-lg placeholder:text-muted-foreground focus-visible:ring-gold"
+   412→                />
+   413→                {filters.query && (
+   414→                  <button
+   415→                    type="button"
+   416→                    onClick={() => setFilters((f) => ({ ...f, query: "" }))}
+   417→                    aria-label="Limpar busca"
+   418→                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-gold"
+   419→                  >
+   420→                    <X className="h-4 w-4" aria-hidden="true" />
+   421→                  </button>
+   422→                )}
+   423→              </div>
+   424→              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+   425→                Dica: aperte{" "}
+   426→                <kbd className="rounded border border-border bg-card px-1.5 py-0.5 font-mono text-[10px] font-bold text-gold">/</kbd>{" "}
+   427→                a qualquer momento para buscar
+   428→              </p>
+   429→            </div>
+   430→
+   431→            {/* Estatísticas rápidas */}
+   432→            <dl className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-3 text-center sm:grid-cols-4">
+   433→              {[
+   434→                { label: "Campeões", value: CHAMPIONS.length },
+   435→                { label: "Itens catalogados", value: Object.keys(ITEMS).length },
+   436→                { label: "Tier S", value: CHAMPIONS.filter((c) => c.tier === "S").length },
+   437→                { label: "Seus favoritos", value: favorites.length },
+   438→              ].map((s) => (
+   439→                <div
+   440→                  key={s.label}
+   441→                  className="card-hover-lift rounded-lg border border-border bg-card/60 px-3 py-3"
+   442→                >
+   443→                  <dt className="sr-only">{s.label}</dt>
+   444→                  <dd className="font-display text-2xl font-black text-gold">
+   445→                    {s.value}
+   446→                  </dd>
+   447→                  <dd className="text-[11px] uppercase tracking-wide text-muted-foreground">
+   448→                    {s.label}
+   449→                  </dd>
+   450→                </div>
+   451→              ))}
+   452→            </dl>
+   453→          </div>
+   454→        </section>
+   455→
+   456→        {/* ---------- Tier list da patch (estatísticas públicas) ---------- */}
+   457→        <section id="tierlist" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   458→          <div className="mb-8 flex items-center gap-3">
+   459→            <BarChart3 className="h-6 w-6 text-gold" aria-hidden="true" />
+   460→            <div>
+   461→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   462→                Tier list do topo — win rates da patch
+   463→              </h2>
+   464→              <p className="mt-2 text-sm text-muted-foreground">
+   465→                Os 12 maiores win rates da rota superior em Esmeralda+ — clique
+   466→                na linha para abrir a build completa do campeão
+   467→              </p>
+   468→            </div>
+   469→          </div>
+   470→          <TierList onSelectDetail={handleSelect} />
+   471→        </section>
+   472→
+   473→        {/* ---------- Mapa do Summoner's Rift ---------- */}
+   474→        <section id="mapa" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   475→          <div className="mb-8 flex items-center gap-3">
+   476→            <Map className="h-6 w-6 text-gold" aria-hidden="true" />
+   477→            <div>
+   478→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   479→                O Summoner's Rift
+   480→              </h2>
+   481→              <p className="mt-2 text-sm text-muted-foreground">
+   482→                O mapa oficial 5v5 com as 3 rotas desenhadas, os 12 acampamentos
+   483→                da selva, objetivos épicos e wards — passe o mouse pelos pontos
+   484→                para entender onde a rota superior se encaixa no jogo
+   485→              </p>
+   486→            </div>
+   487→          </div>
+   488→          <RiftMap />
+   489→        </section>
+   490→
+   491→        {/* ---------- Academia do Topo (macro) ---------- */}
+   492→        <section id="academia" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   493→          <div className="mb-6 flex items-center gap-3">
+   494→            <GraduationCap className="h-6 w-6 text-gold" aria-hidden="true" />
+   495→            <div>
+   496→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   497→                Academia do Topo — Macro 101
+   498→              </h2>
+   499→              <p className="mt-2 text-sm text-muted-foreground">
+   500→                O que separa iniciantes de veteranos: controle de onda, timers de
+   501→                objetivo, metas de farm e o uso correto do Teleporte — o
+   502→                conteúdo que nenhuma build avisa
+   503→              </p>
+   504→            </div>
+   505→          </div>
+   506→          <TopAcademy />
+   507→        </section>
+   508→
+   509→        {/* ---------- Populares ---------- */}
+   510→        <section id="populares" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+   511→          <div className="mb-6 flex items-center gap-3">
+   512→            <Crown className="h-6 w-6 text-gold" aria-hidden="true" />
+   513→            <div>
+   514→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   515→                Campeões populares
+   516→              </h2>
+   517→              <p className="mt-2 text-sm text-muted-foreground">
+   518→                Os picks mais jogados e confiáveis da rota superior agora
+   519→              </p>
+   520→            </div>
+   521→          </div>
+   522→
+   523→          {popular.length === 0 ? (
+   524→            <p className="rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+   525→              Nenhum campeão popular corresponde à busca &ldquo;{filters.query}&rdquo;.
+   526→            </p>
+   527→          ) : (
+   528→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+   529→              {popular.map((c) => (
+   530→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   531→              ))}
+   532→            </div>
+   533→          )}
+   534→        </section>
+   535→
+   536→        {/* ---------- Favoritos ---------- */}
+   537→        <section id="favoritos" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   538→          <div className="mb-6 flex items-center gap-3">
+   539→            <Heart className="h-6 w-6 text-rose-400" aria-hidden="true" />
+   540→            <div>
+   541→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   542→                Seus favoritos
+   543→              </h2>
+   544→              <p className="mt-2 text-sm text-muted-foreground">
+   545→                Salvos no navegador — estejam aqui sempre que você voltar
+   546→              </p>
+   547→            </div>
+   548→          </div>
+   549→
+   550→          {favoriteChampions.length === 0 ? (
+   551→            <div className="rounded-lg border border-dashed border-border bg-card/40 p-8 text-center">
+   552→              <p className="flex items-center justify-center gap-2 font-display text-lg font-bold text-gold-bright">
+   553→                <Star className="h-5 w-5 text-gold" aria-hidden="true" />
+   554→                Nenhum favorito ainda
+   555→              </p>
+   556→              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+   557→                Toque no <Heart className="inline h-3.5 w-3.5 text-rose-400" aria-hidden="true" /> no
+   558→                canto de qualquer card para salvar a build aqui — fica gravado no
+   559→                seu navegador, sem cadastro.
+   560→              </p>
+   561→            </div>
+   562→          ) : (
+   563→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
+   564→              {favoriteChampions.map((c) => (
+   565→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   566→              ))}
+   567→            </div>
+   568→          )}
+   569→        </section>
+   570→
+   571→        {/* ---------- Comparador ---------- */}
+   572→        <section id="comparador" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   573→          <div className="mb-6 flex items-center gap-3">
+   574→            <GitCompareArrows className="h-6 w-6 text-gold" aria-hidden="true" />
+   575→            <div>
+   576→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   577→                Comparador de matchups — até 3 lados
+   578→              </h2>
+   579→              <p className="mt-2 text-sm text-muted-foreground">
+   580→                Escolha dois ou três campeões e veja runas, feitiços e build
+   581→                lado a lado — com ranking de quem leva vantagem em cada
+   582→                confronto
+   583→              </p>
+   584→            </div>
+   585→          </div>
+   586→
+   587→          <Comparator onSelectDetail={handleSelect} />
+   588→        </section>
+   589→
+   590→        {/* ---------- Busca de itens ---------- */}
+   591→        <section id="itens" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+   592→          <div className="mb-6 flex items-center gap-3">
+   593→            <Package className="h-6 w-6 text-gold" aria-hidden="true" />
+   594→            <div>
+   595→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   596→                Busca por item
+   597→              </h2>
+   598→              <p className="mt-2 text-sm text-muted-foreground">
+   599→                Pesquise qualquer item do guia, filtre por categoria, ordene por
+   600→                preço e descubra quem usa — com ícones oficiais do patch
+   601→              </p>
+   602→            </div>
+   603→          </div>
+   604→
+   605→          <ItemSearch onSelectDetail={handleSelect} />
+   606→        </section>
+   607→
+   608→        {/* ---------- Todos os campeões + filtros ---------- */}
+   609→        <section
+   610→          id="campeoes"
+   611→          data-reveal
+   612→          className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16"
+   613→        >
+   614→          <div className="mb-6 flex items-center gap-3">
+   615→            <ListFilter className="h-6 w-6 text-gold" aria-hidden="true" />
+   616→            <div>
+   617→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   618→                Todos os campeões
+   619→              </h2>
+   620→              <p className="mt-2 text-sm text-muted-foreground">
+   621→                Filtre por função, dificuldade e tier para achar seu pick
+   622→              </p>
+   623→            </div>
+   624→          </div>
+   625→
+   626→          {/* Filtros */}
+   627→          <div className="space-y-3 rounded-lg border border-border bg-card/60 p-4">
+   628→            <div className="flex flex-wrap items-center gap-2">
+   629→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   630→                Função
+   631→              </span>
+   632→              {CLASS_FILTERS.map((f) => (
+   633→                <FilterChip
+   634→                  key={f.value}
+   635→                  active={filters.classe === f.value}
+   636→                  color={
+   637→                    f.value !== "todas" ? CLASS_META[f.value].color : undefined
+   638→                  }
+   639→                  onClick={() =>
+   640→                    setFilters((s) => ({ ...s, classe: f.value }))
+   641→                  }
+   642→                >
+   643→                  {f.label}
+   644→                </FilterChip>
+   645→              ))}
+   646→            </div>
+   647→
+   648→            <div className="flex flex-wrap items-center gap-2">
+   649→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   650→                Dificuldade
+   651→              </span>
+   652→              {DIFFICULTY_FILTERS.map((f) => (
+   653→                <FilterChip
+   654→                  key={String(f.value)}
+   655→                  active={filters.dificuldade === f.value}
+   656→                  onClick={() =>
+   657→                    setFilters((s) => ({ ...s, dificuldade: f.value }))
+   658→                  }
+   659→                >
+   660→                  {f.label}
+   661→                </FilterChip>
+   662→              ))}
+   663→            </div>
+   664→
+   665→            <div className="flex flex-wrap items-center gap-2">
+   666→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   667→                Tier
+   668→              </span>
+   669→              {TIER_FILTERS.map((f) => (
+   670→                <FilterChip
+   671→                  key={f.value}
+   672→                  active={filters.tier === f.value}
+   673→                  color={f.value !== "todos" ? TIER_META[f.value].color : undefined}
+   674→                  onClick={() => setFilters((s) => ({ ...s, tier: f.value }))}
+   675→                >
+   676→                  {f.label}
+   677→                </FilterChip>
+   678→              ))}
+   679→            </div>
+   680→
+   681→            <div className="flex flex-wrap items-center gap-2">
+   682→              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+   683→                Extras
+   684→              </span>
+   685→              <FilterChip active={favoriteOnly} onClick={() => setFavoriteOnly(!favoriteOnly)}>
+   686→                <Heart className={cn("mr-1 inline h-3 w-3", favoriteOnly ? "fill-current" : "")} aria-hidden="true" />
+   687→                Só favoritos ({favorites.length})
+   688→              </FilterChip>
+   689→            </div>
+   690→          </div>
+   691→
+   692→          {/* Contagem + limpar */}
+   693→          <div className="mb-4 mt-4 flex items-center justify-between gap-3">
+   694→            <p className="text-sm text-muted-foreground" aria-live="polite">
+   695→              <strong className="text-gold-bright">{results.length}</strong>{" "}
+   696→              {results.length === 1 ? "campeão encontrado" : "campeões encontrados"}
+   697→            </p>
+   698→            {hasActiveFilters && (
+   699→              <Button
+   700→                variant="outline"
+   701→                size="sm"
+   702→                onClick={() => {
+   703→                  clearFilters();
+   704→                  setFavoriteOnly(false);
+   705→                }}
+   706→                className="border-border text-muted-foreground hover:border-gold/50 hover:text-gold-bright"
+   707→              >
+   708→                <X className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+   709→                Limpar filtros
+   710→              </Button>
+   711→            )}
+   712→          </div>
+   713→
+   714→          {results.length === 0 ? (
+   715→            <div className="rounded-lg border border-dashed border-border bg-card/40 p-10 text-center">
+   716→              <p className="font-display text-lg font-bold text-gold-bright">
+   717→                Nenhum campeão encontrado
+   718→              </p>
+   719→              <p className="mt-1 text-sm text-muted-foreground">
+   720→                Tente outro nome ou remova alguns filtros.
+   721→              </p>
+   722→            </div>
+   723→          ) : (
+   724→            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
+   725→              {results.map((c) => (
+   726→                <ChampionCard key={c.id} champion={c} onSelect={handleSelect} />
+   727→              ))}
+   728→            </div>
+   729→          )}
+   730→        </section>
+   731→
+   732→        {/* ---------- Tutorial ---------- */}
+   733→        <section id="tutorial" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16">
+   734→          <div className="mb-8 flex items-center gap-3">
+   735→            <BookOpen className="h-6 w-6 text-gold" aria-hidden="true" />
+   736→            <div>
+   737→              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+   738→                Tutorial — domine o guia em 3 minutos
+   739→              </h2>
+   740→              <p className="mt-2 text-sm text-muted-foreground">
+   741→                Passo a passo de cada ferramenta: busca, filtros, favoritos,
+   742→                comparador, mapa e temas. Clique em qualquer card para ir
+   743→                direto à seção — e volte à tela principal quando quiser
+   744→              </p>
+   745→            </div>
+   746→          </div>
+   747→          <Tutorial />
+   748→        </section>
+   749→      </main>
+   750→
+   751→      <BackToTop />
+   752→      <Footer />
+   753→
+   754→      <ChampionDialog
+   755→        champion={selected}
+   756→        open={dialogOpen}
+   757→        onOpenChange={setDialogOpen}
+   758→      />
+   759→    </>
+   760→  );
+   761→}
+   762→

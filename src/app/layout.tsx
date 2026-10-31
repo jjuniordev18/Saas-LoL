@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { THEME_BOOT_SCRIPT } from "@/lib/lol/theme";
+import { PWARegister } from "@/components/lol/PWARegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,10 +59,18 @@ export const metadata: Metadata = {
       "Builds, runas e macro para dominar a rota superior no LoL.",
   },
   icons: {
-    icon: [{ url: "/logo.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/logo.svg" }],
+    icon: [
+      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Topo do Rift",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
@@ -85,6 +94,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
         {children}
+        <PWARegister />
         <Toaster />
       </body>
     </html>

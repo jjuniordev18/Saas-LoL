@@ -15,6 +15,7 @@ import {
   Swords,
   Users,
   BarChart3,
+  GitCompareArrows,
 } from "lucide-react";
 import {
   Table,
@@ -24,12 +25,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TIER_STATS_LIST, STATS_SOURCE, TIER_META, PATCH_VERSION } from "@/lib/lol/data";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  TIER_STATS_LIST,
+  STATS_SOURCE,
+  TIER_META,
+  PATCH_VERSION,
+  PREV_PATCH_VERSION,
+} from "@/lib/lol/data";
 import type { Champion, TierStatsEntry } from "@/lib/lol/data";
 import { CHAMPIONS } from "@/lib/lol";
 import { cn } from "@/lib/utils";
 import { ChampionAvatar } from "./ChampionCard";
 import { TierBadge } from "./pieces";
+import { TierCompare } from "./TierCompare";
 
 // barras de taxa: escala visual de 49% a 53%
 const wrBar = (wr: number) => Math.min(100, Math.max(4, ((wr - 49) / 4) * 100));
@@ -94,6 +103,31 @@ export function TierList({
 
   return (
     <div className="space-y-4">
+      <Tabs defaultValue="atual">
+        {/* Seletor de modo: patch atual ou comparação com a anterior */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <TabsList className="bg-muted">
+            <TabsTrigger
+              value="atual"
+              className="gap-1.5 data-[state=active]:text-gold-bright"
+            >
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
+              Patch {PATCH_VERSION}
+            </TabsTrigger>
+            <TabsTrigger
+              value="comparar"
+              className="gap-1.5 data-[state=active]:text-gold-bright"
+            >
+              <GitCompareArrows className="h-4 w-4" aria-hidden="true" />
+              Comparar {PREV_PATCH_VERSION} ↔ {PATCH_VERSION}
+            </TabsTrigger>
+          </TabsList>
+          <span className="text-xs text-muted-foreground">
+            {STATS_SOURCE.elo} · {STATS_SOURCE.region}
+          </span>
+        </div>
+
+        <TabsContent value="atual" className="mt-4 space-y-4">
       {/* Fonte dos dados */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-frame/40 bg-card/60 px-4 py-2.5 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5 font-semibold text-gold">
@@ -231,6 +265,13 @@ export function TierList({
         gratuitos de analytics — a fonte oficial de balanceamento continua
         sendo a Riot Games.
       </p>
+        </TabsContent>
+
+        {/* Modo comparação: patch anterior vs atual */}
+        <TabsContent value="comparar" className="mt-4">
+          <TierCompare onSelectDetail={onSelectDetail} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

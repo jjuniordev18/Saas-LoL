@@ -848,6 +848,40 @@ export function getTierStats(championId: string): TierStatsEntry | undefined {
 }
 
 // ------------------------------------------------------------
+// Snapshot da patch anterior (16.20) — alimenta o modo
+// "Comparar patches" da tier list. Os valores são coerentes com
+// a coluna "Variação" da patch atual: WR atual − wrChange ≈ WR anterior.
+// ------------------------------------------------------------
+export const PREV_PATCH_VERSION = "16.20";
+
+export interface PrevTierStatsEntry {
+  championId: string; // id interno do campeão neste site
+  name: string;
+  rank: number; // posição na patch 16.20
+  tier: Tier; // tier na patch 16.20
+  winRate: number; // % na patch 16.20
+}
+
+export const PREV_TIER_STATS_LIST: PrevTierStatsEntry[] = [
+  { championId: "quinn", name: "Quinn", rank: 1, tier: "S", winRate: 51.9 },
+  { championId: "malphite", name: "Malphite", rank: 2, tier: "S", winRate: 51.8 },
+  { championId: "ornn", name: "Ornn", rank: 3, tier: "A", winRate: 51.8 },
+  { championId: "zac", name: "Zac", rank: 4, tier: "S", winRate: 51.7 },
+  { championId: "anivia", name: "Anivia", rank: 5, tier: "S", winRate: 51.7 },
+  { championId: "singed", name: "Singed", rank: 6, tier: "S", winRate: 51.6 },
+  { championId: "shen", name: "Shen", rank: 7, tier: "S", winRate: 51.2 },
+  { championId: "kayle", name: "Kayle", rank: 8, tier: "A", winRate: 51.2 },
+  { championId: "warwick", name: "Warwick", rank: 9, tier: "A", winRate: 51.1 },
+  { championId: "kled", name: "Kled", rank: 10, tier: "A", winRate: 51.1 },
+  { championId: "poppy", name: "Poppy", rank: 11, tier: "A", winRate: 50.5 },
+  { championId: "sion", name: "Sion", rank: 12, tier: "B", winRate: 49.7 },
+];
+
+export function getPrevTierStats(championId: string): PrevTierStatsEntry | undefined {
+  return PREV_TIER_STATS_LIST.find((e) => e.championId === championId);
+}
+
+// ------------------------------------------------------------
 // Gera a sequência de habilidades (níveis 1–18) da prioridade
 // Padrão: 1×P1 / 1×P2 / 1×P3, completa P1, depois P2, por fim P3
 // ------------------------------------------------------------

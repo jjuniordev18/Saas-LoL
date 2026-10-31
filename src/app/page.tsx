@@ -5,7 +5,7 @@
 // Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap, BookOpen } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap, BookOpen, CalendarDays } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,9 @@ import { TopAcademy } from "@/components/lol/TopAcademy";
 import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
 import { TierList } from "@/components/lol/TierList";
 import { Tutorial } from "@/components/lol/Tutorial";
+import { MatchupOfDay } from "@/components/lol/MatchupOfDay";
+import { VisitCounter } from "@/components/lol/VisitCounter";
+import { InstallAppButton } from "@/components/lol/PWARegister";
 
 // ------------------------------------------------------------
 // Cabeçalho fixo
@@ -118,6 +121,7 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
               {favoritesCount}
             </span>
           </a>
+          <InstallAppButton variant="icon" />
           <ThemeSwitcher />
         </nav>
       </div>
@@ -133,15 +137,22 @@ function Footer() {
     <footer className="mt-auto border-t border-frame/40 bg-hex-deep pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
-              <Swords className="h-4 w-4 text-gold" aria-hidden="true" />
-            </span>
-            <span className="font-display text-sm font-bold text-gold-bright">
-              Topo do Rift
-            </span>
+          <div className="flex flex-col items-center gap-3 sm:items-start">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-md border border-frame/70 bg-gradient-to-b from-secondary to-abyss">
+                <Swords className="h-4 w-4 text-gold" aria-hidden="true" />
+              </span>
+              <span className="font-display text-sm font-bold text-gold-bright">
+                Topo do Rift
+              </span>
+            </div>
+            <VisitCounter />
+            <InstallAppButton variant="full" />
           </div>
           <nav aria-label="Links do rodapé" className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+            <a href="#matchup-do-dia" className="transition-colors hover:text-gold-bright">
+              Matchup do dia
+            </a>
             <a href="#tierlist" className="transition-colors hover:text-gold-bright">
               Tier list
             </a>
@@ -451,6 +462,23 @@ export default function Home() {
               ))}
             </dl>
           </div>
+        </section>
+
+        {/* ---------- Matchup do dia ---------- */}
+        <section id="matchup-do-dia" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pt-12">
+          <div className="mb-6 flex items-center gap-3">
+            <CalendarDays className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Matchup do dia
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Um confronto em destaque a cada dia — quem leva vantagem, por quê
+                e o plano de jogo para virar a lane
+              </p>
+            </div>
+          </div>
+          <MatchupOfDay onSelectDetail={handleSelect} />
         </section>
 
         {/* ---------- Tier list da patch (estatísticas públicas) ---------- */}
