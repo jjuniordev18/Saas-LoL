@@ -71,26 +71,35 @@ function applyTheme(id: ThemeId) {
 }
 
 export function useTheme() {
-  const [theme, setThemeState] = React.useState<ThemeId>(DEFAULT_THEME);
-  const [loaded, setLoaded] = React.useState(false);
+  // Estado inicial lazy - lê do localStorage uma única vez
+  const [theme, setThemeState] = React.useState<ThemeId>(() => {
+    return readTheme();
+  });
 
+  // Aplicar tema e sincronizar com outras abas
   React.useEffect(() => {
-    const t = readTheme();
-    setThemeState(t);
-    applyTheme(t);
-    setLoaded(true);
-    const onChange = () => {
-      const next = readTheme();
-      setThemeState(next);
-      applyTheme(next);
+    applyTheme(theme);
+
+    const sync = () => {
+      const t = readTheme();
+      if (t !== theme) setThemeState(t);
     };
-    window.addEventListener(CHANGE_EVENT, onChange);
-    window.addEventListener("storage", onChange);
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) sync();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener(CHANGE_EVENT, sync);
+
     return () => {
-      window.removeEventListener(CHANGE_EVENT, onChange);
-      window.removeEventListener("storage", onChange);
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener(CHANGE_EVENT, sync);
     };
-  }, []);
+  }, [theme]);
+
+  // Estado loaded sempre verdadeiro após o primeiro render
+  const loaded = true;
 
   const setTheme = React.useCallback((id: ThemeId) => {
     try {

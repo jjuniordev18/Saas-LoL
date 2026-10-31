@@ -58,14 +58,19 @@ function Carousel({
     },
     plugins
   )
+
+  // Estado inicial com valores padrão para evitar cascading renders
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) return
-    setCanScrollPrev(api.canScrollPrev())
-    setCanScrollNext(api.canScrollNext())
+  const updateScrollStatus = React.useCallback((emblaApi: CarouselApi) => {
+    setCanScrollPrev(emblaApi.canScrollPrev())
+    setCanScrollNext(emblaApi.canScrollNext())
   }, [])
+
+  const onSelect = React.useCallback((emblaApi: CarouselApi) => {
+    updateScrollStatus(emblaApi)
+  }, [updateScrollStatus])
 
   const scrollPrev = React.useCallback(() => {
     api?.scrollPrev()

@@ -79,9 +79,14 @@ export function InstallAppButton({
   const [available, setAvailable] = React.useState(false);
   const [installed, setInstalled] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
+  const [isStandaloneMode, setIsStandaloneMode] = React.useState<boolean | null>(null);
 
-  React.useEffect(() => {
-    if (isStandalone()) {
+  React.useLayoutEffect(() => {
+    // Verifica se está em modo standalone (instalado como PWA)
+    const standalone = isStandalone();
+    setIsStandaloneMode(standalone);
+    
+    if (standalone) {
       setInstalled(true);
       return;
     }

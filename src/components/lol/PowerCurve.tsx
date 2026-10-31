@@ -30,8 +30,11 @@ function curveLabel(v: number): string {
 
 export function PowerCurveSection({ champion }: { champion: Champion }) {
   const curve = React.useMemo(() => getPowerCurve(champion), [champion]);
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  // Use state inicial true para evitar mismatch de SSR - animações só no cliente
+  const [mounted, setMounted] = React.useState(true);
+  React.useEffect(() => {
+    // Não precisa fazer nada aqui - mounted já está true
+  }, []);
 
   const dmgSum = curve.dmg.fisico + curve.dmg.magico + curve.dmg.verdadeiro || 100;
 

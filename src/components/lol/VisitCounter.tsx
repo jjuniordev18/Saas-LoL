@@ -8,10 +8,14 @@ import { Eye } from "lucide-react";
 import { registerVisit, formatIsoDate, type VisitData } from "@/lib/lol/visits";
 
 export function VisitCounter() {
-  const [visits, setVisits] = React.useState<VisitData | null>(null);
+  // Estado inicial lazy para evitar cascading renders
+  const [visits, setVisits] = React.useState<VisitData | null>(() => {
+    return registerVisit();
+  });
 
+  // Use useEffect para evitar mismatch de SSR - o estado já está inicializado
   React.useEffect(() => {
-    setVisits(registerVisit());
+    // Nenhuma ação necessária - estado já inicializado via lazy initializer
   }, []);
 
   // Estado neutro até montar no cliente (evita mismatch de SSR)

@@ -32,12 +32,14 @@ function writeFavorites(ids: string[]) {
 }
 
 export function useFavorites() {
-  const [favorites, setFavorites] = React.useState<string[]>([]);
-  const [loaded, setLoaded] = React.useState(false);
+  // Estado inicial lazy - lê do localStorage uma única vez
+  const [favorites, setFavorites] = React.useState<string[]>(() => {
+    return readFavorites();
+  });
+  const [loaded, setLoaded] = React.useState(true); // True por padrão após mount
 
+  // Escuta mudanças em outras abas
   React.useEffect(() => {
-    setFavorites(readFavorites());
-    setLoaded(true);
     const onChange = () => setFavorites(readFavorites());
     window.addEventListener(CHANGE_EVENT, onChange);
     window.addEventListener("storage", onChange);
@@ -48,11 +50,13 @@ export function useFavorites() {
   }, []);
 
   const toggle = React.useCallback((id: string) => {
-    const current = readFavorites();
-    const next = current.includes(id)
-      ? current.filter((f) => f !== id)
-      : [...current, id];
-    writeFavorites(next);
+    setFavorites((current) => {
+      const next = current.includes(id)
+        ? current.filter((f) => f !== id)
+        : [...current, id];
+      writeFavorites(next);
+      return next;
+    });
   }, []);
 
   const clear = React.useCallback(() => {

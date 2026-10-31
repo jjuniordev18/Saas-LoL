@@ -325,8 +325,10 @@ export const RIFT_MAP_URL = \`${BASE}/img/map/map11.png\`;
 export const RIFT_MAP_ALT_URL = \`${BASE}/img/map/map11_shrouded.png\`;
 `;
 
+  // Output file - ajuste o caminho conforme seu ambiente ou passe como argumento
+  const outputPath = process.argv[2] || "./src/lib/lol/ddragon.ts";
   await (await import("node:fs/promises")).writeFile(
-    "/home/z/my-project/src/lib/lol/ddragon.ts",
+    outputPath,
     ts,
     "utf8"
   );
