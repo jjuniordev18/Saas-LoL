@@ -5,7 +5,7 @@
 // Busca + cards populares + favoritos + comparador + lista com filtros
 // ============================================================
 import * as React from "react";
-import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap } from "lucide-react";
+import { Search, Swords, Crown, ListFilter, X, Flame, GitCompareArrows, Heart, Star, Map, Package, BarChart3, ArrowUp, GraduationCap, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +30,7 @@ import { RiftMap } from "@/components/lol/RiftMap";
 import { TopAcademy } from "@/components/lol/TopAcademy";
 import { ThemeSwitcher } from "@/components/lol/ThemeSwitcher";
 import { TierList } from "@/components/lol/TierList";
+import { Tutorial } from "@/components/lol/Tutorial";
 
 // ------------------------------------------------------------
 // Cabeçalho fixo
@@ -91,6 +92,13 @@ function Header({ favoritesCount }: { favoritesCount: number }) {
             className="rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold sm:px-3 sm:text-sm"
           >
             Campeões
+          </a>
+          <a
+            href="#tutorial"
+            className="hidden rounded-md px-2 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold md:flex md:items-center md:gap-1.5 sm:px-3 sm:text-sm"
+          >
+            <BookOpen className="h-4 w-4 text-gold" aria-hidden="true" />
+            Tutorial
           </a>
           <a
             href="#favoritos"
@@ -155,14 +163,18 @@ function Footer() {
             <a href="#favoritos" className="transition-colors hover:text-gold-bright">
               Favoritos
             </a>
+            <a href="#tutorial" className="transition-colors hover:text-gold-bright">
+              Tutorial
+            </a>
             <a href="#inicio" className="transition-colors hover:text-gold-bright">
               Voltar ao topo
             </a>
           </nav>
         </div>
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
-          Patch {PATCH_VERSION} · Taxa de vitória, ban e pick rate: Blitz.gg (Esmeralda+) ·{" "}
-          Conteúdo educativo feito por fãs.{" "}
+          Patch {PATCH_VERSION} · Win rate, ban e pick rate: estatísticas públicas
+          (u.gg · op.gg · LoLalytics · League of Graphs) · Conteúdo educativo
+          feito por fãs.{" "}
           Topo do Rift não é afiliado à Riot Games. League of Legends e todos os
           nomes e ícones de campeões são marcas da Riot Games, Inc.
         </p>
@@ -228,6 +240,35 @@ function BackToTop() {
 }
 
 // ------------------------------------------------------------
+// Barra de progresso de leitura (topo da página)
+// ------------------------------------------------------------
+function ScrollProgress() {
+  const [progress, setProgress] = React.useState(0);
+  React.useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      setProgress(max > 0 ? Math.min(100, (el.scrollTop / max) * 100) : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-50 h-[3px] w-full">
+      <div
+        className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-bright shadow-[0_0_8px_color-mix(in_srgb,var(--gold)_60%,transparent)]"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  );
+}
+
+// ------------------------------------------------------------
 // Página
 // ------------------------------------------------------------
 export default function Home() {
@@ -287,8 +328,39 @@ export default function Home() {
 
   const clearFilters = () => setFilters(DEFAULT_FILTERS);
 
+  // Revelação suave das seções ao rolar (IntersectionObserver).
+  // Seções já visíveis no primeiro paint nunca piscam — só as
+  // abaixo da dobra ganham a animação de entrada.
+  React.useEffect(() => {
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (els.length === 0) return;
+    if (!("IntersectionObserver" in window)) return;
+    const vh = window.innerHeight;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting) {
+            en.target.classList.add("revealed");
+            io.unobserve(en.target);
+          }
+        }
+      },
+      { threshold: 0.06, rootMargin: "0px 0px -36px 0px" }
+    );
+    for (const el of els) {
+      if (el.getBoundingClientRect().top < vh * 0.9) {
+        el.classList.add("revealed");
+      } else {
+        el.classList.add("reveal-init");
+        io.observe(el);
+      }
+    }
+    return () => io.disconnect();
+  }, []);
+
   return (
     <>
+      <ScrollProgress />
       <Header favoritesCount={favorites.length} />
 
       <main id="inicio" className="flex-1">
@@ -307,13 +379,13 @@ export default function Home() {
               <Flame className="h-3.5 w-3.5" aria-hidden="true" />
               Patch {PATCH_VERSION} · Temporada 2026
             </p>
-            <h1 className="font-display text-4xl font-black leading-tight text-gold-gradient sm:text-5xl md:text-6xl">
+            <h1 className="hero-shimmer font-display text-4xl font-black leading-tight sm:text-5xl md:text-6xl">
               Domine a rota superior
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-balance text-sm leading-relaxed text-muted-foreground sm:text-base">
               Builds atualizadas com ícones oficiais, runas, feitiços, ordem de
               habilidades, comparador de matchups de até 3 campeões, busca de
-              itens em português e inglês, tier list com dados do Blitz.gg e
+              itens em português e inglês, tier list com win rates do patch e
               favoritos salvos no seu navegador — direto ao ponto, para
               iniciantes e intermediários.
             </p>
@@ -381,13 +453,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ---------- Tier list da patch (Blitz.gg) ---------- */}
-        <section id="tierlist" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+        {/* ---------- Tier list da patch (estatísticas públicas) ---------- */}
+        <section id="tierlist" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
           <div className="mb-8 flex items-center gap-3">
             <BarChart3 className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
               <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
-                Tier list do topo — dados Blitz.gg
+                Tier list do topo — win rates da patch
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Os 12 maiores win rates da rota superior em Esmeralda+ — clique
@@ -399,7 +471,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Mapa do Summoner's Rift ---------- */}
-        <section id="mapa" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+        <section id="mapa" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
           <div className="mb-8 flex items-center gap-3">
             <Map className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
@@ -417,7 +489,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Academia do Topo (macro) ---------- */}
-        <section id="academia" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+        <section id="academia" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
           <div className="mb-6 flex items-center gap-3">
             <GraduationCap className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
@@ -435,7 +507,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Populares ---------- */}
-        <section id="populares" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
+        <section id="populares" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12">
           <div className="mb-6 flex items-center gap-3">
             <Crown className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
@@ -462,7 +534,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Favoritos ---------- */}
-        <section id="favoritos" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+        <section id="favoritos" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
           <div className="mb-6 flex items-center gap-3">
             <Heart className="h-6 w-6 text-rose-400" aria-hidden="true" />
             <div>
@@ -497,7 +569,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Comparador ---------- */}
-        <section id="comparador" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+        <section id="comparador" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
           <div className="mb-6 flex items-center gap-3">
             <GitCompareArrows className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
@@ -516,7 +588,7 @@ export default function Home() {
         </section>
 
         {/* ---------- Busca de itens ---------- */}
-        <section id="itens" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
+        <section id="itens" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-12">
           <div className="mb-6 flex items-center gap-3">
             <Package className="h-6 w-6 text-gold" aria-hidden="true" />
             <div>
@@ -536,6 +608,7 @@ export default function Home() {
         {/* ---------- Todos os campeões + filtros ---------- */}
         <section
           id="campeoes"
+          data-reveal
           className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16"
         >
           <div className="mb-6 flex items-center gap-3">
@@ -654,6 +727,24 @@ export default function Home() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* ---------- Tutorial ---------- */}
+        <section id="tutorial" data-reveal className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16">
+          <div className="mb-8 flex items-center gap-3">
+            <BookOpen className="h-6 w-6 text-gold" aria-hidden="true" />
+            <div>
+              <h2 className="section-underline font-display text-2xl font-bold text-gold-bright">
+                Tutorial — domine o guia em 3 minutos
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Passo a passo de cada ferramenta: busca, filtros, favoritos,
+                comparador, mapa e temas. Clique em qualquer card para ir
+                direto à seção — e volte à tela principal quando quiser
+              </p>
+            </div>
+          </div>
+          <Tutorial />
         </section>
       </main>
 

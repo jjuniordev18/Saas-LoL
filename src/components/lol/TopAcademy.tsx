@@ -19,7 +19,6 @@ import {
   Skull,
   Mountain,
   Flame,
-  Sparkles,
   Bot,
   Wheat,
   Wand2,
@@ -91,18 +90,10 @@ const OBJECTIVES = [
   {
     icon: Mountain,
     color: "#E8902F",
-    time: "15:00 · sai 19:45",
+    time: "14:00 · sai 19:45",
     name: "Arauto da Fenda",
     desc: "Uma única Arauto: solte-a na rota com mais pressão para derrubar a primeira torre.",
     topPlay: "Como top laner, é SEU objetivo: peça o eye e abra a rota com ela.",
-  },
-  {
-    icon: Sparkles,
-    color: "#A25CE8",
-    time: "~14–20 min · uma vez",
-    name: "Atakhan",
-    desc: "Épico de meio de jogo (forma única Thornbound na temporada): buff de equipe no estilo de alma. O jogo anuncia quando ele aparece.",
-    topPlay: "Nunca dispute sem visão e sem ults; o buff perdido alimenta o snowball inimigo.",
   },
   {
     icon: Skull,

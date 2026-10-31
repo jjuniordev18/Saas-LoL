@@ -7,7 +7,7 @@ import { CHAMPIONS_D } from "../src/lib/lol/champions-d";
 import { CHAMPIONS_E } from "../src/lib/lol/champions-e";
 import { CHAMPIONS_F } from "../src/lib/lol/champions-f";
 import { CHAMPIONS_G } from "../src/lib/lol/champions-g";
-import { BLITZ_TIER_LIST } from "../src/lib/lol/data";
+import { TIER_STATS_LIST } from "../src/lib/lol/data";
 
 const ALL = [
   ...CHAMPIONS_A,
@@ -76,9 +76,9 @@ for (const c of ALL) {
 }
 
 // Tier list Blitz deve apontar sempre para campeões existentes
-for (const e of BLITZ_TIER_LIST) {
+for (const e of TIER_STATS_LIST) {
   if (!ALL.some((c) => c.id === e.championId)) {
-    console.error(`[BLITZ] championId inexistente: "${e.championId}"`);
+    console.error(`[TIER-STATS] championId inexistente: "${e.championId}"`);
     errors++;
   }
 }

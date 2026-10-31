@@ -433,4 +433,60 @@
   .animate-pulse-ring {
     animation: pulse-ring 2.4s ease-out infinite;
   }
+
+  /* Brilho varrendo o título principal (sheen dourado) */
+  @keyframes gold-shimmer {
+    to {
+      background-position: 200% center;
+    }
+  }
+  .hero-shimmer {
+    background: linear-gradient(
+      110deg,
+      var(--gold-dark) 25%,
+      var(--gold) 42%,
+      var(--gold-bright) 50%,
+      var(--gold) 58%,
+      var(--gold-dark) 75%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gold-shimmer 7s linear infinite;
+  }
+
+  /* Entrada suave das seções ao rolar (classe aplicada via JS) */
+  .reveal-init {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  .reveal-init.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+
+  /* Scrollbar global discreta com as cores do tema */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sb-thumb) var(--sb-track);
+  }
+}
+
+/* Respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .hero-shimmer,
+  .animate-float,
+  .animate-pulse-ring {
+    animation: none;
+  }
+  .reveal-init,
+  .reveal-init.revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

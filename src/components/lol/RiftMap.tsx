@@ -7,7 +7,7 @@
 // ============================================================
 import * as React from "react";
 import {
-  MapPin, Crown, Flame, Mountain, Skull, Home, ArrowUpRight, Eye, Sparkles,
+  MapPin, Crown, Flame, Mountain, Skull, Home, ArrowUpRight, Eye,
   EyeOff, Route, PawPrint, Bird, Shell, Leaf, Snowflake, FlameKindling, Pickaxe, Trees,
 } from "lucide-react";
 import { InfoTooltip } from "./pieces";
@@ -102,13 +102,6 @@ const OBJECTIVES: MapPoint[] = [
     label: "Arauto da Fenda",
     desc: "Nasce no mesmo fosso do Barão aos 14 minutos (sai aos 19:45): entregue ao top laner, ela derruba a primeira torre em segundos.",
     icon: Pickaxe, color: "#E8902F", group: "objective",
-  },
-  {
-    id: "atakhan",
-    x: 31, y: 21,
-    label: "Atakhan",
-    desc: "Épico de meio de jogo (nasce aos 20:00 no rio superior, entre o topo e o Barão). Dá um buff de equipe poderoso — o jogo avisa quando ele nasce; dispute só com visão.",
-    icon: Sparkles, color: "#A25CE8", group: "objective",
   },
   {
     id: "dragon",

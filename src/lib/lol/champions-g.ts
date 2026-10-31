@@ -1,14 +1,14 @@
 // ============================================================
 // Campeões da meta — alta taxa de vitória na rota do topo
-// Fonte dos tiers/win rates: Blitz.gg (Esmeralda+, captura de
-// nov/2026). Quinn, Poppy, Warwick, Zac e Anivia.
-// Builds baseadas no patch 16.21 (Temporada 2026).
+// Fonte dos tiers/win rates: estatísticas públicas consolidadas
+// (Esmeralda+, captura de dados da patch atual). Quinn, Poppy,
+// Warwick, Zac e Anivia. Builds baseadas no patch 16.21 (Temporada 2026).
 // ============================================================
 import type { Champion } from "./data";
 
 export const CHAMPIONS_G: Champion[] = [
   // ------------------------------------------------------------
-  // QUINN — #1 taxa de vitória (Blitz.gg): 52.2% · Tier S
+  // QUINN — #1 taxa de vitória: 52.2% · Tier S
   // ------------------------------------------------------------
   {
     id: "quinn",
@@ -22,7 +22,7 @@ export const CHAMPIONS_G: Champion[] = [
     color: "#C2703F",
     playstyle: "Atiradora que humilha corpo a corpo",
     summary:
-      "A #1 da rota superior no Blitz.gg (52.2% de vitória). Quinn castiga qualquer lutador sem dash: a marca do Valoro + básicos escorrem a vida do oponente à distância, e a ultimate transforma cada abate de rota em roam pelos outros cantos do mapa.",
+      "A #1 da rota superior (52.2% de vitória). Quinn castiga qualquer lutador sem dash: a marca do Valoro + básicos escorrem a vida do oponente à distância, e a ultimate transforma cada abate de rota em roam pelos outros cantos do mapa.",
     strengths: [
       "Pune melee à distância: poke com marca + básicos sem resposta",
       "Ultimate global de velocidade — roam e splits rápidos",
@@ -139,7 +139,7 @@ export const CHAMPIONS_G: Champion[] = [
   },
 
   // ------------------------------------------------------------
-  // POPPY — #2 taxa de vitória (Blitz.gg): 52.0% · +1.5% no patch
+  // POPPY — #2 taxa de vitória: 52.0% · +1.5% no patch
   // ------------------------------------------------------------
   {
     id: "poppy",
@@ -153,7 +153,7 @@ export const CHAMPIONS_G: Champion[] = [
     color: "#7FA3C8",
     playstyle: "Tanque antidor que trava dashes",
     summary:
-      "A grande subida do patch no Blitz.gg (+1.5%, 52.0% de vitória). A Presença Inabalável apaga o dash de Fiora, Jax, Camille e companhia, e o Veredito da Guardiã desmonta qualquer briga. Tanque simples de jogar e pavor dos duelistas do topo.",
+      "A grande subida do patch (+1.5%, 52.0% de vitória). A Presença Inabalável apaga o dash de Fiora, Jax, Camille e companhia, e o Veredito da Guardiã desmonta qualquer briga. Tanque simples de jogar e pavor dos duelistas do topo.",
     strengths: [
       "A W para TODO dash do jogo — duelistas perdem o kit principal",
       "Trocas curtas fortes: Q duplo + escudo do passivo",
@@ -260,7 +260,7 @@ export const CHAMPIONS_G: Champion[] = [
   },
 
   // ------------------------------------------------------------
-  // WARWICK — #3 taxa de vitória (Blitz.gg): 52.0% · +0.9%
+  // WARWICK — #3 taxa de vitória: 52.0% · +0.9%
   // ------------------------------------------------------------
   {
     id: "warwick",
@@ -274,7 +274,7 @@ export const CHAMPIONS_G: Champion[] = [
     color: "#7D5BA6",
     playstyle: "Caçador de sangue com cura infinita",
     summary:
-      "O terceiro maior win rate do topo no Blitz.gg (52.0%). Warwick sustenta trocas com as Presas da Fera, rastreia alvos feridos com a Caçada Sangrenta e prende o carregador com a Coerção Infinita. Simples de jogar, quase impossível de ganhar por atrito.",
+      "O terceiro maior win rate do topo (52.0%). Warwick sustenta trocas com as Presas da Fera, rastreia alvos feridos com a Caçada Sangrenta e prende o carregador com a Coerção Infinita. Simples de jogar, quase impossível de ganhar por atrito.",
     strengths: [
       "Cura constante em trocas e ondas — atrito nunca vira abate",
       "W rastreia e acelera contra alvos com pouca vida: abate garantido",
@@ -381,7 +381,7 @@ export const CHAMPIONS_G: Champion[] = [
   },
 
   // ------------------------------------------------------------
-  // ZAC — Tier A (Blitz.gg): 51.7% · engage gigante
+  // ZAC — Tier A: 51.7% · engage gigante
   // ------------------------------------------------------------
   {
     id: "zac",
@@ -395,7 +395,7 @@ export const CHAMPIONS_G: Champion[] = [
     color: "#3FA65C",
     playstyle: "Tanque elástico de engage impossível",
     summary:
-      "Tanque de 51.7% de vitória no Blitz.gg. O Estilingue Elástico alcança ângulos que ninguém mais alcança, os glóbulos curam a rota inteira e o Vamos pular! desmonta formação inimiga. O pick dos times que precisam de uma briga começada do nada.",
+      "Tanque de 51.7% de vitória. O Estilingue Elástico alcança ângulos que ninguém mais alcança, os glóbulos curam a rota inteira e o Vamos pular! desmonta formação inimiga. O pick dos times que precisam de uma briga começada do nada.",
     strengths: [
       "E atravessa metade do mapa a partir de ângulos sem visão",
       "Glóbulos curam e escalam vida máxima: paciência vence rota",
@@ -502,7 +502,7 @@ export const CHAMPIONS_G: Champion[] = [
   },
 
   // ------------------------------------------------------------
-  // ANIVIA — Tier A (Blitz.gg): 51.5% · maga de controle
+  // ANIVIA — Tier A: 51.5% · maga de controle
   // ------------------------------------------------------------
   {
     id: "anivia",
@@ -516,7 +516,7 @@ export const CHAMPIONS_G: Champion[] = [
     color: "#5FB8D9",
     playstyle: "Maga de kite e muro que congela o topo",
     summary:
-      "A surpresa da tier list do Blitz.gg (51.5% na rota do topo). O muro de gelo corta qualquer briga, o Congelamento dobra de dano em alvos atingidos e o Renascimento anula o gank. Lutadores sem dash jogam contra um pássaro que nunca deixa a distância cair.",
+      "A surpresa da tier list (51.5% na rota do topo). O muro de gelo corta qualquer briga, o Congelamento dobra de dano em alvos atingidos e o Renascimento anula o gank. Lutadores sem dash jogam contra um pássaro que nunca deixa a distância cair.",
     strengths: [
       "Kite perfeito: R + W seguram qualquer perseguição",
       "Burst garantido: Q ou R acertado = E com dano dobrado",

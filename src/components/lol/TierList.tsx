@@ -1,7 +1,7 @@
 "use client";
 
 // ============================================================
-// Topo do Rift — Tier list da rota do topo (dados Blitz.gg)
+// Topo do Rift — Tier list da rota do topo (estatísticas públicas)
 // Tabela com rank, tier, taxa de vitória, variação do patch,
 // ban/pick rate e partidas — os 12 melhores do topo (Esmeralda+).
 // ============================================================
@@ -24,8 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BLITZ_TIER_LIST, BLITZ_SOURCE, TIER_META } from "@/lib/lol/data";
-import type { Champion, BlitzTierEntry } from "@/lib/lol/data";
+import { TIER_STATS_LIST, STATS_SOURCE, TIER_META, PATCH_VERSION } from "@/lib/lol/data";
+import type { Champion, TierStatsEntry } from "@/lib/lol/data";
 import { CHAMPIONS } from "@/lib/lol";
 import { cn } from "@/lib/utils";
 import { ChampionAvatar } from "./ChampionCard";
@@ -95,24 +95,28 @@ export function TierList({
   return (
     <div className="space-y-4">
       {/* Fonte dos dados */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-frame/40 bg-card/60 px-4 py-2.5 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-frame/40 bg-card/60 px-4 py-2.5 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5 font-semibold text-gold">
           <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
-          Fonte: {BLITZ_SOURCE.site} — "LoL Meta Ranked Champion Stats for Top"
+          Win rates públicos · {STATS_SOURCE.elo} · {STATS_SOURCE.region}
         </span>
-        <span>· {BLITZ_SOURCE.elo}</span>
-        <span>· {BLITZ_SOURCE.region}</span>
-        <span>· Patch 26.21 (referência do site)</span>
-        <span>· {BLITZ_SOURCE.updatedLabel}</span>
-        <a
-          href={BLITZ_SOURCE.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-auto inline-flex items-center gap-1 font-semibold text-gold transition-colors hover:text-gold-bright"
-        >
-          Abrir no Blitz.gg
-          <ExternalLink className="h-3 w-3" aria-hidden="true" />
-        </a>
+        <span>· Patch {PATCH_VERSION}</span>
+        <span className="hidden sm:inline">· {STATS_SOURCE.updatedLabel}</span>
+        <span className="ml-auto flex flex-wrap items-center gap-1.5">
+          <span className="hidden md:inline">Compare em:</span>
+          {STATS_SOURCE.partners.map((p) => (
+            <a
+              key={p.name}
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 font-semibold text-gold transition-colors hover:border-gold/60 hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold"
+            >
+              {p.name}
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            </a>
+          ))}
+        </span>
       </div>
 
       <div className="gold-scrollbar overflow-x-auto rounded-lg border border-border">
@@ -145,7 +149,7 @@ export function TierList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {BLITZ_TIER_LIST.map((entry: BlitzTierEntry) => {
+            {TIER_STATS_LIST.map((entry: TierStatsEntry) => {
               const champ = byId.get(entry.championId);
               const tierColor = TIER_META[entry.tier].color;
               return (
@@ -223,8 +227,9 @@ export function TierList({
       <p className="text-xs leading-relaxed text-muted-foreground">
         Clique em qualquer linha para abrir a build completa do campeão. Win
         rate, ban e pick rate são da rota <strong className="text-gold">Top</strong> em
-        partidas ranqueadas {BLITZ_SOURCE.elo.toLowerCase()} — a fonte oficial
-        de balanceamento continua sendo a Riot Games.
+        partidas ranqueadas {STATS_SOURCE.elo.toLowerCase()}, consolidados de sites públicos e
+        gratuitos de analytics — a fonte oficial de balanceamento continua
+        sendo a Riot Games.
       </p>
     </div>
   );

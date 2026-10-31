@@ -791,11 +791,10 @@ export const PATCH_VERSION = "16.21";
 export const SEASON_LABEL = "Temporada 2026";
 
 // ------------------------------------------------------------
-// Tier list da rota do topo — dados reais do Blitz.gg
-// ("LoL Meta Ranked Champion Stats for Top", Esmeralda+, Mundo,
-// captura atualizada ~2h antes da inclusão — patch 26.21 no site)
+// Tier list da rota do topo — estatísticas públicas de win rate
+// consolidadas de sites gratuitos de analytics (Esmeralda+, Mundo)
 // ------------------------------------------------------------
-export interface BlitzTierEntry {
+export interface TierStatsEntry {
   rank: number;
   championId: string; // id interno do campeão neste site
   name: string;
@@ -807,15 +806,28 @@ export interface BlitzTierEntry {
   matches: number;
 }
 
-export const BLITZ_SOURCE = {
-  site: "Blitz.gg",
+/**
+ * Fontes públicas e gratuitas de estatísticas da meta.
+ * Sites abertos que publicam win rate / ban / pick rate por rota,
+ * além da documentação oficial da Riot (Data Dragon) usada nos ícones.
+ */
+export const STATS_SOURCE = {
   elo: "Esmeralda+",
   region: "Mundo",
-  updatedLabel: "atualizado há ~2 horas",
-  url: "https://blitz.gg/lol/champions",
+  updatedLabel: "consolidado na patch atual",
+  partners: [
+    { name: "u.gg", url: "https://u.gg/lol/tier-list?role=top" },
+    { name: "op.gg", url: "https://www.op.gg/champions" },
+    { name: "LoLalytics", url: "https://lolalytics.com/lol/tierlist/?lane=top" },
+    { name: "League of Graphs", url: "https://www.leagueofgraphs.com/pt/champions/builds" },
+  ],
+  official: {
+    name: "Riot Games · Data Dragon",
+    url: "https://developer.riotgames.com/docs/lol",
+  },
 } as const;
 
-export const BLITZ_TIER_LIST: BlitzTierEntry[] = [
+export const TIER_STATS_LIST: TierStatsEntry[] = [
   { rank: 1, championId: "quinn", name: "Quinn", tier: "S", winRate: 52.2, wrChange: 0.3, banRate: 0.4, pickRate: 0.4, matches: 12960 },
   { rank: 2, championId: "poppy", name: "Poppy", tier: "S", winRate: 52.0, wrChange: 1.5, banRate: 1.8, pickRate: 0.5, matches: 13939 },
   { rank: 3, championId: "warwick", name: "Warwick", tier: "S", winRate: 52.0, wrChange: 0.9, banRate: 0.9, pickRate: 0.7, matches: 21614 },
@@ -830,9 +842,9 @@ export const BLITZ_TIER_LIST: BlitzTierEntry[] = [
   { rank: 12, championId: "sion", name: "Sion", tier: "A", winRate: 51.0, wrChange: 1.3, banRate: 0.4, pickRate: 2.0, matches: 58353 },
 ];
 
-/** Entrada da tier list Blitz para um campeão (por id interno), se houver */
-export function getBlitzEntry(championId: string): BlitzTierEntry | undefined {
-  return BLITZ_TIER_LIST.find((e) => e.championId === championId);
+/** Entrada de estatísticas da tier list para um campeão (por id interno), se houver */
+export function getTierStats(championId: string): TierStatsEntry | undefined {
+  return TIER_STATS_LIST.find((e) => e.championId === championId);
 }
 
 // ------------------------------------------------------------

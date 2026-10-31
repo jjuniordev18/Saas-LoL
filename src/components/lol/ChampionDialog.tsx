@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Coins, Boot, Sparkles, Layers, GitBranch, Wand2, ListOrdered, Lightbulb, Swords } from "lucide-react";
+import { Coins, Sparkles, Layers, GitBranch, Wand2, ListOrdered, Lightbulb, Swords } from "lucide-react";
 import type { Champion } from "@/lib/lol/data";
 import { cn } from "@/lib/utils";
 import { ChampionDetail } from "./ChampionDetail";
