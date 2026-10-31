@@ -407,8 +407,9 @@ export default function Home() {
                 O Summoner's Rift
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">
-                O mapa oficial 5v5 incorporado ao guia — passe o mouse pelos
-                pontos para entender onde a rota superior se encaixa no jogo
+                O mapa oficial 5v5 com as 3 rotas desenhadas, os 12 acampamentos
+                da selva, objetivos épicos e wards — passe o mouse pelos pontos
+                para entender onde a rota superior se encaixa no jogo
               </p>
             </div>
           </div>
