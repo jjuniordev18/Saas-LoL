@@ -158,7 +158,7 @@ export function TierCompare({
 }: {
   onSelectDetail: (c: Champion) => void;
 }) {
-  const rows = React.useMemo(buildRows, []);
+  const rows = React.useMemo(() => buildRows(), []);
 
   const tierUps = rows.filter((r) => r.tierChange === "up");
   const tierDowns = rows.filter((r) => r.tierChange === "down");

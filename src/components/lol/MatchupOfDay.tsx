@@ -96,9 +96,9 @@ export function MatchupOfDay({
 }: {
   onSelectDetail: (c: Champion) => void;
 }) {
-  const seed = React.useMemo(daySeed, []);
+  const seed = React.useMemo(() => daySeed(), []);
   const matchup = React.useMemo(() => resolveDailyMatchup(seed), [seed]);
-  const dateLabel = React.useMemo(formatDateLabel, []);
+  const dateLabel = React.useMemo(() => formatDateLabel(), []);
   const { pick, rival, rivalNote, kind } = matchup;
   const desafiador = kind === "desafiador";
 
