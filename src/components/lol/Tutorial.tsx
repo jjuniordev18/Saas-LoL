@@ -3,8 +3,8 @@
 // ============================================================
 // Topo do Rift — Tutorial interativo
 // Passo a passo de como usar cada ferramenta do guia, com
-// atalhos, links diretos para cada seção e botão de retorno
-// à tela principal.
+// atalhos, links diretos para cada seção e um único CTA de
+// retorno à tela principal (no fim do tutorial, sem duplicação).
 // ============================================================
 import * as React from "react";
 import {
@@ -19,7 +19,6 @@ import {
   Palette,
   GraduationCap,
   ArrowLeft,
-  Home,
   Lightbulb,
   Swords,
   ClipboardCopy,
@@ -151,18 +150,6 @@ export function Tutorial() {
 
   return (
     <div className="space-y-6">
-      {/* Botão discreto de retorno no topo da seção */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={goHome}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground transition-colors hover:border-gold/60 hover:text-gold-bright focus-visible:outline-2 focus-visible:outline-gold"
-        >
-          <Home className="h-3.5 w-3.5" aria-hidden="true" />
-          Voltar à tela principal
-        </button>
-      </div>
-
       {/* Passos */}
       <ol className="grid list-none gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {STEPS.map((s, i) => {
@@ -205,7 +192,7 @@ export function Tutorial() {
         })}
       </ol>
 
-      {/* CTA final — voltar à tela principal */}
+      {/* Único ponto de retorno — CTA final, após concluir os passos */}
       <div className="hextech-border relative overflow-hidden rounded-lg bg-gradient-to-b from-secondary/80 to-abyss px-6 py-8 text-center">
         <div
           className="pointer-events-none absolute inset-0"
