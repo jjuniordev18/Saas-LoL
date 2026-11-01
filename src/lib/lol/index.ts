@@ -65,9 +65,9 @@ export const DEFAULT_FILTERS: ChampionFilters = {
 };
 
 export function filterChampions(filters: ChampionFilters): Champion[] {
-  const q = filters.query.trim().toLowerCase();
+  const q = normalizeText(filters.query);
   return CHAMPIONS.filter((c) => {
-    if (q && !c.name.toLowerCase().includes(q) && !c.title.toLowerCase().includes(q)) return false;
+    if (q && !normalizeText(c.name).includes(q) && !normalizeText(c.title).includes(q)) return false;
     if (filters.classe !== "todas" && !c.classes.includes(filters.classe)) return false;
     if (filters.dificuldade !== "todas" && c.difficulty !== filters.dificuldade) return false;
     if (filters.tier !== "todos" && c.tier !== filters.tier) return false;

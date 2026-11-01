@@ -19,8 +19,8 @@ export function FavoriteButton({
   className?: string;
   iconClassName?: string;
 }) {
-  const { toggle, isFavorite, loaded } = useFavorites();
-  const fav = loaded && isFavorite(championId);
+  const { toggle, isFavorite } = useFavorites();
+  const fav = isFavorite(championId);
 
   return (
     <button

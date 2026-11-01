@@ -1,0 +1,35 @@
+name: Atualizar patch da tier list
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # todos os dias às 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar Prisma Client
+        run: npx prisma generate
+
+      - name: Executar verificação de patch
+        run: node scripts/fetch-patch-data.mjs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Revalidar cache da tier list
+        run: |
+          curl -X POST "${{ secrets.NEXT_PUBLIC_URL }}/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${{ secrets.REVALIDATE_SECRET }}\"}"

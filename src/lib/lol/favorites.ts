@@ -36,7 +36,6 @@ export function useFavorites() {
   const [favorites, setFavorites] = React.useState<string[]>(() => {
     return readFavorites();
   });
-  const [loaded, setLoaded] = React.useState(true); // True por padrão após mount
 
   // Escuta mudanças em outras abas
   React.useEffect(() => {
@@ -68,5 +67,5 @@ export function useFavorites() {
     [favorites]
   );
 
-  return { favorites, toggle, isFavorite, clear, loaded };
+  return { favorites, toggle, isFavorite, clear };
 }

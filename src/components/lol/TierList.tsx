@@ -96,6 +96,32 @@ export function TierList({
 }: {
   onSelectDetail: (c: Champion) => void;
 }) {
+  const [stats, setStats] = React.useState<TierStatsEntry[]>(TIER_STATS_LIST);
+  const [patch, setPatch] = React.useState<string>(PATCH_VERSION);
+
+  // Busca estatísticas do banco via API, com fallback para dados estáticos
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch("/api/stats/tier", { cache: "no-store" })
+      .then((res) => {
+        if (!res.ok) throw new Error("API tier indisponível");
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled && data.stats) {
+          setStats(data.stats);
+          setPatch(data.patch ?? PATCH_VERSION);
+        }
+      })
+      .catch(() => {
+        // Mantém fallback estático (TIER_STATS_LIST / PATCH_VERSION)
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const byId = React.useMemo(
     () => new Map(CHAMPIONS.map((c) => [c.id, c])),
     []
@@ -112,14 +138,14 @@ export function TierList({
               className="gap-1.5 data-[state=active]:text-gold-bright"
             >
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
-              Patch {PATCH_VERSION}
+              Patch {patch}
             </TabsTrigger>
             <TabsTrigger
               value="comparar"
               className="gap-1.5 data-[state=active]:text-gold-bright"
             >
               <GitCompareArrows className="h-4 w-4" aria-hidden="true" />
-              Comparar {PREV_PATCH_VERSION} ↔ {PATCH_VERSION}
+              Comparar {PREV_PATCH_VERSION} ↔ {patch}
             </TabsTrigger>
           </TabsList>
           <span className="text-xs text-muted-foreground">
@@ -134,7 +160,7 @@ export function TierList({
           <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
           Win rates públicos · {STATS_SOURCE.elo} · {STATS_SOURCE.region}
         </span>
-        <span>· Patch {PATCH_VERSION}</span>
+        <span>· Patch {patch}</span>
         <span className="hidden sm:inline">· {STATS_SOURCE.updatedLabel}</span>
         <span className="ml-auto flex flex-wrap items-center gap-1.5">
           <span className="hidden md:inline">Compare em:</span>
@@ -183,7 +209,7 @@ export function TierList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {TIER_STATS_LIST.map((entry: TierStatsEntry) => {
+            {stats.map((entry: TierStatsEntry) => {
               const champ = byId.get(entry.championId);
               const tierColor = TIER_META[entry.tier].color;
               return (

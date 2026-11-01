@@ -8,17 +8,13 @@ import { Eye } from "lucide-react";
 import { registerVisit, formatIsoDate, type VisitData } from "@/lib/lol/visits";
 
 export function VisitCounter() {
-  // Estado inicial lazy para evitar cascading renders
-  const [visits, setVisits] = React.useState<VisitData | null>(() => {
-    return registerVisit();
-  });
+  const [visits, setVisits] = React.useState<VisitData | null>(null);
 
-  // Use useEffect para evitar mismatch de SSR - o estado já está inicializado
+  // Registra a visita apenas no cliente (evita hydration mismatch com o SSR)
   React.useEffect(() => {
-    // Nenhuma ação necessária - estado já inicializado via lazy initializer
+    setVisits(registerVisit());
   }, []);
 
-  // Estado neutro até montar no cliente (evita mismatch de SSR)
   if (!visits) {
     return (
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground opacity-0" aria-hidden="true">

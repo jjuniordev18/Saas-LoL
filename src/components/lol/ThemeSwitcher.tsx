@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { THEMES, useTheme, type ThemeId } from "@/lib/lol/theme";
 
 export function ThemeSwitcher() {
-  const { theme, setTheme, loaded } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [open, setOpen] = React.useState(false);
   const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
@@ -48,7 +48,7 @@ export function ThemeSwitcher() {
           Modos de cor
         </p>
         {THEMES.map((t) => {
-          const active = loaded && t.id === theme;
+          const active = t.id === theme;
           return (
             <button
               key={t.id}

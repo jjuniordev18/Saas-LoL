@@ -76,6 +76,8 @@ export function useTheme() {
     return readTheme();
   });
 
+  // Tema aplicado no servidor via THEME_BOOT_SCRIPT; aqui sincronizamos apenas no cliente
+
   // Aplicar tema e sincronizar com outras abas
   React.useEffect(() => {
     applyTheme(theme);
@@ -98,9 +100,6 @@ export function useTheme() {
     };
   }, [theme]);
 
-  // Estado loaded sempre verdadeiro após o primeiro render
-  const loaded = true;
-
   const setTheme = React.useCallback((id: ThemeId) => {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(id));
@@ -112,7 +111,7 @@ export function useTheme() {
     window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
   }, []);
 
-  return { theme, setTheme, loaded };
+  return { theme, setTheme };
 }
 
 /** Script inline que aplica o tema salvo ANTES da hidratação (evita flash). */

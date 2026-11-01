@@ -30,3 +30,30 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Patch {
+  id        String   @id @default(cuid())
+  version   String   @unique
+  releasedAt DateTime @default(now())
+  isActive  Boolean  @default(false)
+  tierStats TierStat[]
+}
+
+model TierStat {
+  id        String   @id @default(cuid())
+  patchId   String
+  patch     Patch    @relation(fields: [patchId], references: [id])
+  championId String
+  championName String
+  tier      String
+  winRate   Float
+  wrChange  Float
+  banRate   Float
+  pickRate  Float
+  matches   Int
+  rank      Int
+  createdAt DateTime @default(now())
+
+  @@index([patchId])
+  @@index([championId])
+}

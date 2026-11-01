@@ -64,6 +64,7 @@ function Carousel({
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
   const updateScrollStatus = React.useCallback((emblaApi: CarouselApi) => {
+    if (!emblaApi) return
     setCanScrollPrev(emblaApi.canScrollPrev())
     setCanScrollNext(emblaApi.canScrollNext())
   }, [])
